@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ScoreRecord {
-  final String runId; // NEW: Unique ID for the game session
+  final String runId; // Unique ID for the game session
   final int score;
   final DateTime date;
 
@@ -38,9 +38,17 @@ class HighScoreService {
     return scores;
   }
 
-  // Now requires runId to update existing scores instead of duplicating them
   static Future<void> saveScore(int newScore, String runId) async {
     if (newScore <= 0) return;
+
+    // Extract the original game start date from the runId timestamp
+    DateTime gameStartDate;
+    try {
+      gameStartDate = DateTime.fromMicrosecondsSinceEpoch(int.parse(runId));
+    } catch (_) {
+      // Fallback for old save records that might not have a valid timestamp runId
+      gameStartDate = DateTime.now();
+    }
 
     final scores = await getScores();
 
@@ -48,13 +56,13 @@ class HighScoreService {
     final existingIndex = scores.indexWhere((s) => s.runId == runId);
 
     if (existingIndex != -1) {
-      // Update the score if it's higher
+      // Update the score if it's higher, but keep the original start date
       if (newScore > scores[existingIndex].score) {
-        scores[existingIndex] = ScoreRecord(runId: runId, score: newScore, date: DateTime.now());
+        scores[existingIndex] = ScoreRecord(runId: runId, score: newScore, date: gameStartDate);
       }
     } else {
-      // Add as new record
-      scores.add(ScoreRecord(runId: runId, score: newScore, date: DateTime.now()));
+      // Add as new record with the start date
+      scores.add(ScoreRecord(runId: runId, score: newScore, date: gameStartDate));
     }
 
     scores.sort((a, b) => b.score.compareTo(a.score));

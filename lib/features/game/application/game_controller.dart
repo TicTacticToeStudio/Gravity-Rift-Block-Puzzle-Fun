@@ -176,15 +176,14 @@ class GameController extends AutoDisposeNotifier<GameState> {
     _checkForGameOver(state.board, state.pieces);
   }
 
-  void startNewGame() {
-    SaveGameService.clearSave();
+  Future<void> startNewGame() async {
+    await SaveGameService.clearSave();
     final newState = _createInitialState().copyWith(turnId: state.turnId + 1);
     state = newState;
   }
 
-  void restartGame() => startNewGame();
+  Future<void> restartGame() async => await startNewGame();
 
-  // FIXED: Do not reset isOutOfMoves. Just hide the overlay.
   void openBonusesFromRescue() {
     state = state.copyWith(pulseGift: true);
   }
@@ -369,6 +368,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
   }
 
   bool useHint() {
+    // Allow execution even if isOutOfMoves is true (will fail naturally if no moves)
     if (state.isProcessing || state.isGameOver) return false;
 
     bool canUse = false;

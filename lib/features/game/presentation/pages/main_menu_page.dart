@@ -26,6 +26,11 @@ class MainMenuPage extends ConsumerWidget {
     final currentLocale = ref.watch(localeProvider);
     final hasSaveAsync = ref.watch(hasSaveProvider);
 
+    // Split the title into main and sub-title for better visual hierarchy
+    final titleParts = l10n.appTitle.split(':');
+    final mainTitle = titleParts[0].toUpperCase();
+    final subTitle = titleParts.length > 1 ? titleParts[1].trim().toUpperCase() : '';
+
     return Scaffold(
       body: CosmicBackground(
         child: SafeArea(
@@ -92,28 +97,112 @@ class MainMenuPage extends ConsumerWidget {
 
               const Spacer(flex: 1),
 
-              // 2. TITLE
+              // 2. MASSIVE NEON TITLE
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingL),
+                padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingM),
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
-                  child: Text(
-                    l10n.appTitle.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 48,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 2.0,
-                      color: AppColors.primary,
-                      shadows: [
-                        Shadow(color: AppColors.primary.withOpacity(0.8), blurRadius: 20),
-                        const Shadow(color: Colors.black45, offset: Offset(2, 4), blurRadius: 4),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // MAIN TITLE: SPACECORE
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Massive Glow
+                          Text(
+                            mainTitle,
+                            style: TextStyle(
+                              fontSize: 72,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 4.0,
+                              color: Colors.transparent,
+                              shadows: [
+                                Shadow(color: AppColors.primary.withOpacity(0.8), blurRadius: 40),
+                                Shadow(color: AppColors.secondary.withOpacity(0.6), blurRadius: 20),
+                              ],
+                            ),
+                          ),
+                          // Thick Dark Outline for contrast against stars
+                          Text(
+                            mainTitle,
+                            style: TextStyle(
+                              fontSize: 72,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 4.0,
+                              foreground: Paint()
+                                ..style = PaintingStyle.stroke
+                                ..strokeWidth = 8
+                                ..color = const Color(0xFF0A0815), // Very dark cosmic background color
+                            ),
+                          ),
+                          // Gradient Fill
+                          ShaderMask(
+                            shaderCallback: (Rect bounds) {
+                              return const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  AppColors.primary, // Cyan
+                                  Colors.white,
+                                  AppColors.secondary, // Pink
+                                ],
+                                stops: [0.1, 0.5, 0.9],
+                              ).createShader(bounds);
+                            },
+                            blendMode: BlendMode.srcIn,
+                            child: Text(
+                              mainTitle,
+                              style: const TextStyle(
+                                fontSize: 72,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 4.0,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // SUBTITLE: BLOCK PUZZLE & FUN (Increased size)
+                      if (subTitle.isNotEmpty) ...[
+                        const SizedBox(height: 8), // Slightly more space
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Text(
+                              subTitle,
+                              style: TextStyle(
+                                fontSize: 28, // Increased from 20
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 6.0, // Slightly tighter spacing to fit the bigger font
+                                foreground: Paint()
+                                  ..style = PaintingStyle.stroke
+                                  ..strokeWidth = 5 // Thicker outline
+                                  ..color = const Color(0xFF0A0815),
+                              ),
+                            ),
+                            Text(
+                              subTitle,
+                              style: const TextStyle(
+                                fontSize: 28, // Increased from 20
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 6.0,
+                                color: AppColors.primary,
+                                shadows: [
+                                  Shadow(color: AppColors.primary, blurRadius: 15), // Stronger glow
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
-                    ),
+                    ],
                   ),
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 40),
 
               // 3. MENU PANEL (Glassmorphism)
               ConstrainedBox(
@@ -152,7 +241,7 @@ class MainMenuPage extends ConsumerWidget {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(builder: (_) => GamePage(savedState: savedState)),
-                                        ).then((_) => ref.invalidate(hasSaveProvider)); // Refresh save state on return
+                                        ).then((_) => ref.invalidate(hasSaveProvider));
                                       }
                                     },
                                   ),

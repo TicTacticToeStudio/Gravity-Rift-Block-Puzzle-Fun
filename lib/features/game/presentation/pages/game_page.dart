@@ -62,12 +62,15 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
     final bool hasAnyAdsLeft = gameState.adSurprises < 2 || gameState.adHammers < 2 || gameState.adShuffles < 2 || gameState.adHints < 2;
     final bool canUseBonuses = hasAnyFreeBonuses || hasAnyAdsLeft || gameState.isOutOfMoves;
 
+    // Undo logic
     bool hasFreeUndos = gameState.freeUndos > 0;
     bool canWatchGameAd = !gameState.isOutOfMoves && gameState.adUndos < 1;
     bool canWatchRescueAd = gameState.isOutOfMoves && gameState.rescueUndos == 0;
     bool hasAdUndos = canWatchGameAd || canWatchRescueAd;
+    bool hasAnyUndosLeft = hasFreeUndos || hasAdUndos;
 
-    final bool canUndo = !gameState.isProcessing && gameState.previousState != null && !gameState.isHammerActive;
+    bool hasUndoHistory = gameState.previousState != null && !gameState.isHammerActive && !gameState.isProcessing;
+    final bool canUndo = hasUndoHistory && hasAnyUndosLeft;
 
     return Scaffold(
       appBar: AppBar(
@@ -169,44 +172,33 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Nothing to undo yet!')));
                             return;
                           }
+                          if (!hasAnyUndosLeft) {
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Out of Undos!')));
+                            return;
+                          }
 
                           bool success = ref.read(gameControllerProvider.notifier).undo();
-                          if (!success) {
-                            if (hasAdUndos) {
-                              showDialog(
-                                  context: context,
-                                  builder: (ctx) => AlertDialog(
-                                    backgroundColor: AppColors.surface,
-                                    title: const Text('Out of Free Undos', style: TextStyle(color: Colors.white)),
-                                    content: const Text('Watch an ad to get 1 more undo?', style: TextStyle(color: Colors.white70)),
-                                    actions: [
-                                      TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('CANCEL', style: TextStyle(color: Colors.grey))),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(ctx);
-                                          RewardedAdManager.showAd(
-                                            onUserEarnedReward: () {
-                                              ref.read(gameControllerProvider.notifier).onAdReward(PowerUpType.undo);
-                                            },
-                                            onAdDismissed: () {},
-                                            onAdFailed: () {
-                                              ref.read(gameControllerProvider.notifier).onAdReward(PowerUpType.undo);
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                const SnackBar(content: Text('Ad unavailable. Here is your undo!')),
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: const Text('WATCH AD', style: TextStyle(color: AppColors.primary)),
-                                      ),
-                                    ],
-                                  )
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Out of Undos!')),
-                              );
-                            }
+                          if (!success && hasAdUndos) {
+                            // Directly show ad without an intermediate dialog
+                            bool earned = false;
+                            RewardedAdManager.showAd(
+                              onUserEarnedReward: () => earned = true,
+                              onAdDismissed: () {
+                                if (earned) {
+                                  Future.delayed(const Duration(milliseconds: 500), () {
+                                    ref.read(gameControllerProvider.notifier).onAdReward(PowerUpType.undo);
+                                  });
+                                }
+                              },
+                              onAdFailed: () {
+                                Future.delayed(const Duration(milliseconds: 500), () {
+                                  ref.read(gameControllerProvider.notifier).onAdReward(PowerUpType.undo);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Ad unavailable. Here is your undo!')),
+                                  );
+                                });
+                              },
+                            );
                           }
                         },
                         child: Stack(
@@ -226,14 +218,14 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                                   size: 32
                               ),
                             ),
-                            // FIXED: Badge matching bonus AD button style
-                            if (canUndo)
+                            // Badge logic: Shows count, AD, or LIMIT
+                            if (hasUndoHistory)
                               Positioned(
                                 top: -6, right: -6,
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: hasFreeUndos ? AppColors.primary : AppColors.primary,
+                                    color: hasAnyUndosLeft ? AppColors.primary : Colors.grey.shade700,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(color: AppColors.background, width: 2),
                                   ),
@@ -242,13 +234,18 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                                     '${gameState.freeUndos}',
                                     style: const TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold),
                                   )
-                                      : const Row(
+                                      : hasAdUndos
+                                      ? const Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(Icons.play_arrow, color: Colors.black, size: 12),
                                       SizedBox(width: 2),
                                       Text('AD', style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
                                     ],
+                                  )
+                                      : const Text(
+                                    'LIMIT',
+                                    style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ),
@@ -264,11 +261,11 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         const trayHeight = 100.0;
-                        final availableHeight = constraints.maxHeight - trayHeight - AppConstants.paddingL;
-                        final maxBoardSize = min(constraints.maxWidth, availableHeight);
+                        final availableHeight = max(0.0, constraints.maxHeight - trayHeight - AppConstants.paddingL);
+                        final maxBoardSize = max(0.0, min(constraints.maxWidth, availableHeight));
                         const double borderWidth = 2.0 * 2;
                         final boardPadding = (AppConstants.paddingS * 2) + borderWidth;
-                        final cellSize = (maxBoardSize - boardPadding) / gameState.board.width;
+                        final cellSize = max(1.0, (maxBoardSize - boardPadding) / gameState.board.width);
 
                         return DragTarget<Piece>(
                             onWillAcceptWithDetails: (details) => !gameState.isGameOver && !gameState.isProcessing && !_isPaused && !gameState.isOutOfMoves && !gameState.isHammerActive,
@@ -381,36 +378,39 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                   child: Container(
                     color: Colors.black.withOpacity(0.85),
                     child: Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 400),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingL),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.warning_amber_rounded, color: Colors.orangeAccent, size: 48),
-                              const SizedBox(height: 12),
-                              const Text('Out of Moves!', style: TextStyle(color: AppColors.primary, fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
-                              const SizedBox(height: 8),
-                              const Text('We\'ve prepared a rescue bonus for you.\nUse a bonus to continue.', textAlign: TextAlign.center, style: TextStyle(color: AppColors.textPrimary, fontSize: 14)),
-                              const SizedBox(height: 24),
-                              ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.crystalAmber, foregroundColor: Colors.black,
-                                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                                  minimumSize: const Size(double.infinity, 50),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      // FIXED: Wrapped in SingleChildScrollView to prevent overflow
+                      child: SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 400),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingL, vertical: AppConstants.paddingM),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.warning_amber_rounded, color: Colors.orangeAccent, size: 48),
+                                const SizedBox(height: 12),
+                                const Text('Out of Moves!', style: TextStyle(color: AppColors.primary, fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+                                const SizedBox(height: 8),
+                                const Text('We\'ve prepared a rescue bonus for you.\nUse a bonus to continue.', textAlign: TextAlign.center, style: TextStyle(color: AppColors.textPrimary, fontSize: 14)),
+                                const SizedBox(height: 24),
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.crystalAmber, foregroundColor: Colors.black,
+                                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                                    minimumSize: const Size(double.infinity, 50),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  ),
+                                  icon: const Icon(Icons.card_giftcard),
+                                  label: const Text('OPEN BONUSES', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                  onPressed: () => ref.read(gameControllerProvider.notifier).openBonusesFromRescue(),
                                 ),
-                                icon: const Icon(Icons.card_giftcard),
-                                label: const Text('OPEN BONUSES', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                onPressed: () => ref.read(gameControllerProvider.notifier).openBonusesFromRescue(),
-                              ),
-                              const SizedBox(height: 12),
-                              TextButton(
-                                onPressed: () => ref.read(gameControllerProvider.notifier).giveUp(),
-                                child: const Text('END SESSION', style: TextStyle(color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.bold)),
-                              ),
-                            ],
+                                const SizedBox(height: 12),
+                                TextButton(
+                                  onPressed: () => ref.read(gameControllerProvider.notifier).giveUp(),
+                                  child: const Text('END SESSION', style: TextStyle(color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -424,51 +424,54 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                   child: Container(
                     color: Colors.black.withOpacity(0.85),
                     child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(l10n.pauseTitle, style: const TextStyle(color: AppColors.primary, fontSize: 40, fontWeight: FontWeight.bold, letterSpacing: 4)),
-                          const SizedBox(height: AppConstants.paddingXL),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: AppColors.background, minimumSize: const Size(200, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusM))),
-                            onPressed: () => setState(() => _isPaused = false),
-                            child: Text(l10n.resume, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          ),
-                          const SizedBox(height: AppConstants.paddingM),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: AppColors.surface, foregroundColor: AppColors.primary, minimumSize: const Size(200, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusM), side: BorderSide(color: AppColors.primary))),
-                            onPressed: () {
-                              ref.read(gameControllerProvider.notifier).startNewGame();
-                              setState(() => _isPaused = false);
-                            },
-                            child: Text(l10n.restart, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          ),
-                          const SizedBox(height: AppConstants.paddingM),
-                          TextButton.icon(
-                            onPressed: () => setState(() => _isSoundOn = !_isSoundOn),
-                            icon: Icon(_isSoundOn ? Icons.volume_up : Icons.volume_off, color: Colors.white),
-                            label: Text(_isSoundOn ? l10n.soundOn : l10n.soundOff, style: const TextStyle(color: Colors.white, fontSize: 16)),
-                          ),
-                          const SizedBox(height: AppConstants.paddingL),
-                          TextButton.icon(
-                            onPressed: () async {
-                              await ref.read(gameControllerProvider.notifier).saveCurrentGame();
-                              if (context.mounted) {
+                      // FIXED: Wrapped in SingleChildScrollView to prevent overflow
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(l10n.pauseTitle, style: const TextStyle(color: AppColors.primary, fontSize: 40, fontWeight: FontWeight.bold, letterSpacing: 4)),
+                            const SizedBox(height: AppConstants.paddingXL),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: AppColors.background, minimumSize: const Size(200, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusM))),
+                              onPressed: () => setState(() => _isPaused = false),
+                              child: Text(l10n.resume, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            ),
+                            const SizedBox(height: AppConstants.paddingM),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.surface, foregroundColor: AppColors.primary, minimumSize: const Size(200, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusM), side: BorderSide(color: AppColors.primary))),
+                              onPressed: () {
+                                ref.read(gameControllerProvider.notifier).startNewGame();
+                                setState(() => _isPaused = false);
+                              },
+                              child: Text(l10n.restart, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            ),
+                            const SizedBox(height: AppConstants.paddingM),
+                            TextButton.icon(
+                              onPressed: () => setState(() => _isSoundOn = !_isSoundOn),
+                              icon: Icon(_isSoundOn ? Icons.volume_up : Icons.volume_off, color: Colors.white),
+                              label: Text(_isSoundOn ? l10n.soundOn : l10n.soundOff, style: const TextStyle(color: Colors.white, fontSize: 16)),
+                            ),
+                            const SizedBox(height: AppConstants.paddingL),
+                            TextButton.icon(
+                              onPressed: () async {
+                                await ref.read(gameControllerProvider.notifier).saveCurrentGame();
+                                if (context.mounted) {
+                                  setState(() => _isPaused = false);
+                                  Navigator.pop(context);
+                                }
+                              },
+                              icon: const Icon(Icons.save, color: AppColors.primary),
+                              label: Text(l10n.saveAndExit, style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.bold)),
+                            ),
+                            TextButton(
+                              onPressed: () {
                                 setState(() => _isPaused = false);
                                 Navigator.pop(context);
-                              }
-                            },
-                            icon: const Icon(Icons.save, color: AppColors.primary),
-                            label: Text(l10n.saveAndExit, style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.bold)),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              setState(() => _isPaused = false);
-                              Navigator.pop(context);
-                            },
-                            child: Text(l10n.exitWithoutSaving, style: const TextStyle(color: Colors.redAccent, fontSize: 14)),
-                          ),
-                        ],
+                              },
+                              child: Text(l10n.exitWithoutSaving, style: const TextStyle(color: Colors.redAccent, fontSize: 14)),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -480,25 +483,34 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                   child: Container(
                     color: Colors.black.withOpacity(0.85),
                     child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingL),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.auto_awesome, color: AppColors.crystalAmber, size: 64),
-                            const SizedBox(height: AppConstants.paddingM),
-                            const Text('Out of Space', style: TextStyle(color: AppColors.primary, fontSize: 36, fontWeight: FontWeight.bold, letterSpacing: 2)),
-                            const SizedBox(height: AppConstants.paddingS),
-                            const Text('Journey Complete', style: TextStyle(color: AppColors.textSecondary, fontSize: 20, fontWeight: FontWeight.w500)),
-                            const SizedBox(height: AppConstants.paddingL),
-                            Text(l10n.yourScore(gameState.score), style: const TextStyle(color: AppColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold)),
-                            const SizedBox(height: AppConstants.paddingXL),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: AppColors.background, padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingXL, vertical: AppConstants.paddingM), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusM))),
-                              onPressed: () => ref.read(gameControllerProvider.notifier).restartGame(),
-                              child: const Text('Try Again', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                            ),
-                          ],
+                      // FIXED: Wrapped in SingleChildScrollView to prevent overflow
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingL, vertical: AppConstants.paddingM),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.auto_awesome, color: AppColors.crystalAmber, size: 64),
+                              const SizedBox(height: AppConstants.paddingM),
+                              const Text('Out of Space', style: TextStyle(color: AppColors.primary, fontSize: 36, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                              const SizedBox(height: AppConstants.paddingS),
+                              const Text('Journey Complete', style: TextStyle(color: AppColors.textSecondary, fontSize: 20, fontWeight: FontWeight.w500)),
+                              const SizedBox(height: AppConstants.paddingL),
+                              Text(l10n.yourScore(gameState.score), style: const TextStyle(color: AppColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold)),
+                              const SizedBox(height: AppConstants.paddingXL),
+    ElevatedButton.icon(
+    style: ElevatedButton.styleFrom(
+    backgroundColor: AppColors.primary,
+    foregroundColor: AppColors.background,
+    padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingXL, vertical: AppConstants.paddingM),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusM))
+    ),
+    onPressed: () => ref.read(gameControllerProvider.notifier).restartGame(),
+    icon: const Icon(Icons.refresh, size: 24),
+    label: const Text('START NEW GAME', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+    ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
