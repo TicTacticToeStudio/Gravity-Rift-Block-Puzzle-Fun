@@ -1,0 +1,35 @@
+{
+  "@@locale": "en",
+  "appTitle": "SpaceCore: Block Puzzle & Fun",
+  "scoreLabel": "SCORE",
+  "gameOverTitle": "Great Game!",
+  "gameOverBody": "There is no space left for new blocks.",
+  "yourScore": "Your Score: {score}",
+  "@yourScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "playAgain": "Play Again",
+  "classicMode": "CLASSIC MODE",
+  "classicModeSub": "Endless block puzzle. Beat your score.",
+  "treasureMode": "TREASURE HUNT",
+  "treasureModeSub": "Collect rare crystals.",
+  "playFreeOffline": "Play free offline",
+  "comingSoon": "Coming Soon!",
+  "moreGames": "More Games",
+  "myGamesTitle": "My Games",
+  "playNow": "Play Now",
+  "sound": "Sound",
+  "continueGame": "CONTINUE",
+  "newGame": "NEW GAME",
+  "saveAndExit": "SAVE & EXIT",
+  "exitWithoutSaving": "EXIT WITHOUT SAVING",
+  "pauseTitle": "PAUSED",
+  "resume": "RESUME",
+  "restart": "RESTART",
+  "soundOn": "SOUND: ON",
+  "soundOff": "SOUND: OFF"
+}

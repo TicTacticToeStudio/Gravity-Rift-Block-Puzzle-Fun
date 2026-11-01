@@ -1,0 +1,35 @@
+{
+  "@@locale": "ru",
+  "appTitle": "SpaceCore: Block Puzzle & Fun",
+  "scoreLabel": "ОЧКИ",
+  "gameOverTitle": "Отличная игра!",
+  "gameOverBody": "Не осталось места для новых блоков.",
+  "yourScore": "Твой счет: {score}",
+  "@yourScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "playAgain": "Играть снова",
+  "classicMode": "КЛАССИЧЕСКИЙ РЕЖИМ",
+  "classicModeSub": "Бесконечный пазл. Побей свой рекорд.",
+  "treasureMode": "ОХОТА ЗА СОКРОВИЩАМИ",
+  "treasureModeSub": "Собирай редкие кристаллы.",
+  "playFreeOffline": "Играйте бесплатно офлайн",
+  "comingSoon": "Скоро!",
+  "moreGames": "Другие игры",
+  "myGamesTitle": "Мои игры",
+  "playNow": "Играть",
+  "sound": "Звук",
+  "continueGame": "ПРОДОЛЖИТЬ",
+  "newGame": "НОВАЯ ИГРА",
+  "saveAndExit": "СОХРАНИТЬ И ВЫЙТИ",
+  "exitWithoutSaving": "ВЫЙТИ БЕЗ СОХРАНЕНИЯ",
+  "pauseTitle": "ПАУЗА",
+  "resume": "ПРОДОЛЖИТЬ",
+  "restart": "ЗАНОВО",
+  "soundOn": "ЗВУК: ВКЛ",
+  "soundOff": "ЗВУК: ВЫКЛ"
+}

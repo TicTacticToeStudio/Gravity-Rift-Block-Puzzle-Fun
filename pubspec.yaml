@@ -1,0 +1,33 @@
+name: energy_blast
+description: "Hybrid puzzle game: block placement + match-3 with gravity"
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1
+  cupertino_icons: ^1.0.6
+  google_mobile_ads: ^8.0.0
+  shared_preferences: ^2.3.2
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+  # assets:
+  #   - assets/images/flowers/
+  #   - assets/images/pieces/
+  #   - assets/images/ui/
+  #   - assets/sounds/
+  #   - assets/fonts/
