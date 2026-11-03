@@ -84,4 +84,55 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get soundOff => 'ЗВУК: ВЫКЛ';
+
+  @override
+  String get nothingToUndo => 'Пока нечего отменять!';
+
+  @override
+  String get outOfUndos => 'Отмены закончились!';
+
+  @override
+  String get adUnavailableUndo => 'Реклама недоступна. Вот ваша отмена!';
+
+  @override
+  String get outOfMovesTitle => 'Нет ходов!';
+
+  @override
+  String get outOfMovesBody =>
+      'Мы подготовили для вас бонус спасения. Используйте бонус, чтобы продолжить.';
+
+  @override
+  String get openBonuses => 'ОТКРЫТЬ БОНУСЫ';
+
+  @override
+  String get endSession => 'ЗАВЕРШИТЬ СЕССИЮ';
+
+  @override
+  String get sessionEnded => 'Ваша сессия завершена.';
+
+  @override
+  String get startNewGame => 'НАЧАТЬ НОВУЮ ИГРУ';
+
+  @override
+  String get outOfSpace => 'ИГРА ОКОНЧЕНА';
+
+  @override
+  String get hexGameTitle => 'Hex Крестики-нолики: Веселье и Стратегия';
+
+  @override
+  String get hexGameDesc =>
+      'Hex Крестики-нолики. Играйте офлайн против Бота или друга. Анализ игр. Турниры.';
+
+  @override
+  String get tttGameTitle => 'Крестики-нолики: Веселье и Стратегия';
+
+  @override
+  String get tttGameDesc =>
+      'Бот или друг, глубокий анализ, адаптивный геймплей. Крестики-нолики — но тактически.';
+
+  @override
+  String get comingSoonTitle => 'Скоро';
+
+  @override
+  String get comingSoonDesc => 'Следите за нашими новыми головоломками!';
 }

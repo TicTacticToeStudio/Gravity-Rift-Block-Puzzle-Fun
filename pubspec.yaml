@@ -16,6 +16,7 @@ dependencies:
   google_mobile_ads: ^8.0.0
   shared_preferences: ^2.3.2
   intl: ^0.20.2
+  url_launcher: ^6.2.5
 
 dev_dependencies:
   flutter_test:
@@ -25,9 +26,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
-  # assets:
+  assets:
   #   - assets/images/flowers/
   #   - assets/images/pieces/
   #   - assets/images/ui/
   #   - assets/sounds/
   #   - assets/fonts/
+  - "assets/images/HEX_Icon.png"
+  - "assets/images/TTT_icon_final.png"

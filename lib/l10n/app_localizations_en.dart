@@ -84,4 +84,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get soundOff => 'SOUND: OFF';
+
+  @override
+  String get nothingToUndo => 'Nothing to undo yet!';
+
+  @override
+  String get outOfUndos => 'Out of Undos!';
+
+  @override
+  String get adUnavailableUndo => 'Ad unavailable. Here is your undo!';
+
+  @override
+  String get outOfMovesTitle => 'Out of Moves!';
+
+  @override
+  String get outOfMovesBody =>
+      'We\'ve prepared a rescue bonus for you. Use a bonus to continue.';
+
+  @override
+  String get openBonuses => 'OPEN BONUSES';
+
+  @override
+  String get endSession => 'END SESSION';
+
+  @override
+  String get sessionEnded => 'Your session has ended.';
+
+  @override
+  String get startNewGame => 'START NEW GAME';
+
+  @override
+  String get outOfSpace => 'GAME OVER';
+
+  @override
+  String get hexGameTitle => 'Hex Tic Tac Toe Fun & Strategy';
+
+  @override
+  String get hexGameDesc =>
+      'Hex Tic Tac Toe. Play offline vs Bot or friend. Game analysis. Tournaments.';
+
+  @override
+  String get tttGameTitle => 'Tic Tac Toe: Fun & Strategy';
+
+  @override
+  String get tttGameDesc =>
+      'Bot or friend, deep analysis, adaptive gameplay. Tic Tac Toe — but tactical.';
+
+  @override
+  String get comingSoonTitle => 'Coming Soon';
+
+  @override
+  String get comingSoonDesc => 'Stay tuned for our next puzzle!';
 }

@@ -31,5 +31,21 @@
   "resume": "RESUME",
   "restart": "RESTART",
   "soundOn": "SOUND: ON",
-  "soundOff": "SOUND: OFF"
+  "soundOff": "SOUND: OFF",
+  "nothingToUndo": "Nothing to undo yet!",
+  "outOfUndos": "Out of Undos!",
+  "adUnavailableUndo": "Ad unavailable. Here is your undo!",
+  "outOfMovesTitle": "Out of Moves!",
+  "outOfMovesBody": "We've prepared a rescue bonus for you. Use a bonus to continue.",
+  "openBonuses": "OPEN BONUSES",
+  "endSession": "END SESSION",
+  "sessionEnded": "Your session has ended.",
+  "startNewGame": "START NEW GAME",
+  "outOfSpace": "GAME OVER",
+  "hexGameTitle": "Hex Tic Tac Toe Fun & Strategy",
+  "hexGameDesc": "Hex Tic Tac Toe. Play offline vs Bot or friend. Game analysis. Tournaments.",
+  "tttGameTitle": "Tic Tac Toe: Fun & Strategy",
+  "tttGameDesc": "Bot or friend, deep analysis, adaptive gameplay. Tic Tac Toe — but tactical.",
+  "comingSoonTitle": "Coming Soon",
+  "comingSoonDesc": "Stay tuned for our next puzzle!"
 }

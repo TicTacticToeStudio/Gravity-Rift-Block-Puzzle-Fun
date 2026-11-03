@@ -74,7 +74,12 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.appTitle),
+        // FIXED: Wrapped in FittedBox to ensure the full title is always visible
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(l10n.appTitle),
+        ),
+        centerTitle: true,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: AppConstants.paddingM),
@@ -145,23 +150,46 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                         },
                       ),
                       const SizedBox(width: AppConstants.paddingM),
+
+                      // SCORE CONTAINER
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: AppConstants.paddingS, horizontal: AppConstants.paddingM),
+                          height: 72,
+                          padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingM),
                           decoration: BoxDecoration(
                             color: AppColors.surface,
                             borderRadius: BorderRadius.circular(AppConstants.radiusM),
                             border: Border.all(color: AppColors.primary.withOpacity(0.3)),
                           ),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(l10n.scoreLabel, style: const TextStyle(color: AppColors.textSecondary, letterSpacing: 2, fontSize: 12)),
-                              const SizedBox(height: AppConstants.paddingXS),
-                              Text('${gameState.score}', style: const TextStyle(color: AppColors.primary, fontSize: 32, fontWeight: FontWeight.bold)),
+                              Text(
+                                  l10n.scoreLabel,
+                                  style: const TextStyle(color: AppColors.textSecondary, letterSpacing: 2, fontSize: 12, height: 1.1)
+                              ),
+                              const SizedBox(height: 2), // Reduced spacing to prevent overflow
+                              // FIXED: Using Flexible so it doesn't force overflow, and height: 1.0 to strip extra font padding
+                              Flexible(
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                      '${gameState.score}',
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                        color: AppColors.primary,
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
+                                        height: 1.0, // Strips extra line-height
+                                      )
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ),
+
                       const SizedBox(width: AppConstants.paddingM),
 
                       // UNDO BUTTON
@@ -169,11 +197,11 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                         onTap: () {
                           if (gameState.isProcessing || _isPaused || gameState.isHammerActive) return;
                           if (gameState.previousState == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Nothing to undo yet!')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.nothingToUndo)));
                             return;
                           }
                           if (!hasAnyUndosLeft) {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Out of Undos!')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.outOfUndos)));
                             return;
                           }
 
@@ -194,7 +222,7 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                                 Future.delayed(const Duration(milliseconds: 500), () {
                                   ref.read(gameControllerProvider.notifier).onAdReward(PowerUpType.undo);
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Ad unavailable. Here is your undo!')),
+                                    SnackBar(content: Text(l10n.adUnavailableUndo)),
                                   );
                                 });
                               },
@@ -378,7 +406,6 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                   child: Container(
                     color: Colors.black.withOpacity(0.85),
                     child: Center(
-                      // FIXED: Wrapped in SingleChildScrollView to prevent overflow
                       child: SingleChildScrollView(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 400),
@@ -389,9 +416,12 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                               children: [
                                 const Icon(Icons.warning_amber_rounded, color: Colors.orangeAccent, size: 48),
                                 const SizedBox(height: 12),
-                                const Text('Out of Moves!', style: TextStyle(color: AppColors.primary, fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(l10n.outOfMovesTitle, style: const TextStyle(color: AppColors.primary, fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 1.5), textAlign: TextAlign.center),
+                                ),
                                 const SizedBox(height: 8),
-                                const Text('We\'ve prepared a rescue bonus for you.\nUse a bonus to continue.', textAlign: TextAlign.center, style: TextStyle(color: AppColors.textPrimary, fontSize: 14)),
+                                Text(l10n.outOfMovesBody, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.textPrimary, fontSize: 14)),
                                 const SizedBox(height: 24),
                                 ElevatedButton.icon(
                                   style: ElevatedButton.styleFrom(
@@ -401,13 +431,19 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                   ),
                                   icon: const Icon(Icons.card_giftcard),
-                                  label: const Text('OPEN BONUSES', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                  label: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(l10n.openBonuses, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                  ),
                                   onPressed: () => ref.read(gameControllerProvider.notifier).openBonusesFromRescue(),
                                 ),
                                 const SizedBox(height: 12),
                                 TextButton(
                                   onPressed: () => ref.read(gameControllerProvider.notifier).giveUp(),
-                                  child: const Text('END SESSION', style: TextStyle(color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.bold)),
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(l10n.endSession, style: const TextStyle(color: Colors.redAccent, fontSize: 14, fontWeight: FontWeight.bold)),
+                                  ),
                                 ),
                               ],
                             ),
@@ -424,53 +460,58 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                   child: Container(
                     color: Colors.black.withOpacity(0.85),
                     child: Center(
-                      // FIXED: Wrapped in SingleChildScrollView to prevent overflow
                       child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(l10n.pauseTitle, style: const TextStyle(color: AppColors.primary, fontSize: 40, fontWeight: FontWeight.bold, letterSpacing: 4)),
-                            const SizedBox(height: AppConstants.paddingXL),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: AppColors.background, minimumSize: const Size(200, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusM))),
-                              onPressed: () => setState(() => _isPaused = false),
-                              child: Text(l10n.resume, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            ),
-                            const SizedBox(height: AppConstants.paddingM),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.surface, foregroundColor: AppColors.primary, minimumSize: const Size(200, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusM), side: BorderSide(color: AppColors.primary))),
-                              onPressed: () {
-                                ref.read(gameControllerProvider.notifier).startNewGame();
-                                setState(() => _isPaused = false);
-                              },
-                              child: Text(l10n.restart, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            ),
-                            const SizedBox(height: AppConstants.paddingM),
-                            TextButton.icon(
-                              onPressed: () => setState(() => _isSoundOn = !_isSoundOn),
-                              icon: Icon(_isSoundOn ? Icons.volume_up : Icons.volume_off, color: Colors.white),
-                              label: Text(_isSoundOn ? l10n.soundOn : l10n.soundOff, style: const TextStyle(color: Colors.white, fontSize: 16)),
-                            ),
-                            const SizedBox(height: AppConstants.paddingL),
-                            TextButton.icon(
-                              onPressed: () async {
-                                await ref.read(gameControllerProvider.notifier).saveCurrentGame();
-                                if (context.mounted) {
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 400),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(l10n.pauseTitle, style: const TextStyle(color: AppColors.primary, fontSize: 40, fontWeight: FontWeight.bold, letterSpacing: 4)),
+                              ),
+                              const SizedBox(height: AppConstants.paddingXL),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: AppColors.background, minimumSize: const Size(200, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusM))),
+                                onPressed: () => setState(() => _isPaused = false),
+                                child: Text(l10n.resume, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                              ),
+                              const SizedBox(height: AppConstants.paddingM),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: AppColors.surface, foregroundColor: AppColors.primary, minimumSize: const Size(200, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusM), side: BorderSide(color: AppColors.primary))),
+                                onPressed: () {
+                                  ref.read(gameControllerProvider.notifier).startNewGame();
+                                  setState(() => _isPaused = false);
+                                },
+                                child: Text(l10n.restart, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                              ),
+                              const SizedBox(height: AppConstants.paddingM),
+                              TextButton.icon(
+                                onPressed: () => setState(() => _isSoundOn = !_isSoundOn),
+                                icon: Icon(_isSoundOn ? Icons.volume_up : Icons.volume_off, color: Colors.white),
+                                label: Text(_isSoundOn ? l10n.soundOn : l10n.soundOff, style: const TextStyle(color: Colors.white, fontSize: 16)),
+                              ),
+                              const SizedBox(height: AppConstants.paddingL),
+                              TextButton.icon(
+                                onPressed: () async {
+                                  await ref.read(gameControllerProvider.notifier).saveCurrentGame();
+                                  if (context.mounted) {
+                                    setState(() => _isPaused = false);
+                                    Navigator.pop(context);
+                                  }
+                                },
+                                icon: const Icon(Icons.save, color: AppColors.primary),
+                                label: Text(l10n.saveAndExit, style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.bold)),
+                              ),
+                              TextButton(
+                                onPressed: () {
                                   setState(() => _isPaused = false);
                                   Navigator.pop(context);
-                                }
-                              },
-                              icon: const Icon(Icons.save, color: AppColors.primary),
-                              label: Text(l10n.saveAndExit, style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.bold)),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                setState(() => _isPaused = false);
-                                Navigator.pop(context);
-                              },
-                              child: Text(l10n.exitWithoutSaving, style: const TextStyle(color: Colors.redAccent, fontSize: 14)),
-                            ),
-                          ],
+                                },
+                                child: Text(l10n.exitWithoutSaving, style: const TextStyle(color: Colors.redAccent, fontSize: 14)),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -483,33 +524,54 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                   child: Container(
                     color: Colors.black.withOpacity(0.85),
                     child: Center(
-                      // FIXED: Wrapped in SingleChildScrollView to prevent overflow
                       child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingL, vertical: AppConstants.paddingM),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.auto_awesome, color: AppColors.crystalAmber, size: 64),
-                              const SizedBox(height: AppConstants.paddingM),
-                              const Text('Out of Space', style: TextStyle(color: AppColors.primary, fontSize: 36, fontWeight: FontWeight.bold, letterSpacing: 2)),
-                              const SizedBox(height: AppConstants.paddingS),
-                              const Text('Journey Complete', style: TextStyle(color: AppColors.textSecondary, fontSize: 20, fontWeight: FontWeight.w500)),
-                              const SizedBox(height: AppConstants.paddingL),
-                              Text(l10n.yourScore(gameState.score), style: const TextStyle(color: AppColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold)),
-                              const SizedBox(height: AppConstants.paddingXL),
-    ElevatedButton.icon(
-    style: ElevatedButton.styleFrom(
-    backgroundColor: AppColors.primary,
-    foregroundColor: AppColors.background,
-    padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingXL, vertical: AppConstants.paddingM),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusM))
-    ),
-    onPressed: () => ref.read(gameControllerProvider.notifier).restartGame(),
-    icon: const Icon(Icons.refresh, size: 24),
-    label: const Text('START NEW GAME', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-    ),
-                            ],
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 400),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingL, vertical: AppConstants.paddingM),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.auto_awesome, color: AppColors.crystalAmber, size: 64),
+                                const SizedBox(height: AppConstants.paddingM),
+                                // Using localized gameOverTitle ("Great Game!" / "Отличная игра!")
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(l10n.gameOverTitle, style: const TextStyle(color: AppColors.primary, fontSize: 36, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                                ),
+                                const SizedBox(height: AppConstants.paddingS),
+                                Text(l10n.sessionEnded, style: const TextStyle(color: AppColors.textSecondary, fontSize: 20, fontWeight: FontWeight.w500), textAlign: TextAlign.center),
+                                const SizedBox(height: AppConstants.paddingL),
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(l10n.yourScore(gameState.score), style: const TextStyle(color: AppColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold)),
+                                ),
+                                const SizedBox(height: AppConstants.paddingXL),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primary,
+                                      foregroundColor: AppColors.background,
+                                      padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingXL, vertical: AppConstants.paddingM),
+                                      minimumSize: const Size(double.infinity, 50),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusM))
+                                  ),
+                                  onPressed: () => ref.read(gameControllerProvider.notifier).restartGame(),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.refresh, size: 24),
+                                      const SizedBox(width: 8),
+                                      Flexible(
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(l10n.startNewGame, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

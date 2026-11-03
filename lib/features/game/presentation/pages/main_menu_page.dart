@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -164,33 +165,33 @@ class MainMenuPage extends ConsumerWidget {
                         ],
                       ),
 
-                      // SUBTITLE: BLOCK PUZZLE & FUN (Increased size)
+                      // SUBTITLE: BLOCK PUZZLE & FUN
                       if (subTitle.isNotEmpty) ...[
-                        const SizedBox(height: 8), // Slightly more space
+                        const SizedBox(height: 8),
                         Stack(
                           alignment: Alignment.center,
                           children: [
                             Text(
                               subTitle,
                               style: TextStyle(
-                                fontSize: 28, // Increased from 20
+                                fontSize: 28,
                                 fontWeight: FontWeight.bold,
-                                letterSpacing: 6.0, // Slightly tighter spacing to fit the bigger font
+                                letterSpacing: 6.0,
                                 foreground: Paint()
                                   ..style = PaintingStyle.stroke
-                                  ..strokeWidth = 5 // Thicker outline
+                                  ..strokeWidth = 5
                                   ..color = const Color(0xFF0A0815),
                               ),
                             ),
                             Text(
                               subTitle,
                               style: const TextStyle(
-                                fontSize: 28, // Increased from 20
+                                fontSize: 28,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 6.0,
                                 color: AppColors.primary,
                                 shadows: [
-                                  Shadow(color: AppColors.primary, blurRadius: 15), // Stronger glow
+                                  Shadow(color: AppColors.primary, blurRadius: 15),
                                 ],
                               ),
                             ),
@@ -234,6 +235,7 @@ class MainMenuPage extends ConsumerWidget {
                                     subtitle: "Resume your game",
                                     icon: Icons.play_arrow,
                                     color: AppColors.primary,
+                                    showBoardBackground: false,
                                     onTap: () async {
                                       final json = await SaveGameService.loadGame();
                                       if (json != null && context.mounted) {
@@ -249,9 +251,10 @@ class MainMenuPage extends ConsumerWidget {
                                   // New Game Button
                                   _buildMenuButton(
                                     title: l10n.newGame,
-                                    subtitle: l10n.classicModeSub,
+                                    subtitle: "Start fresh",
                                     icon: Icons.refresh,
                                     color: AppColors.secondary,
+                                    showBoardBackground: false,
                                     onTap: () {
                                       SaveGameService.clearSave();
                                       ref.invalidate(hasSaveProvider);
@@ -264,12 +267,13 @@ class MainMenuPage extends ConsumerWidget {
                                 ],
                               );
                             } else {
-                              // Standard Classic Mode Button
+                              // Standard Play Button (with Board Background)
                               return _buildMenuButton(
-                                title: l10n.classicMode,
-                                subtitle: l10n.classicModeSub,
-                                icon: Icons.view_quilt,
+                                title: l10n.playNow.toUpperCase(),
+                                subtitle: l10n.classicModeSub, // "Endless block puzzle. Beat your score."
+                                icon: Icons.play_circle_fill,
                                 color: AppColors.primary,
+                                showBoardBackground: true, // Enables the mini-game board background
                                 onTap: () {
                                   Navigator.push(
                                       context,
@@ -281,10 +285,11 @@ class MainMenuPage extends ConsumerWidget {
                           },
                           loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
                           error: (_, __) => _buildMenuButton(
-                            title: l10n.classicMode,
+                            title: l10n.playNow.toUpperCase(),
                             subtitle: l10n.classicModeSub,
-                            icon: Icons.view_quilt,
+                            icon: Icons.play_circle_fill,
                             color: AppColors.primary,
+                            showBoardBackground: true,
                             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GamePage())),
                           ),
                         ),
@@ -381,42 +386,61 @@ class MainMenuPage extends ConsumerWidget {
     required IconData icon,
     required Color color,
     required VoidCallback onTap,
+    bool showBoardBackground = false,
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(AppConstants.paddingM),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: color.withOpacity(0.5), width: 2),
-          boxShadow: [
-            BoxShadow(color: color.withOpacity(0.2), blurRadius: 10, spreadRadius: 1)
-          ],
-        ),
-        child: Row(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppConstants.radiusM),
+        child: Stack(
           children: [
-            Icon(icon, color: color, size: 32),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            // Draw the board background only if requested
+            if (showBoardBackground)
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: _PlaqueBoardPainter(),
+                ),
+              ),
+
+            // Foreground Content
+            Container(
+              padding: const EdgeInsets.all(AppConstants.paddingM),
+              decoration: BoxDecoration(
+                color: showBoardBackground ? Colors.black.withOpacity(0.3) : color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppConstants.radiusM),
+                border: Border.all(color: color.withOpacity(0.7), width: 2),
+                boxShadow: [
+                  BoxShadow(color: color.withOpacity(0.3), blurRadius: 15, spreadRadius: 2)
+                ],
+              ),
+              child: Row(
                 children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: color,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 12,
+                  Icon(icon, color: color, size: 32),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            color: color,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            color: showBoardBackground ? Colors.white.withOpacity(0.9) : AppColors.textSecondary,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            shadows: showBoardBackground ? [const Shadow(color: Colors.black, blurRadius: 4)] : [],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -454,4 +478,72 @@ class MainMenuPage extends ConsumerWidget {
       ),
     );
   }
+}
+
+// Custom painter to draw a mini game board *inside* the button
+class _PlaqueBoardPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cellSize = size.height / 3; // Make cells fit vertically
+    final random = Random(42);
+
+    final emptyCellPaint = Paint()..color = AppColors.boardEmptyCell.withOpacity(0.4);
+
+    // Draw empty grid
+    for (double y = 0; y < size.height; y += cellSize) {
+      for (double x = 0; x < size.width; x += cellSize) {
+        final rect = Rect.fromLTWH(x + 2, y + 2, cellSize - 4, cellSize - 4);
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(rect, const Radius.circular(4)),
+          emptyCellPaint,
+        );
+      }
+    }
+
+    // Draw some bright crystals to simulate a game in progress
+    final colors = [
+      AppColors.crystalRuby,
+      AppColors.crystalSapphire,
+      AppColors.crystalEmerald,
+      AppColors.crystalAmber,
+    ];
+
+    // Pre-defined positions to look like a nice arrangement
+    final blockPositions = [
+      const Offset(0, 0), const Offset(1, 0), const Offset(2, 0),
+      const Offset(3, 1), const Offset(4, 1),
+      const Offset(6, 0), const Offset(7, 0), const Offset(8, 0),
+      const Offset(10, 1), const Offset(10, 2), const Offset(11, 2),
+      const Offset(13, 0), const Offset(14, 0), const Offset(14, 1),
+    ];
+
+    for (int i = 0; i < blockPositions.length; i++) {
+      final pos = blockPositions[i];
+      final x = pos.dx * cellSize;
+      final y = pos.dy * cellSize;
+
+      if (x >= size.width) continue;
+
+      final rect = Rect.fromLTWH(x + 2, y + 2, cellSize - 4, cellSize - 4);
+      final crystalColor = colors[i % colors.length].withOpacity(0.6);
+
+      final glowPaint = Paint()
+        ..color = crystalColor
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+
+      final crystalPaint = Paint()..color = crystalColor;
+
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, const Radius.circular(4)),
+        glowPaint,
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, const Radius.circular(4)),
+        crystalPaint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

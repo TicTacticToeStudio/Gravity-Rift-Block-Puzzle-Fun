@@ -247,6 +247,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SOUND: OFF'**
   String get soundOff;
+
+  /// No description provided for @nothingToUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to undo yet!'**
+  String get nothingToUndo;
+
+  /// No description provided for @outOfUndos.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of Undos!'**
+  String get outOfUndos;
+
+  /// No description provided for @adUnavailableUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Ad unavailable. Here is your undo!'**
+  String get adUnavailableUndo;
+
+  /// No description provided for @outOfMovesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of Moves!'**
+  String get outOfMovesTitle;
+
+  /// No description provided for @outOfMovesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ve prepared a rescue bonus for you. Use a bonus to continue.'**
+  String get outOfMovesBody;
+
+  /// No description provided for @openBonuses.
+  ///
+  /// In en, this message translates to:
+  /// **'OPEN BONUSES'**
+  String get openBonuses;
+
+  /// No description provided for @endSession.
+  ///
+  /// In en, this message translates to:
+  /// **'END SESSION'**
+  String get endSession;
+
+  /// No description provided for @sessionEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has ended.'**
+  String get sessionEnded;
+
+  /// No description provided for @startNewGame.
+  ///
+  /// In en, this message translates to:
+  /// **'START NEW GAME'**
+  String get startNewGame;
+
+  /// No description provided for @outOfSpace.
+  ///
+  /// In en, this message translates to:
+  /// **'GAME OVER'**
+  String get outOfSpace;
+
+  /// No description provided for @hexGameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hex Tic Tac Toe Fun & Strategy'**
+  String get hexGameTitle;
+
+  /// No description provided for @hexGameDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Hex Tic Tac Toe. Play offline vs Bot or friend. Game analysis. Tournaments.'**
+  String get hexGameDesc;
+
+  /// No description provided for @tttGameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tic Tac Toe: Fun & Strategy'**
+  String get tttGameTitle;
+
+  /// No description provided for @tttGameDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Bot or friend, deep analysis, adaptive gameplay. Tic Tac Toe — but tactical.'**
+  String get tttGameDesc;
+
+  /// No description provided for @comingSoonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Soon'**
+  String get comingSoonTitle;
+
+  /// No description provided for @comingSoonDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay tuned for our next puzzle!'**
+  String get comingSoonDesc;
 }
 
 class _AppLocalizationsDelegate
