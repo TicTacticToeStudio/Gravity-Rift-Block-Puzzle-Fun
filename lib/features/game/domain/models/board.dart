@@ -10,9 +10,9 @@ class Board {
   Board({required this.width, required this.height})
       : grid = List.generate(
     height,
-        (y) => List.generate(
+        (_) => List.generate(
       width,
-          (x) => Cell(x: x, y: y),
+          (_) => Cell(),
     ),
   );
 

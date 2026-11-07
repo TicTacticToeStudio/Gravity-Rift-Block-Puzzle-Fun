@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:energy_blast/core/constants/app_constants.dart';
 import 'package:energy_blast/core/theme/app_colors.dart';
+import 'package:energy_blast/core/services/audio_service.dart';
+import 'package:energy_blast/core/services/haptic_service.dart';
 import 'package:energy_blast/l10n/app_localizations.dart';
 
-class MoreGamesPage extends StatelessWidget {
+class MoreGamesPage extends ConsumerWidget {
   const MoreGamesPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
@@ -17,7 +20,11 @@ class MoreGamesPage extends StatelessWidget {
         title: Text(l10n.myGamesTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            ref.read(audioServiceProvider).play(AppSound.click);
+            ref.read(hapticServiceProvider).trigger(AppHaptic.selection);
+            Navigator.pop(context);
+          },
         ),
       ),
       body: ListView(
@@ -29,9 +36,11 @@ class MoreGamesPage extends StatelessWidget {
             subtitle: l10n.hexGameDesc,
             imagePath: "assets/images/HEX_Icon.png",
             color: Colors.purpleAccent,
-            onTap: () => _launchStoreUrl(
-              'https://play.google.com/store/apps/details?id=com.studio3t.hextactictoe',
-            ),
+            onTap: () {
+              ref.read(audioServiceProvider).play(AppSound.click);
+              ref.read(hapticServiceProvider).trigger(AppHaptic.selection);
+              _launchStoreUrl('https://play.google.com/store/apps/details?id=com.studio3t.hextactictoe');
+            },
           ),
 
           const SizedBox(height: AppConstants.paddingM),
@@ -42,9 +51,11 @@ class MoreGamesPage extends StatelessWidget {
             subtitle: l10n.tttGameDesc,
             imagePath: "assets/images/TTT_icon_final.png",
             color: Colors.blueAccent,
-            onTap: () => _launchStoreUrl(
-              'https://play.google.com/store/apps/details?id=com.studio3t.tictactictoe',
-            ),
+            onTap: () {
+              ref.read(audioServiceProvider).play(AppSound.click);
+              ref.read(hapticServiceProvider).trigger(AppHaptic.selection);
+              _launchStoreUrl('https://play.google.com/store/apps/details?id=com.studio3t.tictactictoe');
+            },
           ),
 
           const SizedBox(height: AppConstants.paddingM),
@@ -55,7 +66,7 @@ class MoreGamesPage extends StatelessWidget {
             subtitle: l10n.comingSoonDesc,
             icon: Icons.auto_awesome,
             color: AppColors.secondary,
-            onTap: () {},
+            onTap: () {}, // No sound/action for disabled card
             isDisabled: true,
           ),
         ],

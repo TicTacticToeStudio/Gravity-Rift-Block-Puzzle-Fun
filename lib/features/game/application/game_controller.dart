@@ -5,13 +5,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:energy_blast/features/game/domain/models/board.dart';
 import 'package:energy_blast/features/game/domain/models/crystal_type.dart';
 import 'package:energy_blast/features/game/domain/models/piece.dart';
+import 'package:energy_blast/core/models/power_up_type.dart';
 import 'package:energy_blast/core/services/high_score_service.dart';
-import 'package:energy_blast/core/services/power_up_service.dart';
 import 'package:energy_blast/core/services/save_game_service.dart';
+import 'package:energy_blast/core/services/audio_service.dart';
+import 'package:energy_blast/core/services/haptic_service.dart';
 
 class ScorePopup {
-  final String id; final int amount; final bool isCross; final int comboLevel; final Offset position;
-  ScorePopup({required this.id, required this.amount, required this.isCross, required this.comboLevel, required this.position});
+  final String id; final int amount; final bool isCross; final int comboLevel; final Offset position; final bool isMiss;
+  ScorePopup({required this.id, required this.amount, required this.isCross, required this.comboLevel, required this.position, this.isMiss = false});
+}
+
+class HammerMiss {
+  final String id;
+  final Offset position;
+  HammerMiss({required this.id, required this.position});
 }
 
 class GameState {
@@ -49,6 +57,7 @@ class GameState {
   final int lastSurprisePoints;
   final bool isHammerActive;
   final int turnId;
+  final List<HammerMiss> activeHammerMisses;
 
   final String? hintPieceId;
   final int? hintX;
@@ -67,7 +76,7 @@ class GameState {
     this.rescueSurprises = 0, this.rescueHammers = 0, this.rescueShuffles = 0, this.rescueHints = 0, this.rescueUndos = 0,
 
     this.activeSurprises = const [], this.lastSurprisePoints = 0, this.isHammerActive = false,
-    this.turnId = 0, this.hintPieceId, this.hintX, this.hintY,
+    this.turnId = 0, this.activeHammerMisses = const [], this.hintPieceId, this.hintX, this.hintY,
     this.pulseGift = false,
   });
 
@@ -81,7 +90,7 @@ class GameState {
     int? adSurprises, int? adHammers, int? adShuffles, int? adHints, int? adUndos,
     int? rescueSurprises, int? rescueHammers, int? rescueShuffles, int? rescueHints, int? rescueUndos,
 
-    List<Offset>? activeSurprises, int? lastSurprisePoints, bool? isHammerActive, int? turnId,
+    List<Offset>? activeSurprises, int? lastSurprisePoints, bool? isHammerActive, int? turnId, List<HammerMiss>? activeHammerMisses,
     String? hintPieceId, int? hintX, int? hintY, bool clearHint = false,
     bool? pulseGift,
   }) {
@@ -102,8 +111,8 @@ class GameState {
       rescueShuffles: rescueShuffles ?? this.rescueShuffles, rescueHints: rescueHints ?? this.rescueHints, rescueUndos: rescueUndos ?? this.rescueUndos,
 
       activeSurprises: activeSurprises ?? this.activeSurprises, lastSurprisePoints: lastSurprisePoints ?? this.lastSurprisePoints,
-      isHammerActive: isHammerActive ?? this.isHammerActive,
-      turnId: turnId ?? this.turnId,
+      isHammerActive: isHammerActive ?? this.isHammerActive, turnId: turnId ?? this.turnId,
+      activeHammerMisses: activeHammerMisses ?? this.activeHammerMisses,
       hintPieceId: clearHint ? null : (hintPieceId ?? this.hintPieceId),
       hintX: clearHint ? null : (hintX ?? this.hintX),
       hintY: clearHint ? null : (hintY ?? this.hintY),
@@ -226,9 +235,12 @@ class GameController extends AutoDisposeNotifier<GameState> {
       if (canUseFree) {
         newFree--;
       } else {
-        return false; // Needs ad
+        return false;
       }
     }
+
+    ref.read(audioServiceProvider).play(AppSound.click);
+    ref.read(hapticServiceProvider).trigger(AppHaptic.selection);
 
     final pointsToKeep = state.lastSurprisePoints;
     GameState restoredState = state.previousState!;
@@ -236,11 +248,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
       restoredState = restoredState.copyWith(score: restoredState.score + pointsToKeep);
     }
 
-    restoredState = restoredState.copyWith(
-      freeUndos: newFree,
-      adUndos: newGameAd,
-      rescueUndos: newRescueAd,
-    );
+    restoredState = restoredState.copyWith(freeUndos: newFree, adUndos: newGameAd, rescueUndos: newRescueAd);
 
     state = restoredState.copyWith(clearHint: true, pulseGift: false, isOutOfMoves: false);
     _checkForGameOver(state.board, state.pieces);
@@ -249,11 +257,21 @@ class GameController extends AutoDisposeNotifier<GameState> {
   }
 
   void giveUp() {
-    state = state.copyWith(isOutOfMoves: false, isGameOver: true, isProcessing: false, isHammerActive: false, clearHint: true, pulseGift: false);
+    ref.read(audioServiceProvider).play(AppSound.gameOver);
+    ref.read(hapticServiceProvider).trigger(AppHaptic.vibrate);
+
+    state = state.copyWith(
+      isOutOfMoves: false,
+      isGameOver: true,
+      isProcessing: false,
+      isHammerActive: false,
+      clearHint: true,
+      pulseGift: false,
+      clearPreviousState: true,
+    );
     HighScoreService.saveScore(state.score, state.runId);
     SaveGameService.clearSave();
   }
-
   void useSurprise() {
     if (state.isProcessing || state.isGameOver) return;
 
@@ -268,6 +286,9 @@ class GameController extends AutoDisposeNotifier<GameState> {
 
     if (!canUse) return;
 
+    ref.read(audioServiceProvider).play(AppSound.bonus);
+    ref.read(hapticServiceProvider).trigger(AppHaptic.medium);
+
     final surprisePiece = Piece(id: 'surprise_${DateTime.now().microsecondsSinceEpoch}', shape: [[true]], type: CrystalType.amber, isSurprise: true);
     final newPieces = List<Piece>.from(state.pieces)..insert(0, surprisePiece);
 
@@ -279,30 +300,65 @@ class GameController extends AutoDisposeNotifier<GameState> {
   }
 
   void toggleHammerMode() {
-    if (state.isProcessing || state.isGameOver) return;
+    if (state.isProcessing || state.isGameOver || state.isHammerActive) return;
 
     bool canUse = false;
-    int newFree = state.freeHammers;
-    int newAd = state.adHammers;
-    int newRescue = state.rescueHammers;
-
-    if (state.freeHammers > 0) { newFree--; canUse = true; }
-    else if (state.isOutOfMoves && state.rescueHammers == 0) { newRescue = 1; canUse = true; }
-    else if (!state.isOutOfMoves && state.adHammers < 2) { newAd++; canUse = true; }
+    if (state.freeHammers > 0) canUse = true;
+    else if (state.isOutOfMoves && state.rescueHammers == 0) canUse = true;
+    else if (!state.isOutOfMoves && state.adHammers < 2) canUse = true;
 
     if (!canUse) return;
 
+    ref.read(audioServiceProvider).play(AppSound.bonus);
+    ref.read(hapticServiceProvider).trigger(AppHaptic.light);
+
     state = state.copyWith(
-      freeHammers: newFree, adHammers: newAd, rescueHammers: newRescue,
-      isHammerActive: true, isOutOfMoves: false, isProcessing: false, clearHint: true, pulseGift: false,
+      isHammerActive: true,
+      isProcessing: false,
+      clearHint: true,
+      pulseGift: false,
     );
-    saveCurrentGame();
   }
 
-  void useHammer(int x, int y) {
+  Future<void> useHammer(int x, int y) async {
     if (!state.isHammerActive || state.isProcessing) return;
+
+    final strike = HammerMiss(id: DateTime.now().microsecondsSinceEpoch.toString(), position: Offset(x.toDouble(), y.toDouble()));
+    state = state.copyWith(activeHammerMisses: [...state.activeHammerMisses, strike], isProcessing: true);
+
     if (state.board.getCell(x, y).isEmpty) {
-      state = state.copyWith(isHammerActive: false);
+      ref.read(audioServiceProvider).play(AppSound.click);
+      ref.read(hapticServiceProvider).trigger(AppHaptic.light);
+
+      await Future.delayed(const Duration(milliseconds: 200));
+      if (_isDisposed) return;
+
+      state = state.copyWith(
+        activeHammerMisses: state.activeHammerMisses.where((m) => m.id != strike.id).toList(),
+        isProcessing: false,
+      );
+      return;
+    }
+
+    ref.read(audioServiceProvider).play(AppSound.place);
+    ref.read(hapticServiceProvider).trigger(AppHaptic.medium);
+
+    int newFree = state.freeHammers;
+    int newAd = state.adHammers;
+    int newRescue = state.rescueHammers;
+    bool sourceFound = false;
+
+    if (state.freeHammers > 0) { newFree--; sourceFound = true; }
+    else if (state.isOutOfMoves && state.rescueHammers == 0) { newRescue = 1; sourceFound = true; }
+    else if (!state.isOutOfMoves && state.adHammers < 2) { newAd++; sourceFound = true; }
+
+    if (!sourceFound) {
+      state = state.copyWith(
+        activeHammerMisses: state.activeHammerMisses.where((m) => m.id != strike.id).toList(),
+        isHammerActive: false,
+        isProcessing: false,
+      );
+      _checkForGameOver(state.board, state.pieces);
       return;
     }
 
@@ -315,14 +371,36 @@ class GameController extends AutoDisposeNotifier<GameState> {
       lastSurprisePoints: 0,
     );
 
-    final newBoard = state.board;
+    await Future.delayed(const Duration(milliseconds: 200));
+    if (_isDisposed) return;
+
+    final newBoard = state.board.copy();
     newBoard.getCell(x, y).type = CrystalType.empty;
 
+    // 1. Hide the rescue screen immediately (isOutOfMoves: false) so the player
+    // can see the cell break. Keep isProcessing: true to block new inputs temporarily.
     state = state.copyWith(
-      board: newBoard, isHammerActive: false, isProcessing: false,
-      previousState: currentSnapshot, clearPreviousState: false, clearHint: true, pulseGift: false,
+      board: newBoard,
+      freeHammers: newFree,
+      adHammers: newAd,
+      rescueHammers: newRescue,
+      isHammerActive: false,
+      isProcessing: true,
+      isOutOfMoves: false, // <-- Прячем экран спасения
+      activeHammerMisses: state.activeHammerMisses.where((m) => m.id != strike.id).toList(),
+      previousState: currentSnapshot,
+      clearPreviousState: false,
+      clearHint: true,
+      pulseGift: false,
     );
-    _checkForGameOver(newBoard, state.pieces);
+
+    // 2. Wait 400ms to let the player see the destroyed cell
+    await Future.delayed(const Duration(milliseconds: 400));
+    if (_isDisposed) return;
+
+    // 3. Unlock input and re-check for a deadlock (the rescue screen will pop back if needed)
+    state = state.copyWith(isProcessing: false);
+    _checkForGameOver(state.board, state.pieces);
     saveCurrentGame();
   }
 
@@ -339,6 +417,9 @@ class GameController extends AutoDisposeNotifier<GameState> {
     else if (!state.isOutOfMoves && state.adShuffles < 2) { newAd++; canUse = true; }
 
     if (!canUse) return;
+
+    ref.read(audioServiceProvider).play(AppSound.bonus);
+    ref.read(hapticServiceProvider).trigger(AppHaptic.light);
 
     final currentSnapshot = GameState(
       runId: state.runId,
@@ -368,7 +449,6 @@ class GameController extends AutoDisposeNotifier<GameState> {
   }
 
   bool useHint() {
-    // Allow execution even if isOutOfMoves is true (will fail naturally if no moves)
     if (state.isProcessing || state.isGameOver) return false;
 
     bool canUse = false;
@@ -401,6 +481,9 @@ class GameController extends AutoDisposeNotifier<GameState> {
     }
 
     if (bestPiece != null) {
+      ref.read(audioServiceProvider).play(AppSound.bonus);
+      ref.read(hapticServiceProvider).trigger(AppHaptic.light);
+
       state = state.copyWith(
         freeHints: newFree, adHints: newAd, rescueHints: newRescue,
         hintPieceId: bestPiece.id, hintX: bestX, hintY: bestY, isOutOfMoves: false, pulseGift: false,
@@ -456,6 +539,9 @@ class GameController extends AutoDisposeNotifier<GameState> {
   Future<void> placePiece(Piece piece, int startX, int startY) async {
     if (state.isGameOver || state.isProcessing || state.isOutOfMoves || state.isHammerActive || !state.board.canPlacePiece(piece, startX, startY)) return;
 
+    ref.read(audioServiceProvider).play(AppSound.place);
+    ref.read(hapticServiceProvider).trigger(AppHaptic.light);
+
     final int currentTurnId = state.turnId;
     final int thisTurnId = currentTurnId + 1;
 
@@ -495,18 +581,22 @@ class GameController extends AutoDisposeNotifier<GameState> {
         } else { outcome = _random.nextInt(3); }
 
         newBoard.getCell(startX, startY).type = CrystalType.empty;
-        int bonusPoints = 0; bool isCross = false;
+        int bonusPoints = 0; bool isCross = false; bool isMiss = false;
 
         if (outcome == 0) {
           for (int dy = -1; dy <= 1; dy++) {
             for (int dx = -1; dx <= 1; dx++) {
               int nx = startX + dx; int ny = startY + dy;
               if (nx >= 0 && nx < newBoard.width && ny >= 0 && ny < newBoard.height) {
-                if (!newBoard.getCell(nx, ny).isEmpty) { newBoard.getCell(nx, ny).type = CrystalType.empty; bonusPoints += 20; }
+                if (!newBoard.getCell(nx, ny).isEmpty) {
+                  newBoard.getCell(nx, ny).type = CrystalType.empty;
+                  bonusPoints += 10;
+                }
               }
             }
           }
-          if (bonusPoints == 0) bonusPoints = 100; isCross = true;
+          if (bonusPoints == 0) { bonusPoints = 50; isMiss = true; }
+          isCross = true;
         } else if (outcome == 1) {
           final allColors = [CrystalType.ruby, CrystalType.sapphire, CrystalType.emerald, CrystalType.amber];
           for (int dy = -1; dy <= 1; dy++) {
@@ -517,10 +607,13 @@ class GameController extends AutoDisposeNotifier<GameState> {
               }
             }
           }
-          if (bonusPoints == 0) bonusPoints = 100;
+          if (bonusPoints == 0) { bonusPoints = 50; isMiss = true; }
         } else { bonusPoints = 500; }
 
-        final newPopup = ScorePopup(id: DateTime.now().microsecondsSinceEpoch.toString(), amount: bonusPoints, isCross: isCross, comboLevel: 1, position: const Offset(0, 0));
+        ref.read(audioServiceProvider).play(isMiss ? AppSound.click : AppSound.bonus);
+        ref.read(hapticServiceProvider).trigger(isMiss ? AppHaptic.light : AppHaptic.medium);
+
+        final newPopup = ScorePopup(id: DateTime.now().microsecondsSinceEpoch.toString(), amount: bonusPoints, isCross: isCross, comboLevel: 1, position: const Offset(0, 0), isMiss: isMiss);
         state = state.copyWith(board: newBoard, score: state.score + bonusPoints, activePopups: [newPopup], activeSurprises: const [], lastSurprisePoints: outcome == 2 ? bonusPoints : 0);
 
         await Future.delayed(const Duration(milliseconds: 400));
@@ -536,16 +629,27 @@ class GameController extends AutoDisposeNotifier<GameState> {
         int stepScore = (totalLines * 80) * ((cleared['rows']!.isNotEmpty && cleared['cols']!.isNotEmpty) ? 10 : 1) * cascadeLevel;
         state = state.copyWith(clearingRows: cleared['rows'], clearingCols: cleared['cols']);
 
-        await Future.delayed(const Duration(milliseconds: 1500));
+        await Future.delayed(const Duration(milliseconds: 1000));
         if (_isDisposed || state.turnId != thisTurnId) return;
 
+        // Play sound and haptic exactly at the moment the crystals break and disappear
+        // Play sound and haptic exactly at the moment the crystals break and disappear
+        final bool isCross = cleared['rows']!.isNotEmpty && cleared['cols']!.isNotEmpty;
+
+        if (isCross || cascadeLevel > 1) {
+          ref.read(audioServiceProvider).play(AppSound.combo);
+          ref.read(hapticServiceProvider).trigger(AppHaptic.heavy);
+        } else {
+          ref.read(audioServiceProvider).play(AppSound.clear);
+          ref.read(hapticServiceProvider).trigger(AppHaptic.medium);
+        }
         newBoard.clearSpecificLines(cleared['rows']!, cleared['cols']!);
         newBoard.applyCenterGravity(cleared['rows']!, cleared['cols']!);
 
         final newPopup = ScorePopup(id: DateTime.now().microsecondsSinceEpoch.toString(), amount: stepScore, isCross: cleared['rows']!.isNotEmpty && cleared['cols']!.isNotEmpty, comboLevel: cascadeLevel, position: const Offset(0, 0));
         state = state.copyWith(board: newBoard, clearingRows: const [], clearingCols: const [], score: state.score + stepScore, activePopups: [newPopup]);
 
-        await Future.delayed(const Duration(milliseconds: 400));
+        await Future.delayed(const Duration(milliseconds: 200));
         if (_isDisposed || state.turnId != thisTurnId) return;
         cascadeLevel++;
       }
@@ -569,16 +673,20 @@ class GameController extends AutoDisposeNotifier<GameState> {
     for (var p in pieces) { if (board.canPlaceAnywhere(p)) { noMovesLeft = false; break; } }
 
     if (noMovesLeft) {
-      bool canUseAnyBonus =
-          (state.freeSurprises > 0 || state.rescueSurprises == 0 || state.adSurprises < 2) ||
-              (state.freeHammers > 0 || state.rescueHammers == 0 || state.adHammers < 2) ||
-              (state.freeShuffles > 0 || state.rescueShuffles == 0 || state.adShuffles < 2) ||
-              (state.freeHints > 0 || state.rescueHints == 0 || state.adHints < 2) ||
-              (state.freeUndos > 0 || state.rescueUndos == 0 || state.adUndos < 1);
+      final bool canUndoByAnyMeans = state.previousState != null &&
+          (state.freeUndos > 0 || state.rescueUndos == 0);
+
+      final bool canUseAnyBonus =
+          (state.freeSurprises > 0 || state.rescueSurprises == 0) ||
+              (state.freeHammers > 0 || state.rescueHammers == 0) ||
+              (state.freeShuffles > 0 || state.rescueShuffles == 0) ||
+              canUndoByAnyMeans;
 
       if (canUseAnyBonus) {
         state = state.copyWith(isOutOfMoves: true, isGameOver: false, pulseGift: false);
       } else {
+        ref.read(audioServiceProvider).play(AppSound.gameOver);
+        ref.read(hapticServiceProvider).trigger(AppHaptic.vibrate);
         state = state.copyWith(isGameOver: true, isOutOfMoves: false, pulseGift: false);
         HighScoreService.saveScore(state.score, state.runId);
         SaveGameService.clearSave();

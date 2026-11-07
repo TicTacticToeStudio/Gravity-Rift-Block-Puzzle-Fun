@@ -36,7 +36,6 @@ class BoardWidget extends ConsumerWidget {
     final centerY = 4 * cellSize;
     final lineThickness = cellSize * 0.12;
 
-    // Find the hint piece to know its shape
     final hintPiece = gameState.hintPieceId != null
         ? gameState.pieces.firstWhere((p) => p.id == gameState.hintPieceId, orElse: () => gameState.pieces.first)
         : null;
@@ -85,7 +84,6 @@ class BoardWidget extends ConsumerWidget {
       }
     }
 
-    // Generate hint overlays based on the exact shape of the piece
     final List<Widget> hintWidgets = [];
     if (gameState.hintX != null && gameState.hintY != null && hintPiece != null) {
       for (int dy = 0; dy < hintPiece.height; dy++) {
@@ -110,7 +108,7 @@ class BoardWidget extends ConsumerWidget {
                           decoration: BoxDecoration(
                               border: Border.all(color: Colors.greenAccent, width: 3),
                               borderRadius: BorderRadius.circular(cellSize * 0.1),
-                              color: Colors.greenAccent.withOpacity(0.2), // Slight fill
+                              color: Colors.greenAccent.withOpacity(0.2),
                               boxShadow: [
                                 BoxShadow(color: Colors.greenAccent.withOpacity(0.5), blurRadius: 10, spreadRadius: 2)
                               ]
@@ -140,7 +138,6 @@ class BoardWidget extends ConsumerWidget {
       ),
       child: Stack(
         children: [
-          // 1. Background Grid
           Column(
             children: List.generate(board.height, (y) {
               return Expanded(
@@ -161,7 +158,7 @@ class BoardWidget extends ConsumerWidget {
             }),
           ),
 
-          // 2. Gravity Crosshair Lines
+          // Gravity Crosshair Lines
           Positioned(
             left: centerX - (lineThickness / 2),
             top: 0,
@@ -226,7 +223,6 @@ class BoardWidget extends ConsumerWidget {
             ),
           ),
 
-          // 3. Spark Effects
           ...gameState.clearingRows.map((y) {
             return Positioned(
               left: 0, right: 0, top: y * cellSize, height: cellSize,
@@ -234,7 +230,7 @@ class BoardWidget extends ConsumerWidget {
                 child: TweenAnimationBuilder<double>(
                   key: ValueKey('row_$y'),
                   tween: Tween(begin: 0.0, end: 1.0),
-                  duration: const Duration(milliseconds: 1500),
+                  duration: const Duration(milliseconds: 1000),
                   curve: Curves.linear,
                   builder: (context, t, child) {
                     return CustomPaint(
@@ -254,7 +250,7 @@ class BoardWidget extends ConsumerWidget {
                 child: TweenAnimationBuilder<double>(
                   key: ValueKey('col_$x'),
                   tween: Tween(begin: 0.0, end: 1.0),
-                  duration: const Duration(milliseconds: 1500),
+                  duration: const Duration(milliseconds: 1000),
                   curve: Curves.linear,
                   builder: (context, t, child) {
                     return CustomPaint(
@@ -267,13 +263,43 @@ class BoardWidget extends ConsumerWidget {
             );
           }),
 
-          // 4. Animated Crystals
           ...animatedCells,
 
-          // 5. HINT OVERLAY (Exact shape)
           ...hintWidgets,
 
-          // 6. HAMMER OVERLAY
+          // Hammer Miss Ripples
+          ...gameState.activeHammerMisses.map((miss) {
+            return Positioned(
+              left: miss.position.dx * cellSize,
+              top: miss.position.dy * cellSize,
+              width: cellSize,
+              height: cellSize,
+              child: IgnorePointer(
+                child: TweenAnimationBuilder<double>(
+                  key: ValueKey(miss.id),
+                  tween: Tween(begin: 1.0, end: 0.0),
+                  duration: const Duration(milliseconds: 200), // <-- Синхронизировано с контроллером
+                  builder: (context, value, child) {
+                    return Center(
+                      child: Container(
+                        width: cellSize * 0.8 * (1.2 - value),
+                        height: cellSize * 0.8 * (1.2 - value),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withOpacity(value),
+                            width: 2,
+                          ),
+                          color: Colors.white.withOpacity(value * 0.2),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            );
+          }),
+
           if (gameState.isHammerActive)
             Positioned.fill(
               child: GestureDetector(
@@ -297,9 +323,6 @@ class BoardWidget extends ConsumerWidget {
     );
   }
 }
-
-// --- CUSTOM PAINTERS ---
-// (RowSparkPainter and ColSparkPainter remain unchanged below)
 
 double _fract(double x) => x - x.floorToDouble();
 double _rand(double seed) => _fract(sin(seed * 12.9898) * 43758.5453);

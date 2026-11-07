@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:energy_blast/core/constants/app_constants.dart';
 import 'package:energy_blast/core/theme/app_colors.dart';
+import 'package:energy_blast/core/providers/settings_provider.dart';
+import 'package:energy_blast/core/services/audio_service.dart';
+import 'package:energy_blast/core/services/haptic_service.dart';
 import 'package:energy_blast/l10n/app_localizations.dart';
 import 'package:energy_blast/shared/widgets/cosmic_background.dart';
 import 'package:energy_blast/core/providers/locale_provider.dart';
@@ -21,10 +24,17 @@ final hasSaveProvider = FutureProvider.autoDispose<bool>((ref) async {
 class MainMenuPage extends ConsumerWidget {
   const MainMenuPage({super.key});
 
+  // Helper to play click sound and haptic
+  void _playClick(WidgetRef ref) {
+    ref.read(audioServiceProvider).play(AppSound.click);
+    ref.read(hapticServiceProvider).trigger(AppHaptic.selection);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final currentLocale = ref.watch(localeProvider);
+    final settings = ref.watch(settingsProvider);
     final hasSaveAsync = ref.watch(hasSaveProvider);
 
     // Split the title into main and sub-title for better visual hierarchy
@@ -47,6 +57,7 @@ class MainMenuPage extends ConsumerWidget {
                     IconButton(
                       icon: const Icon(Icons.info_outline, color: Colors.white, size: 32),
                       onPressed: () {
+                        _playClick(ref);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Info menu coming soon')),
                         );
@@ -59,6 +70,7 @@ class MainMenuPage extends ConsumerWidget {
                         IconButton(
                           icon: const Icon(Icons.emoji_events, color: AppColors.crystalAmber, size: 32),
                           onPressed: () {
+                            _playClick(ref);
                             showDialog(
                               context: context,
                               builder: (_) => const LeaderboardDialog(),
@@ -69,7 +81,10 @@ class MainMenuPage extends ConsumerWidget {
 
                         // Language Selector Button
                         GestureDetector(
-                          onTap: () => _showLanguageDialog(context, ref),
+                          onTap: () {
+                            _playClick(ref);
+                            _showLanguageDialog(context, ref);
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                             decoration: BoxDecoration(
@@ -237,6 +252,7 @@ class MainMenuPage extends ConsumerWidget {
                                     color: AppColors.primary,
                                     showBoardBackground: false,
                                     onTap: () async {
+                                      _playClick(ref);
                                       final json = await SaveGameService.loadGame();
                                       if (json != null && context.mounted) {
                                         final savedState = GameState.fromJson(json);
@@ -256,6 +272,7 @@ class MainMenuPage extends ConsumerWidget {
                                     color: AppColors.secondary,
                                     showBoardBackground: false,
                                     onTap: () {
+                                      _playClick(ref);
                                       SaveGameService.clearSave();
                                       ref.invalidate(hasSaveProvider);
                                       Navigator.push(
@@ -275,6 +292,7 @@ class MainMenuPage extends ConsumerWidget {
                                 color: AppColors.primary,
                                 showBoardBackground: true, // Enables the mini-game board background
                                 onTap: () {
+                                  _playClick(ref);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(builder: (_) => const GamePage())
@@ -290,7 +308,10 @@ class MainMenuPage extends ConsumerWidget {
                             icon: Icons.play_circle_fill,
                             color: AppColors.primary,
                             showBoardBackground: true,
-                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GamePage())),
+                            onTap: () {
+                              _playClick(ref);
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => const GamePage()));
+                            },
                           ),
                         ),
                       ),
@@ -308,15 +329,22 @@ class MainMenuPage extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildFooterButton(
-                      icon: Icons.volume_up,
+                      icon: settings.isSoundOn ? Icons.volume_up : Icons.volume_off,
                       label: l10n.sound,
-                      onPressed: () {},
+                      onPressed: () {
+                        ref.read(settingsProvider.notifier).toggleSound();
+                        // Play a click if the sound just got turned ON
+                        if (!settings.isSoundOn) {
+                          _playClick(ref);
+                        }
+                      },
                     ),
                     const SizedBox(width: AppConstants.paddingM),
                     _buildFooterButton(
                       icon: Icons.sports_esports,
                       label: l10n.moreGames,
                       onPressed: () {
+                        _playClick(ref);
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) => const MoreGamesPage()),
@@ -374,6 +402,7 @@ class MainMenuPage extends ConsumerWidget {
       ),
       trailing: isSelected ? const Icon(Icons.check, color: AppColors.primary) : null,
       onTap: () {
+        _playClick(ref);
         ref.read(localeProvider.notifier).changeLocale(locale);
         Navigator.pop(context);
       },

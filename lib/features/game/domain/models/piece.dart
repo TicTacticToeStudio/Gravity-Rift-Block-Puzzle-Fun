@@ -17,7 +17,7 @@ class Piece {
   int get width => shape.isNotEmpty ? shape[0].length : 0;
   int get blockCount => shape.expand((row) => row).where((isBlock) => isBlock).length;
 
-  // Превращаем фигуру в Map для сохранения
+  // Serialize the piece into a JSON-compatible map for saving.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -27,7 +27,7 @@ class Piece {
     };
   }
 
-  // Восстанавливаем фигуру из Map
+  // Restore a piece from a saved JSON map.
   factory Piece.fromJson(Map<String, dynamic> json) {
     return Piece(
       id: json['id'],

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:energy_blast/core/constants/app_constants.dart';
 import 'package:energy_blast/core/theme/app_colors.dart';
 import 'package:energy_blast/core/services/high_score_service.dart';
+import 'package:energy_blast/core/services/audio_service.dart';
+import 'package:energy_blast/core/services/haptic_service.dart';
 import 'package:energy_blast/l10n/app_localizations.dart';
 
 class LeaderboardDialog extends ConsumerWidget {
@@ -24,7 +26,7 @@ class LeaderboardDialog extends ConsumerWidget {
             BoxShadow(color: AppColors.primary.withOpacity(0.2), blurRadius: 20, spreadRadius: 2)
           ],
         ),
-        // FIXED: Wrapped in SingleChildScrollView so it doesn't overflow on small screens
+        // Wrapped in SingleChildScrollView so it doesn't overflow on small screens
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -113,7 +115,11 @@ class LeaderboardDialog extends ConsumerWidget {
 
               const SizedBox(height: AppConstants.paddingM),
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  ref.read(audioServiceProvider).play(AppSound.click);
+                  ref.read(hapticServiceProvider).trigger(AppHaptic.selection);
+                  Navigator.pop(context);
+                },
                 child: const Text('CLOSE', style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.bold)),
               )
             ],

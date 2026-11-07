@@ -17,6 +17,9 @@ dependencies:
   shared_preferences: ^2.3.2
   intl: ^0.20.2
   url_launcher: ^6.2.5
+  audioplayers: ^6.8.1
+  vibration: ^3.1.3
+  flutter_soloud: ^4.0.2
 
 dev_dependencies:
   flutter_test:
@@ -34,3 +37,4 @@ flutter:
   #   - assets/fonts/
   - "assets/images/HEX_Icon.png"
   - "assets/images/TTT_icon_final.png"
+  - assets/sounds/
