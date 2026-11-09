@@ -5,7 +5,8 @@ plugins {
 }
 
 android {
-    namespace = "com.example.energy_blast"
+    // Changed namespace to match the new production package
+    namespace = "com.studio3t.gravityrift"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -15,10 +16,9 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.energy_blast"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        // This is the unique ID for Google Play. It CANNOT be changed after release.
+        applicationId = "com.studio3t.gravityrift"
+        // minSdk 28 is good. It covers Android 9.0+ (covers ~95% of devices).
         minSdk = 28
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

@@ -47,6 +47,7 @@ class GameState {
   final bool isProcessing;
   final List<int> clearingRows;
   final List<int> clearingCols;
+  final Map<String, int> clearingCellPoints; // NEW: Stores points for UI
   final List<ScorePopup> activePopups;
   final GameState? previousState;
 
@@ -84,7 +85,7 @@ class GameState {
     required this.runId,
     required this.board, required this.pieces, this.score = 0,
     this.isGameOver = false, this.isOutOfMoves = false, this.isProcessing = false,
-    this.clearingRows = const [], this.clearingCols = const [], this.activePopups = const [], this.previousState,
+    this.clearingRows = const [], this.clearingCols = const [], this.clearingCellPoints = const {}, this.activePopups = const [], this.previousState,
 
     this.freeSurprises = 2, this.freeHammers = 2, this.freeShuffles = 2, this.freeHints = 2, this.freeUndos = 3,
     this.adSurprises = 0, this.adHammers = 0, this.adShuffles = 0, this.adHints = 0, this.adUndos = 0,
@@ -98,7 +99,7 @@ class GameState {
   GameState copyWith({
     String? runId,
     Board? board, List<Piece>? pieces, int? score, bool? isGameOver, bool? isOutOfMoves, bool? isProcessing,
-    List<int>? clearingRows, List<int>? clearingCols, List<ScorePopup>? activePopups,
+    List<int>? clearingRows, List<int>? clearingCols, Map<String, int>? clearingCellPoints, List<ScorePopup>? activePopups,
     GameState? previousState, bool clearPreviousState = false,
 
     int? freeSurprises, int? freeHammers, int? freeShuffles, int? freeHints, int? freeUndos,
@@ -115,6 +116,7 @@ class GameState {
       isGameOver: isGameOver ?? this.isGameOver, isOutOfMoves: isOutOfMoves ?? this.isOutOfMoves,
       isProcessing: isProcessing ?? this.isProcessing,
       clearingRows: clearingRows ?? this.clearingRows, clearingCols: clearingCols ?? this.clearingCols,
+      clearingCellPoints: clearingCellPoints ?? this.clearingCellPoints,
       activePopups: activePopups ?? this.activePopups,
       previousState: clearPreviousState ? null : (previousState ?? this.previousState),
 
@@ -725,11 +727,40 @@ class GameController extends AutoDisposeNotifier<GameState> {
         final int totalLines = cleared['rows']!.length + cleared['cols']!.length;
         if (totalLines == 0) break;
 
-        int stepScore = (totalLines * 80) * ((cleared['rows']!.isNotEmpty && cleared['cols']!.isNotEmpty) ? 10 : 1) * cascadeLevel;
+        // NEW LOGIC: Calculate points based on the color of each cleared block
+        final Set<Offset> clearedCoords = {};
+        for (int y in cleared['rows']!) {
+          for (int x = 0; x < newBoard.width; x++) {
+            clearedCoords.add(Offset(x.toDouble(), y.toDouble()));
+          }
+        }
+        for (int x in cleared['cols']!) {
+          for (int y = 0; y < newBoard.height; y++) {
+            clearedCoords.add(Offset(x.toDouble(), y.toDouble()));
+          }
+        }
 
-        state = state.copyWith(clearingRows: cleared['rows'], clearingCols: cleared['cols']);
+        final Map<String, int> cellPoints = {};
+        int baseScore = 0;
+        for (var pos in clearedCoords) {
+          final cell = newBoard.getCell(pos.dx.toInt(), pos.dy.toInt());
+          if (!cell.isEmpty) {
+            final pts = cell.type.points;
+            cellPoints["${pos.dx.toInt()}_${pos.dy.toInt()}"] = pts;
+            baseScore += pts;
+          }
+        }
 
-        await Future.delayed(const Duration(milliseconds: 1000));
+        final bool isCross = cleared['rows']!.isNotEmpty && cleared['cols']!.isNotEmpty;
+        int stepScore = baseScore * (isCross ? 10 : 1) * cascadeLevel;
+
+        state = state.copyWith(
+          clearingRows: cleared['rows'],
+          clearingCols: cleared['cols'],
+          clearingCellPoints: cellPoints, // Pass data to UI
+        );
+
+        await Future.delayed(const Duration(milliseconds: 1200));
         if (_isDisposed || state.turnId != thisTurnId) return;
 
         newBoard.clearSpecificLines(cleared['rows']!, cleared['cols']!);
@@ -742,7 +773,6 @@ class GameController extends AutoDisposeNotifier<GameState> {
           ref.read(audioServiceProvider).play(AppSound.perfectClear);
           ref.read(hapticServiceProvider).trigger(AppHaptic.vibrate);
         } else {
-          final bool isCross = cleared['rows']!.isNotEmpty && cleared['cols']!.isNotEmpty;
           if (isCross || cascadeLevel > 1) {
             ref.read(audioServiceProvider).play(AppSound.combo);
             ref.read(hapticServiceProvider).trigger(AppHaptic.heavy);
@@ -755,13 +785,20 @@ class GameController extends AutoDisposeNotifier<GameState> {
         final newPopup = ScorePopup(
           id: DateTime.now().microsecondsSinceEpoch.toString(),
           amount: stepScore,
-          isCross: cleared['rows']!.isNotEmpty && cleared['cols']!.isNotEmpty,
+          isCross: isCross,
           comboLevel: cascadeLevel,
           position: const Offset(0, 0),
           isPerfect: isPerfectClear,
         );
 
-        state = state.copyWith(board: newBoard, clearingRows: const [], clearingCols: const [], score: state.score + stepScore, activePopups: [newPopup]);
+        state = state.copyWith(
+            board: newBoard,
+            clearingRows: const [],
+            clearingCols: const [],
+            clearingCellPoints: const {}, // Clear UI data
+            score: state.score + stepScore,
+            activePopups: [newPopup]
+        );
 
         await Future.delayed(const Duration(milliseconds: 200));
         if (_isDisposed || state.turnId != thisTurnId) return;

@@ -33,12 +33,8 @@ class BoardWidget extends ConsumerWidget {
     final board = gameState.board;
 
     final lineThickness = cellSize * 0.15;
-    // Aura width: 1/4 cell on each side of the line
     final auraWidth = lineThickness + (cellSize * 0.5);
 
-    // Corrected logic:
-    // Row clears -> blocks fall UP/DOWN -> Horizontal rift activates.
-    // Col clears -> blocks fall LEFT/RIGHT -> Vertical rift activates.
     final bool isVerticalRiftActive = gameState.clearingCols.isNotEmpty;
     final bool isHorizontalRiftActive = gameState.clearingRows.isNotEmpty;
 
@@ -293,7 +289,7 @@ class BoardWidget extends ConsumerWidget {
                   alignment: Alignment.center,
                   child: TweenAnimationBuilder<double>(
                     tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 1000),
+                    duration: const Duration(milliseconds: 1200),
                     builder: (context, t, child) {
                       double pulse = (1.0 - t) * (0.5 + 0.5 * cos(t * pi * 6));
                       return Opacity(
@@ -339,7 +335,7 @@ class BoardWidget extends ConsumerWidget {
                   alignment: Alignment.center,
                   child: TweenAnimationBuilder<double>(
                     tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 1000),
+                    duration: const Duration(milliseconds: 1200),
                     builder: (context, t, child) {
                       double pulse = (1.0 - t) * (0.5 + 0.5 * cos(t * pi * 6));
                       return Opacity(
@@ -385,7 +381,7 @@ class BoardWidget extends ConsumerWidget {
                 child: TweenAnimationBuilder<double>(
                   key: ValueKey('row_$y'),
                   tween: Tween(begin: 0.0, end: 1.0),
-                  duration: const Duration(milliseconds: 1000),
+                  duration: const Duration(milliseconds: 1200),
                   curve: Curves.linear,
                   builder: (context, t, child) {
                     return CustomPaint(
@@ -405,7 +401,7 @@ class BoardWidget extends ConsumerWidget {
                 child: TweenAnimationBuilder<double>(
                   key: ValueKey('col_$x'),
                   tween: Tween(begin: 0.0, end: 1.0),
-                  duration: const Duration(milliseconds: 1000),
+                  duration: const Duration(milliseconds: 1200),
                   curve: Curves.linear,
                   builder: (context, t, child) {
                     return CustomPaint(
@@ -420,6 +416,82 @@ class BoardWidget extends ConsumerWidget {
 
           // 6. Animated Crystals
           ...animatedCells,
+
+          // 6.5. FLOATING SCORE NUMBERS (WHITE OUTLINE)
+          if (gameState.clearingCellPoints.isNotEmpty)
+            ...gameState.clearingCellPoints.entries.map((entry) {
+              final parts = entry.key.split('_');
+              final x = int.parse(parts[0]);
+              final y = int.parse(parts[1]);
+              final points = entry.value;
+
+              // Get the block's color for the text
+              final cell = board.getCell(x, y);
+              final blockColor = _getColor(cell.type);
+
+              return Positioned(
+                left: x * cellSize,
+                top: y * cellSize,
+                width: cellSize,
+                height: cellSize,
+                child: IgnorePointer(
+                  child: TweenAnimationBuilder<double>(
+                    key: ValueKey('score_${entry.key}'),
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 1200),
+                    curve: Curves.easeOutQuad,
+                    builder: (context, t, child) {
+                      final dy = -cellSize * 1.2 * t;
+                      // Keep at 100% opacity for the first 70% of the flight, then fade out
+                      final opacity = t < 0.7 ? 1.0 : (1.0 - t) / 0.3;
+
+                      return Transform.translate(
+                        offset: Offset(0, dy),
+                        child: Center(
+                          child: Opacity(
+                            opacity: opacity.clamp(0.0, 1.0),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  // 1. White stroke outline
+                                  Text(
+                                    '+$points',
+                                    style: TextStyle(
+                                      fontSize: cellSize * 0.42,
+                                      fontWeight: FontWeight.w900,
+                                      foreground: Paint()
+                                        ..style = PaintingStyle.stroke
+                                        ..strokeWidth = 3.5
+                                        ..color = Colors.white,
+                                    ),
+                                  ),
+                                  // 2. Colored fill with neon glow
+                                  Text(
+                                    '+$points',
+                                    style: TextStyle(
+                                      fontSize: cellSize * 0.42,
+                                      fontWeight: FontWeight.w900,
+                                      color: blockColor,
+                                      shadows: [
+                                        // Adding a tiny dark shadow under the white outline helps pop it further against light areas
+                                        const Shadow(color: Colors.black45, blurRadius: 2, offset: Offset(0, 1)),
+                                        Shadow(color: blockColor, blurRadius: 10), // Glow matches block color
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              );
+            }),
 
           // 7. HINT OVERLAY
           ...hintWidgets,
