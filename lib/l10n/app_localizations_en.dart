@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'SpaceCore: Block Puzzle & Fun';
+  String get appTitle => 'Gravity Rift: Block Puzzle Fun';
 
   @override
   String get scoreLabel => 'SCORE';
@@ -21,7 +21,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gameOverBody => 'There is no space left for new blocks.';
 
   @override
-  String yourScore(int score) {
+  String yourScore(Object score) {
     return 'Your Score: $score';
   }
 
@@ -86,6 +86,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get soundOff => 'SOUND: OFF';
 
   @override
+  String get vibrationOn => 'VIBRATION: ON';
+
+  @override
+  String get vibrationOff => 'VIBRATION: OFF';
+
+  @override
   String get nothingToUndo => 'Nothing to undo yet!';
 
   @override
@@ -135,4 +141,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get comingSoonDesc => 'Stay tuned for our next puzzle!';
+
+  @override
+  String get resumeYourGame => 'Resume your game';
+
+  @override
+  String get startFresh => 'Start fresh';
+
+  @override
+  String get topScores => 'TOP SCORES';
+
+  @override
+  String get noRecordsYet => 'No records yet. Play a game!';
+
+  @override
+  String get close => 'CLOSE';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String daysAgo(Object days) {
+    return '$days days ago';
+  }
+
+  @override
+  String get bonusesTitle => 'BONUSES';
+
+  @override
+  String get rescueBonusesTitle => 'RESCUE BONUSES';
+
+  @override
+  String get selectBonusToSave => 'Select a bonus to save your game';
+
+  @override
+  String get bonusSurprise => 'Surprise';
+
+  @override
+  String get bonusHammer => 'Hammer';
+
+  @override
+  String get bonusNewBlocks => 'New Blocks';
+
+  @override
+  String get bonusHint => 'Hint';
+
+  @override
+  String useBonus(int count) {
+    return 'USE ($count)';
+  }
+
+  @override
+  String get adButton => 'AD';
+
+  @override
+  String get limitLabel => 'LIMIT';
+
+  @override
+  String get adUnavailableBonus => 'Ad unavailable. Here is your bonus!';
+
+  @override
+  String get noMovesFound => 'No moves found! Use another bonus.';
+
+  @override
+  String get perfectClear => 'PERFECT CLEAR!';
+
+  @override
+  String missLabel(int amount) {
+    return 'MISS +$amount';
+  }
+
+  @override
+  String get crossMultiplier => 'CROSS x10!';
+
+  @override
+  String comboMultiplier(int level) {
+    return 'COMBO x$level!';
+  }
+
+  @override
+  String get infoComingSoon => 'Info menu coming soon';
+
+  @override
+  String get languageTitle => 'Language';
 }

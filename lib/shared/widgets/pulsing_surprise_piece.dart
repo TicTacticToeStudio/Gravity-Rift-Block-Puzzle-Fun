@@ -49,7 +49,7 @@ class _PulsingSurprisePieceState extends State<PulsingSurprisePiece> with Single
               borderRadius: BorderRadius.circular(widget.size * 0.1),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.secondary.withOpacity(0.8),
+                  color: AppColors.secondary.withValues(alpha: 0.8),
                   blurRadius: 15 * _animation.value,
                   spreadRadius: 3 * _animation.value,
                 )

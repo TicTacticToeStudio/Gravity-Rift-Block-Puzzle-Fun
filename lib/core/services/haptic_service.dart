@@ -12,7 +12,9 @@ class HapticService {
     if (!_ref.read(settingsProvider).isVibrationOn) return;
     if (await Vibration.hasVibrator() != true) return;
 
-    bool hasAmplitude = await Vibration.hasAmplitudeControl() ?? false;
+    // hasAmplitudeControl() returns Future<bool> on the current plugin
+    // version, so no null-coalescing is needed.
+    final bool hasAmplitude = await Vibration.hasAmplitudeControl();
 
     switch (haptic) {
       case AppHaptic.selection:

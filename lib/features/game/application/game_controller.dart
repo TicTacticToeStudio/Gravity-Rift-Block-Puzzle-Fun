@@ -12,8 +12,23 @@ import 'package:energy_blast/core/services/audio_service.dart';
 import 'package:energy_blast/core/services/haptic_service.dart';
 
 class ScorePopup {
-  final String id; final int amount; final bool isCross; final int comboLevel; final Offset position; final bool isMiss;
-  ScorePopup({required this.id, required this.amount, required this.isCross, required this.comboLevel, required this.position, this.isMiss = false});
+  final String id;
+  final int amount;
+  final bool isCross;
+  final int comboLevel;
+  final Offset position;
+  final bool isMiss;
+  final bool isPerfect;
+
+  ScorePopup({
+    required this.id,
+    required this.amount,
+    required this.isCross,
+    required this.comboLevel,
+    required this.position,
+    this.isMiss = false,
+    this.isPerfect = false,
+  });
 }
 
 class HammerMiss {
@@ -150,28 +165,116 @@ class GameController extends AutoDisposeNotifier<GameState> {
   @override
   GameState build() {
     ref.onDispose(() => _isDisposed = true);
-    return _createInitialState();
+    return _createBoardForLevel(1);
   }
 
-  GameState _createInitialState() {
+  GameState _createBoardForLevel(int level) {
     final board = Board(width: 8, height: 8);
-    const int initialBlocksCount = 8;
-    int placedBlocks = 0;
     final allColors = [CrystalType.ruby, CrystalType.sapphire, CrystalType.emerald, CrystalType.amber];
 
-    while (placedBlocks < initialBlocksCount) {
-      int x = _random.nextInt(board.width);
-      int y = _random.nextInt(board.height);
-      if (y <= 1) continue;
-      if (board.getCell(x, y).isEmpty) {
-        board.getCell(x, y).type = allColors[_random.nextInt(allColors.length)];
-        placedBlocks++;
+    int targetCells;
+    List<List<List<bool>>> allowedShapes;
+
+    if (level == 1) {
+      targetCells = 8;
+      allowedShapes = [[[true]]]; // Only 1x1 blocks for beginners
+    } else if (level == 2) {
+      targetCells = 16 + _random.nextInt(5); // 16-20 cells
+      allowedShapes = _safeShapes;
+    } else if (level == 3) {
+      targetCells = 24 + _random.nextInt(5); // 24-28 cells
+      allowedShapes = [..._safeShapes, ..._mediumShapes];
+    } else {
+      targetCells = 32 + _random.nextInt(6); // 32-37 cells
+      allowedShapes = [..._safeShapes, ..._mediumShapes, ..._complexShapes];
+    }
+
+    int placedCells = 0;
+    int attempts = 0;
+
+    while (placedCells < targetCells && attempts < 500) {
+      attempts++;
+      final shape = allowedShapes[_random.nextInt(allowedShapes.length)];
+      final color = allColors[_random.nextInt(allColors.length)];
+      final testPiece = Piece(id: 'init', shape: shape, type: color);
+
+      int x, y;
+
+      if (level == 1) {
+        // Level 1: perfectly uniform across the board
+        x = _random.nextInt(board.width);
+        y = _random.nextInt(board.height);
+      } else {
+        // Levels 2, 3, 4: distribute across 4 quadrants for balance
+        int quadrant = _random.nextInt(4); // 0: TL, 1: TR, 2: BL, 3: BR
+        int qx = (quadrant % 2) * 4;
+        int qy = (quadrant ~/ 2) * 4;
+
+        // Pick a random cell inside the quadrant as the anchor
+        x = qx + _random.nextInt(4);
+        y = qy + _random.nextInt(4);
+
+        // Ensure the piece fits within the board bounds
+        x = x.clamp(0, board.width - testPiece.width);
+        y = y.clamp(0, board.height - testPiece.height);
+
+        // For levels 3 and 4, reject pieces that overlap the central 4x4 area (x:2-5, y:2-5)
+        // This keeps the Gravity Rifts clean and clear.
+        if (level >= 3) {
+          bool overlapsCenter = false;
+          for (int py = 0; py < testPiece.height; py++) {
+            for (int px = 0; px < testPiece.width; px++) {
+              if (testPiece.shape[py][px]) {
+                int nx = x + px;
+                int ny = y + py;
+                if (nx >= 2 && nx <= 5 && ny >= 2 && ny <= 5) {
+                  overlapsCenter = true;
+                }
+              }
+            }
+          }
+          if (overlapsCenter) {
+            continue; // Reject and try again
+          }
+        }
+      }
+
+      if (board.canPlacePiece(testPiece, x, y)) {
+        board.placePiece(testPiece, x, y);
+        placedCells += testPiece.blockCount;
       }
     }
+
     return GameState(
       runId: DateTime.now().microsecondsSinceEpoch.toString(),
-      board: board, pieces: _generateNewPieces(board), score: 0, isHammerActive: false, isProcessing: false,
+      board: board,
+      pieces: _generateNewPieces(board),
+      score: 0,
+      isHammerActive: false,
+      isProcessing: false,
     );
+  }
+
+  Future<int> _calculateDifficultyLevel() async {
+    final scores = await HighScoreService.getScores();
+    if (scores.isEmpty) return 1;
+
+    final highestScore = scores.first;
+    int level = 1;
+
+    if (highestScore.score >= 7000) level = 4;
+    else if (highestScore.score >= 5000) level = 3;
+    else if (highestScore.score >= 3000) level = 2;
+
+    // Skill Decay: if the record hasn't been beaten for a while, lower the difficulty
+    final daysPassed = DateTime.now().difference(highestScore.date).inDays;
+    if (daysPassed >= 7) {
+      level -= 2;
+    } else if (daysPassed >= 3) {
+      level -= 1;
+    }
+
+    return level.clamp(1, 4);
   }
 
   Future<void> saveCurrentGame() async {
@@ -187,7 +290,12 @@ class GameController extends AutoDisposeNotifier<GameState> {
 
   Future<void> startNewGame() async {
     await SaveGameService.clearSave();
-    final newState = _createInitialState().copyWith(turnId: state.turnId + 1);
+
+    // Fetch difficulty asynchronously
+    final level = await _calculateDifficultyLevel();
+
+    // Generate the board based on the level and replace the state
+    final newState = _createBoardForLevel(level).copyWith(turnId: state.turnId + 1);
     state = newState;
   }
 
@@ -272,6 +380,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
     HighScoreService.saveScore(state.score, state.runId);
     SaveGameService.clearSave();
   }
+
   void useSurprise() {
     if (state.isProcessing || state.isGameOver) return;
 
@@ -377,30 +486,20 @@ class GameController extends AutoDisposeNotifier<GameState> {
     final newBoard = state.board.copy();
     newBoard.getCell(x, y).type = CrystalType.empty;
 
-    // 1. Hide the rescue screen immediately (isOutOfMoves: false) so the player
-    // can see the cell break. Keep isProcessing: true to block new inputs temporarily.
     state = state.copyWith(
       board: newBoard,
       freeHammers: newFree,
       adHammers: newAd,
       rescueHammers: newRescue,
       isHammerActive: false,
-      isProcessing: true,
-      isOutOfMoves: false, // <-- Прячем экран спасения
+      isProcessing: false,
       activeHammerMisses: state.activeHammerMisses.where((m) => m.id != strike.id).toList(),
       previousState: currentSnapshot,
       clearPreviousState: false,
       clearHint: true,
       pulseGift: false,
     );
-
-    // 2. Wait 400ms to let the player see the destroyed cell
-    await Future.delayed(const Duration(milliseconds: 400));
-    if (_isDisposed) return;
-
-    // 3. Unlock input and re-check for a deadlock (the rescue screen will pop back if needed)
-    state = state.copyWith(isProcessing: false);
-    _checkForGameOver(state.board, state.pieces);
+    _checkForGameOver(newBoard, state.pieces);
     saveCurrentGame();
   }
 
@@ -627,26 +726,41 @@ class GameController extends AutoDisposeNotifier<GameState> {
         if (totalLines == 0) break;
 
         int stepScore = (totalLines * 80) * ((cleared['rows']!.isNotEmpty && cleared['cols']!.isNotEmpty) ? 10 : 1) * cascadeLevel;
+
         state = state.copyWith(clearingRows: cleared['rows'], clearingCols: cleared['cols']);
 
         await Future.delayed(const Duration(milliseconds: 1000));
         if (_isDisposed || state.turnId != thisTurnId) return;
 
-        // Play sound and haptic exactly at the moment the crystals break and disappear
-        // Play sound and haptic exactly at the moment the crystals break and disappear
-        final bool isCross = cleared['rows']!.isNotEmpty && cleared['cols']!.isNotEmpty;
-
-        if (isCross || cascadeLevel > 1) {
-          ref.read(audioServiceProvider).play(AppSound.combo);
-          ref.read(hapticServiceProvider).trigger(AppHaptic.heavy);
-        } else {
-          ref.read(audioServiceProvider).play(AppSound.clear);
-          ref.read(hapticServiceProvider).trigger(AppHaptic.medium);
-        }
         newBoard.clearSpecificLines(cleared['rows']!, cleared['cols']!);
         newBoard.applyCenterGravity(cleared['rows']!, cleared['cols']!);
 
-        final newPopup = ScorePopup(id: DateTime.now().microsecondsSinceEpoch.toString(), amount: stepScore, isCross: cleared['rows']!.isNotEmpty && cleared['cols']!.isNotEmpty, comboLevel: cascadeLevel, position: const Offset(0, 0));
+        bool isPerfectClear = newBoard.grid.expand((row) => row).every((cell) => cell.isEmpty);
+
+        if (isPerfectClear) {
+          stepScore += 5000;
+          ref.read(audioServiceProvider).play(AppSound.perfectClear);
+          ref.read(hapticServiceProvider).trigger(AppHaptic.vibrate);
+        } else {
+          final bool isCross = cleared['rows']!.isNotEmpty && cleared['cols']!.isNotEmpty;
+          if (isCross || cascadeLevel > 1) {
+            ref.read(audioServiceProvider).play(AppSound.combo);
+            ref.read(hapticServiceProvider).trigger(AppHaptic.heavy);
+          } else {
+            ref.read(audioServiceProvider).play(AppSound.clear);
+            ref.read(hapticServiceProvider).trigger(AppHaptic.medium);
+          }
+        }
+
+        final newPopup = ScorePopup(
+          id: DateTime.now().microsecondsSinceEpoch.toString(),
+          amount: stepScore,
+          isCross: cleared['rows']!.isNotEmpty && cleared['cols']!.isNotEmpty,
+          comboLevel: cascadeLevel,
+          position: const Offset(0, 0),
+          isPerfect: isPerfectClear,
+        );
+
         state = state.copyWith(board: newBoard, clearingRows: const [], clearingCols: const [], score: state.score + stepScore, activePopups: [newPopup]);
 
         await Future.delayed(const Duration(milliseconds: 200));
@@ -758,9 +872,32 @@ class GameController extends AutoDisposeNotifier<GameState> {
     if (colors[0] == colors[1]) { colors.add(allColors.where((c) => c != primary).toList()[_random.nextInt(3)]); } else { colors.add(allColors[_random.nextInt(allColors.length)]); }
     return colors;
   }
-  final List<List<List<bool>>> _safeShapes = [[[true]], [[true, true]], [[true], [true]], [[true, true], [true, true]], [[true, false], [true, true]]];
-  final List<List<List<bool>>> _mediumShapes = [[[true, true, true]], [[true], [true], [true]], [[true, false], [true, true]], [[true, true, true], [false, true, false]], [[true, true, false], [false, true, true]]];
-  final List<List<List<bool>>> _complexShapes = [[[true, true, true, true]], [[true], [true], [true], [true]], [[true, true, true], [true, true, true], [true, true, true]], [[false, true, false], [true, true, true], [false, true, false]], [[true, true, true, true, true]]];
+
+  final List<List<List<bool>>> _safeShapes = [
+    [[true]],
+    [[true, true]],
+    [[true], [true]],
+    [[true, true], [true, true]],
+    [[true, false], [true, true]]
+  ];
+
+  final List<List<List<bool>>> _mediumShapes = [
+    [[true, true, true]],
+    [[true], [true], [true]],
+    [[true, false], [true, true]],
+    [[true, true, true], [false, true, false]],
+    [[true, true, false], [false, true, true]]
+  ];
+
+  final List<List<List<bool>>> _complexShapes = [
+    [[true, true, true, true]],
+    [[true], [true], [true], [true]],
+    [[true, true], [true, true], [true, true]], // 2x3 rectangle
+    [[true, false], [true, false], [true, true]], // 3x2 L-shape (Г-образник)
+    [[true, true, true], [true, true, true], [true, true, true]],
+    [[false, true, false], [true, true, true], [false, true, false]],
+    [[true, true, true, true, true]]
+  ];
 }
 
 final gameControllerProvider = NotifierProvider.autoDispose<GameController, GameState>(GameController.new);

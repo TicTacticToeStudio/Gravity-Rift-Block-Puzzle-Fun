@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +7,7 @@ import 'package:energy_blast/core/providers/settings_provider.dart';
 import 'package:energy_blast/core/services/audio_service.dart';
 import 'package:energy_blast/core/services/haptic_service.dart';
 import 'package:energy_blast/l10n/app_localizations.dart';
+import 'package:energy_blast/shared/widgets/auto_text.dart';
 import 'package:energy_blast/shared/widgets/cosmic_background.dart';
 import 'package:energy_blast/core/providers/locale_provider.dart';
 import 'package:energy_blast/core/services/save_game_service.dart';
@@ -59,7 +59,7 @@ class MainMenuPage extends ConsumerWidget {
                       onPressed: () {
                         _playClick(ref);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Info menu coming soon')),
+                          SnackBar(content: Text(l10n.infoComingSoon)),
                         );
                       },
                     ),
@@ -88,9 +88,9 @@ class MainMenuPage extends ConsumerWidget {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.white.withOpacity(0.3)),
+                              border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -121,7 +121,7 @@ class MainMenuPage extends ConsumerWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // MAIN TITLE: SPACECORE
+                      // MAIN TITLE
                       Stack(
                         alignment: Alignment.center,
                         children: [
@@ -134,12 +134,12 @@ class MainMenuPage extends ConsumerWidget {
                               letterSpacing: 4.0,
                               color: Colors.transparent,
                               shadows: [
-                                Shadow(color: AppColors.primary.withOpacity(0.8), blurRadius: 40),
-                                Shadow(color: AppColors.secondary.withOpacity(0.6), blurRadius: 20),
+                                Shadow(color: AppColors.primary.withValues(alpha: 0.8), blurRadius: 40),
+                                Shadow(color: AppColors.secondary.withValues(alpha: 0.6), blurRadius: 20),
                               ],
                             ),
                           ),
-                          // Thick Dark Outline for contrast against stars
+                          // Thick Dark Outline
                           Text(
                             mainTitle,
                             style: TextStyle(
@@ -149,7 +149,7 @@ class MainMenuPage extends ConsumerWidget {
                               foreground: Paint()
                                 ..style = PaintingStyle.stroke
                                 ..strokeWidth = 8
-                                ..color = const Color(0xFF0A0815), // Very dark cosmic background color
+                                ..color = const Color(0xFF0A0815),
                             ),
                           ),
                           // Gradient Fill
@@ -159,9 +159,9 @@ class MainMenuPage extends ConsumerWidget {
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  AppColors.primary, // Cyan
+                                  AppColors.primary,
                                   Colors.white,
-                                  AppColors.secondary, // Pink
+                                  AppColors.secondary,
                                 ],
                                 stops: [0.1, 0.5, 0.9],
                               ).createShader(bounds);
@@ -180,7 +180,7 @@ class MainMenuPage extends ConsumerWidget {
                         ],
                       ),
 
-                      // SUBTITLE: BLOCK PUZZLE & FUN
+                      // SUBTITLE
                       if (subTitle.isNotEmpty) ...[
                         const SizedBox(height: 8),
                         Stack(
@@ -218,17 +218,17 @@ class MainMenuPage extends ConsumerWidget {
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const Spacer(flex: 1),
 
               // 3. MENU PANEL (Glassmorphism)
               ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 400),
+                constraints: const BoxConstraints(maxWidth: 450),
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: AppConstants.paddingL),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
+                    color: Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(AppConstants.radiusL),
-                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                     boxShadow: const [
                       BoxShadow(color: Colors.black26, blurRadius: 20, offset: Offset(0, 10))
                     ],
@@ -247,7 +247,7 @@ class MainMenuPage extends ConsumerWidget {
                                   // Continue Game Button
                                   _buildMenuButton(
                                     title: l10n.continueGame,
-                                    subtitle: "Resume your game",
+                                    subtitle: l10n.resumeYourGame,
                                     icon: Icons.play_arrow,
                                     color: AppColors.primary,
                                     showBoardBackground: false,
@@ -267,7 +267,7 @@ class MainMenuPage extends ConsumerWidget {
                                   // New Game Button
                                   _buildMenuButton(
                                     title: l10n.newGame,
-                                    subtitle: "Start fresh",
+                                    subtitle: l10n.startFresh,
                                     icon: Icons.refresh,
                                     color: AppColors.secondary,
                                     showBoardBackground: false,
@@ -287,10 +287,10 @@ class MainMenuPage extends ConsumerWidget {
                               // Standard Play Button (with Board Background)
                               return _buildMenuButton(
                                 title: l10n.playNow.toUpperCase(),
-                                subtitle: l10n.classicModeSub, // "Endless block puzzle. Beat your score."
+                                subtitle: l10n.classicModeSub,
                                 icon: Icons.play_circle_fill,
                                 color: AppColors.primary,
-                                showBoardBackground: true, // Enables the mini-game board background
+                                showBoardBackground: true,
                                 onTap: () {
                                   _playClick(ref);
                                   Navigator.push(
@@ -328,28 +328,31 @@ class MainMenuPage extends ConsumerWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildFooterButton(
-                      icon: settings.isSoundOn ? Icons.volume_up : Icons.volume_off,
-                      label: l10n.sound,
-                      onPressed: () {
-                        ref.read(settingsProvider.notifier).toggleSound();
-                        // Play a click if the sound just got turned ON
-                        if (!settings.isSoundOn) {
-                          _playClick(ref);
-                        }
-                      },
+                    Flexible(
+                      child: _buildFooterButton(
+                        icon: settings.isSoundOn ? Icons.volume_up : Icons.volume_off,
+                        label: l10n.sound,
+                        onPressed: () {
+                          ref.read(settingsProvider.notifier).toggleSound();
+                          if (!settings.isSoundOn) {
+                            _playClick(ref);
+                          }
+                        },
+                      ),
                     ),
                     const SizedBox(width: AppConstants.paddingM),
-                    _buildFooterButton(
-                      icon: Icons.sports_esports,
-                      label: l10n.moreGames,
-                      onPressed: () {
-                        _playClick(ref);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const MoreGamesPage()),
-                        );
-                      },
+                    Flexible(
+                      child: _buildFooterButton(
+                        icon: Icons.sports_esports,
+                        label: l10n.moreGames,
+                        onPressed: () {
+                          _playClick(ref);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const MoreGamesPage()),
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -362,6 +365,7 @@ class MainMenuPage extends ConsumerWidget {
   }
 
   void _showLanguageDialog(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final currentLocale = ref.read(localeProvider);
 
     showDialog(
@@ -371,11 +375,11 @@ class MainMenuPage extends ConsumerWidget {
           backgroundColor: AppColors.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppConstants.radiusM),
-            side: BorderSide(color: AppColors.primary.withOpacity(0.3)),
+            side: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
           ),
-          title: const Text(
-            'Language / Язык',
-            style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+          title: AutoText.singleLine(
+            l10n.languageTitle,
+            style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -393,8 +397,9 @@ class MainMenuPage extends ConsumerWidget {
     final isSelected = locale.languageCode == currentLocale.languageCode;
 
     return ListTile(
-      title: Text(
+      title: AutoText.singleLine(
         label,
+        alignment: Alignment.centerLeft,
         style: TextStyle(
           color: isSelected ? AppColors.primary : AppColors.textPrimary,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -433,39 +438,48 @@ class MainMenuPage extends ConsumerWidget {
 
             // Foreground Content
             Container(
-              padding: const EdgeInsets.all(AppConstants.paddingM),
+              // Generous vertical padding for a taller button
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               decoration: BoxDecoration(
-                color: showBoardBackground ? Colors.black.withOpacity(0.3) : color.withOpacity(0.1),
+                color: showBoardBackground ? Colors.black.withValues(alpha: 0.3) : color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
-                border: Border.all(color: color.withOpacity(0.7), width: 2),
+                border: Border.all(color: color.withValues(alpha: 0.7), width: 2),
                 boxShadow: [
-                  BoxShadow(color: color.withOpacity(0.3), blurRadius: 15, spreadRadius: 2)
+                  BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 15, spreadRadius: 2)
                 ],
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(icon, color: color, size: 32),
-                  const SizedBox(width: 12),
+                  Icon(icon, color: color, size: 40),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
+                        // Title: single-line, scales down if the translation
+                        // doesn't fit (French/German tend to be longer).
+                        AutoText.singleLine(
                           title,
+                          alignment: Alignment.centerLeft,
                           style: TextStyle(
                             color: color,
-                            fontSize: 20,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.5,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 6),
+                        // Subtitle: multiline, wraps naturally, button grows
+                        // in height to accommodate longer descriptions.
                         Text(
                           subtitle,
                           style: TextStyle(
-                            color: showBoardBackground ? Colors.white.withOpacity(0.9) : AppColors.textSecondary,
-                            fontSize: 13,
+                            color: showBoardBackground ? Colors.white.withValues(alpha: 0.9) : AppColors.textSecondary,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
+                            height: 1.2,
                             shadows: showBoardBackground ? [const Shadow(color: Colors.black, blurRadius: 4)] : [],
                           ),
                         ),
@@ -489,7 +503,7 @@ class MainMenuPage extends ConsumerWidget {
     return TextButton.icon(
       onPressed: onPressed,
       icon: Icon(icon, color: AppColors.primary, size: 18),
-      label: Text(
+      label: AutoText.singleLine(
         label,
         style: const TextStyle(
           color: AppColors.primary,
@@ -499,10 +513,10 @@ class MainMenuPage extends ConsumerWidget {
       ),
       style: TextButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        backgroundColor: AppColors.primary.withOpacity(0.1),
+        backgroundColor: AppColors.primary.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: AppColors.primary.withOpacity(0.3)),
+          side: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
         ),
       ),
     );
@@ -513,10 +527,9 @@ class MainMenuPage extends ConsumerWidget {
 class _PlaqueBoardPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final cellSize = size.height / 3; // Make cells fit vertically
-    final random = Random(42);
+    final cellSize = size.height / 3;
 
-    final emptyCellPaint = Paint()..color = AppColors.boardEmptyCell.withOpacity(0.4);
+    final emptyCellPaint = Paint()..color = AppColors.boardEmptyCell.withValues(alpha: 0.4);
 
     // Draw empty grid
     for (double y = 0; y < size.height; y += cellSize) {
@@ -537,7 +550,6 @@ class _PlaqueBoardPainter extends CustomPainter {
       AppColors.crystalAmber,
     ];
 
-    // Pre-defined positions to look like a nice arrangement
     final blockPositions = [
       const Offset(0, 0), const Offset(1, 0), const Offset(2, 0),
       const Offset(3, 1), const Offset(4, 1),
@@ -554,7 +566,7 @@ class _PlaqueBoardPainter extends CustomPainter {
       if (x >= size.width) continue;
 
       final rect = Rect.fromLTWH(x + 2, y + 2, cellSize - 4, cellSize - 4);
-      final crystalColor = colors[i % colors.length].withOpacity(0.6);
+      final crystalColor = colors[i % colors.length].withValues(alpha: 0.6);
 
       final glowPaint = Paint()
         ..color = crystalColor

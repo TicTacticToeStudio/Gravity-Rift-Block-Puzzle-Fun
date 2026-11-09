@@ -9,7 +9,7 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get appTitle => 'SpaceCore: Block Puzzle & Fun';
+  String get appTitle => 'Gravity Rift: Block Puzzle Fun';
 
   @override
   String get scoreLabel => 'ОЧКИ';
@@ -21,7 +21,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get gameOverBody => 'Не осталось места для новых блоков.';
 
   @override
-  String yourScore(int score) {
+  String yourScore(Object score) {
     return 'Твой счет: $score';
   }
 
@@ -86,6 +86,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get soundOff => 'ЗВУК: ВЫКЛ';
 
   @override
+  String get vibrationOn => 'ВИБРАЦИЯ: ВКЛ';
+
+  @override
+  String get vibrationOff => 'ВИБРАЦИЯ: ВЫКЛ';
+
+  @override
   String get nothingToUndo => 'Пока нечего отменять!';
 
   @override
@@ -135,4 +141,90 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get comingSoonDesc => 'Следите за нашими новыми головоломками!';
+
+  @override
+  String get resumeYourGame => 'Продолжить игру';
+
+  @override
+  String get startFresh => 'Начать заново';
+
+  @override
+  String get topScores => 'РЕКОРДЫ';
+
+  @override
+  String get noRecordsYet => 'Пока нет рекордов. Сыграйте!';
+
+  @override
+  String get close => 'ЗАКРЫТЬ';
+
+  @override
+  String get today => 'Сегодня';
+
+  @override
+  String get yesterday => 'Вчера';
+
+  @override
+  String daysAgo(Object days) {
+    return '$days дн. назад';
+  }
+
+  @override
+  String get bonusesTitle => 'БОНУСЫ';
+
+  @override
+  String get rescueBonusesTitle => 'БОНУСЫ СПАСЕНИЯ';
+
+  @override
+  String get selectBonusToSave => 'Выберите бонус, чтобы спасти игру';
+
+  @override
+  String get bonusSurprise => 'Сюрприз';
+
+  @override
+  String get bonusHammer => 'Молот';
+
+  @override
+  String get bonusNewBlocks => 'Новые блоки';
+
+  @override
+  String get bonusHint => 'Подсказка';
+
+  @override
+  String useBonus(int count) {
+    return 'ИСП. ($count)';
+  }
+
+  @override
+  String get adButton => 'РЕКЛАМА';
+
+  @override
+  String get limitLabel => 'ЛИМИТ';
+
+  @override
+  String get adUnavailableBonus => 'Реклама недоступна. Вот ваш бонус!';
+
+  @override
+  String get noMovesFound => 'Ходов не найдено! Используйте другой бонус.';
+
+  @override
+  String get perfectClear => 'ИДЕАЛЬНАЯ ОЧИСТКА!';
+
+  @override
+  String missLabel(int amount) {
+    return 'МИМО +$amount';
+  }
+
+  @override
+  String get crossMultiplier => 'КРЕСТ x10!';
+
+  @override
+  String comboMultiplier(int level) {
+    return 'КОМБО x$level!';
+  }
+
+  @override
+  String get infoComingSoon => 'Меню информации скоро появится';
+
+  @override
+  String get languageTitle => 'Язык';
 }

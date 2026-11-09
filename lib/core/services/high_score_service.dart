@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:energy_blast/l10n/app_localizations.dart';
 
 class ScoreRecord {
   final String runId; // Unique ID for the game session
@@ -73,8 +73,20 @@ class HighScoreService {
     await prefs.setString(_key, jsonString);
   }
 
-  static String formatDate(DateTime date, String localeCode) {
-    final formatter = DateFormat.yMMMd(localeCode);
-    return formatter.format(date);
+  // Changed to use relative dates for better localization
+  static String formatRelativeDate(DateTime date, AppLocalizations l10n) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final recordDate = DateTime(date.year, date.month, date.day);
+
+    final difference = today.difference(recordDate).inDays;
+
+    if (difference == 0) {
+      return l10n.today;
+    } else if (difference == 1) {
+      return l10n.yesterday;
+    } else {
+      return l10n.daysAgo(difference);
+    }
   }
 }

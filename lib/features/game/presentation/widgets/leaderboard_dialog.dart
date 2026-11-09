@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:energy_blast/core/constants/app_constants.dart';
 import 'package:energy_blast/core/theme/app_colors.dart';
 import 'package:energy_blast/core/services/high_score_service.dart';
-import 'package:energy_blast/core/services/audio_service.dart';
-import 'package:energy_blast/core/services/haptic_service.dart';
 import 'package:energy_blast/l10n/app_localizations.dart';
 
 class LeaderboardDialog extends ConsumerWidget {
@@ -12,7 +10,7 @@ class LeaderboardDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentLocale = Localizations.localeOf(context).languageCode;
+    final l10n = AppLocalizations.of(context);
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -21,25 +19,25 @@ class LeaderboardDialog extends ConsumerWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppConstants.radiusL),
-          border: Border.all(color: AppColors.primary.withOpacity(0.5), width: 2),
+          border: Border.all(color: AppColors.primary.withValues(alpha: 0.5), width: 2),
           boxShadow: [
-            BoxShadow(color: AppColors.primary.withOpacity(0.2), blurRadius: 20, spreadRadius: 2)
+            BoxShadow(color: AppColors.primary.withValues(alpha: 0.2), blurRadius: 20, spreadRadius: 2)
           ],
         ),
-        // Wrapped in SingleChildScrollView so it doesn't overflow on small screens
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.emoji_events, color: AppColors.crystalAmber, size: 48),
-              const SizedBox(height: AppConstants.paddingS),
-              const Text(
-                'TOP SCORES',
-                style: TextStyle(color: AppColors.primary, fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 2),
-              ),
-              const SizedBox(height: AppConstants.paddingM),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.emoji_events, color: AppColors.crystalAmber, size: 48),
+            const SizedBox(height: AppConstants.paddingS),
+            Text(
+              l10n.topScores,
+              style: const TextStyle(color: AppColors.primary, fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 2),
+            ),
+            const SizedBox(height: AppConstants.paddingM),
 
-              FutureBuilder<List<ScoreRecord>>(
+            // Flexible ensures the list shrinks and keeps the CLOSE button visible
+            Flexible(
+              child: FutureBuilder<List<ScoreRecord>>(
                 future: HighScoreService.getScores(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -49,32 +47,37 @@ class LeaderboardDialog extends ConsumerWidget {
                   final scores = snapshot.data ?? [];
 
                   if (scores.isEmpty) {
-                    return const Padding(
-                      padding: EdgeInsets.all(AppConstants.paddingL),
+                    return Padding(
+                      padding: const EdgeInsets.all(AppConstants.paddingL),
                       child: Text(
-                        'No records yet. Play a game!',
-                        style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+                        l10n.noRecordsYet,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 16),
                       ),
                     );
                   }
 
-                  return Column(
-                    children: scores.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final record = entry.value;
-
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: scores.length,
+                    itemBuilder: (context, index) {
+                      final record = scores[index];
                       Color rankColor = AppColors.textPrimary;
-                      if (index == 0) rankColor = Colors.amberAccent; // Gold
-                      else if (index == 1) rankColor = Colors.grey; // Silver
-                      else if (index == 2) rankColor = Colors.brown; // Bronze
+                      if (index == 0) {
+                        rankColor = Colors.amberAccent;
+                      } else if (index == 1) {
+                        rankColor = Colors.grey;
+                      } else if (index == 2) {
+                        rankColor = Colors.brown;
+                      }
 
                       return Container(
                         margin: const EdgeInsets.only(bottom: AppConstants.paddingS),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: rankColor.withOpacity(0.3)),
+                          border: Border.all(color: rankColor.withValues(alpha: 0.3)),
                         ),
                         child: Row(
                           children: [
@@ -83,8 +86,6 @@ class LeaderboardDialog extends ConsumerWidget {
                               style: TextStyle(color: rankColor, fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(width: 12),
-
-                            // FittedBox ensures the score text scales down if it doesn't fit
                             Expanded(
                               flex: 3,
                               child: FittedBox(
@@ -96,11 +97,11 @@ class LeaderboardDialog extends ConsumerWidget {
                                 ),
                               ),
                             ),
-
                             Expanded(
                               flex: 2,
                               child: Text(
-                                HighScoreService.formatDate(record.date, currentLocale),
+                                // Now using relative dates from the service
+                                HighScoreService.formatRelativeDate(record.date, l10n),
                                 textAlign: TextAlign.right,
                                 style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
                               ),
@@ -108,22 +109,18 @@ class LeaderboardDialog extends ConsumerWidget {
                           ],
                         ),
                       );
-                    }).toList(),
+                    },
                   );
                 },
               ),
+            ),
 
-              const SizedBox(height: AppConstants.paddingM),
-              TextButton(
-                onPressed: () {
-                  ref.read(audioServiceProvider).play(AppSound.click);
-                  ref.read(hapticServiceProvider).trigger(AppHaptic.selection);
-                  Navigator.pop(context);
-                },
-                child: const Text('CLOSE', style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.bold)),
-              )
-            ],
-          ),
+            const SizedBox(height: AppConstants.paddingM),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.close, style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.bold)),
+            )
+          ],
         ),
       ),
     );

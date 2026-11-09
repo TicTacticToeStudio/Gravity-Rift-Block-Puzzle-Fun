@@ -98,9 +98,9 @@ class MoreGamesPage extends ConsumerWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: Border.all(color: color.withOpacity(isDisabled ? 0.1 : 0.5), width: 2),
+          border: Border.all(color: color.withValues(alpha: isDisabled ? 0.1 : 0.5), width: 2),
           boxShadow: isDisabled ? [] : [
-            BoxShadow(color: color.withOpacity(0.2), blurRadius: 10, spreadRadius: 2),
+            BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 10, spreadRadius: 2),
           ],
         ),
         child: Column(
@@ -123,7 +123,7 @@ class MoreGamesPage extends ConsumerWidget {
                         return Container(
                           width: 56,
                           height: 56,
-                          color: color.withOpacity(0.2),
+                          color: color.withValues(alpha: 0.2),
                           child: Icon(icon ?? Icons.gamepad, color: color, size: 28),
                         );
                       },
@@ -133,7 +133,7 @@ class MoreGamesPage extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(AppConstants.paddingS),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.2),
+                      color: color.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(icon ?? Icons.gamepad, color: color, size: 28),

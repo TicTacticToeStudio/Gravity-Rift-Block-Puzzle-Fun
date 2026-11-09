@@ -1,15 +1,14 @@
 {
   "@@locale": "en",
-  "appTitle": "SpaceCore: Block Puzzle & Fun",
+
+  "appTitle": "Gravity Rift: Block Puzzle Fun",
   "scoreLabel": "SCORE",
   "gameOverTitle": "Great Game!",
   "gameOverBody": "There is no space left for new blocks.",
   "yourScore": "Your Score: {score}",
   "@yourScore": {
     "placeholders": {
-      "score": {
-        "type": "int"
-      }
+      "score": { "type": "Object" }
     }
   },
   "playAgain": "Play Again",
@@ -32,6 +31,8 @@
   "restart": "RESTART",
   "soundOn": "SOUND: ON",
   "soundOff": "SOUND: OFF",
+  "vibrationOn": "VIBRATION: ON",
+  "vibrationOff": "VIBRATION: OFF",
   "nothingToUndo": "Nothing to undo yet!",
   "outOfUndos": "Out of Undos!",
   "adUnavailableUndo": "Ad unavailable. Here is your undo!",
@@ -42,10 +43,62 @@
   "sessionEnded": "Your session has ended.",
   "startNewGame": "START NEW GAME",
   "outOfSpace": "GAME OVER",
+
   "hexGameTitle": "Hex Tic Tac Toe Fun & Strategy",
   "hexGameDesc": "Hex Tic Tac Toe. Play offline vs Bot or friend. Game analysis. Tournaments.",
   "tttGameTitle": "Tic Tac Toe: Fun & Strategy",
   "tttGameDesc": "Bot or friend, deep analysis, adaptive gameplay. Tic Tac Toe — but tactical.",
   "comingSoonTitle": "Coming Soon",
-  "comingSoonDesc": "Stay tuned for our next puzzle!"
+  "comingSoonDesc": "Stay tuned for our next puzzle!",
+
+  "resumeYourGame": "Resume your game",
+  "startFresh": "Start fresh",
+
+  "topScores": "TOP SCORES",
+  "noRecordsYet": "No records yet. Play a game!",
+  "close": "CLOSE",
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "daysAgo": "{days} days ago",
+  "@daysAgo": {
+    "placeholders": {
+      "days": { "type": "Object" }
+    }
+  },
+
+  "bonusesTitle": "BONUSES",
+  "rescueBonusesTitle": "RESCUE BONUSES",
+  "selectBonusToSave": "Select a bonus to save your game",
+  "bonusSurprise": "Surprise",
+  "bonusHammer": "Hammer",
+  "bonusNewBlocks": "New Blocks",
+  "bonusHint": "Hint",
+  "useBonus": "USE ({count})",
+  "@useBonus": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "adButton": "AD",
+  "limitLabel": "LIMIT",
+  "adUnavailableBonus": "Ad unavailable. Here is your bonus!",
+  "noMovesFound": "No moves found! Use another bonus.",
+
+  "perfectClear": "PERFECT CLEAR!",
+  "missLabel": "MISS +{amount}",
+  "@missLabel": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "crossMultiplier": "CROSS x10!",
+  "comboMultiplier": "COMBO x{level}!",
+  "@comboMultiplier": {
+    "placeholders": {
+      "level": { "type": "int" }
+    }
+  },
+
+  "infoComingSoon": "Info menu coming soon",
+  "languageTitle": "Language"
 }

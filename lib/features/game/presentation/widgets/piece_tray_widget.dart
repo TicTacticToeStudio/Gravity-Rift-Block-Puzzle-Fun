@@ -34,7 +34,7 @@ class PieceTrayWidget extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: AppConstants.paddingS, horizontal: AppConstants.paddingS),
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.5),
+        color: AppColors.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(AppConstants.radiusL),
         border: Border.all(color: AppColors.boardBorder, width: 1),
       ),
@@ -64,11 +64,11 @@ class PieceTrayWidget extends ConsumerWidget {
           if (isHinted) {
             draggableChild = Container(
               decoration: BoxDecoration(
-                  color: Colors.greenAccent.withOpacity(0.1),
+                  color: Colors.greenAccent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppConstants.radiusM),
                   border: Border.all(color: Colors.greenAccent, width: 2),
                   boxShadow: [
-                    BoxShadow(color: Colors.greenAccent.withOpacity(0.5), blurRadius: 10, spreadRadius: 2)
+                    BoxShadow(color: Colors.greenAccent.withValues(alpha: 0.5), blurRadius: 10, spreadRadius: 2)
                   ]
               ),
               padding: const EdgeInsets.all(4),
@@ -134,7 +134,7 @@ class PieceTrayWidget extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(size * 0.1),
                   boxShadow: isBlock && isDragging ? [
                     BoxShadow(
-                      color: _getColor(piece.type).withOpacity(0.8),
+                      color: _getColor(piece.type).withValues(alpha: 0.8),
                       blurRadius: 10,
                       spreadRadius: 2,
                     )

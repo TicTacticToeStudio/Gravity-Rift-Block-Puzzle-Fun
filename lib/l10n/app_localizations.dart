@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'SpaceCore: Block Puzzle & Fun'**
+  /// **'Gravity Rift: Block Puzzle Fun'**
   String get appTitle;
 
   /// No description provided for @scoreLabel.
@@ -126,7 +126,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Your Score: {score}'**
-  String yourScore(int score);
+  String yourScore(Object score);
 
   /// No description provided for @playAgain.
   ///
@@ -248,6 +248,18 @@ abstract class AppLocalizations {
   /// **'SOUND: OFF'**
   String get soundOff;
 
+  /// No description provided for @vibrationOn.
+  ///
+  /// In en, this message translates to:
+  /// **'VIBRATION: ON'**
+  String get vibrationOn;
+
+  /// No description provided for @vibrationOff.
+  ///
+  /// In en, this message translates to:
+  /// **'VIBRATION: OFF'**
+  String get vibrationOff;
+
   /// No description provided for @nothingToUndo.
   ///
   /// In en, this message translates to:
@@ -343,6 +355,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stay tuned for our next puzzle!'**
   String get comingSoonDesc;
+
+  /// No description provided for @resumeYourGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume your game'**
+  String get resumeYourGame;
+
+  /// No description provided for @startFresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Start fresh'**
+  String get startFresh;
+
+  /// No description provided for @topScores.
+  ///
+  /// In en, this message translates to:
+  /// **'TOP SCORES'**
+  String get topScores;
+
+  /// No description provided for @noRecordsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No records yet. Play a game!'**
+  String get noRecordsYet;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'CLOSE'**
+  String get close;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days ago'**
+  String daysAgo(Object days);
+
+  /// No description provided for @bonusesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'BONUSES'**
+  String get bonusesTitle;
+
+  /// No description provided for @rescueBonusesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'RESCUE BONUSES'**
+  String get rescueBonusesTitle;
+
+  /// No description provided for @selectBonusToSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a bonus to save your game'**
+  String get selectBonusToSave;
+
+  /// No description provided for @bonusSurprise.
+  ///
+  /// In en, this message translates to:
+  /// **'Surprise'**
+  String get bonusSurprise;
+
+  /// No description provided for @bonusHammer.
+  ///
+  /// In en, this message translates to:
+  /// **'Hammer'**
+  String get bonusHammer;
+
+  /// No description provided for @bonusNewBlocks.
+  ///
+  /// In en, this message translates to:
+  /// **'New Blocks'**
+  String get bonusNewBlocks;
+
+  /// No description provided for @bonusHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hint'**
+  String get bonusHint;
+
+  /// No description provided for @useBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'USE ({count})'**
+  String useBonus(int count);
+
+  /// No description provided for @adButton.
+  ///
+  /// In en, this message translates to:
+  /// **'AD'**
+  String get adButton;
+
+  /// No description provided for @limitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'LIMIT'**
+  String get limitLabel;
+
+  /// No description provided for @adUnavailableBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Ad unavailable. Here is your bonus!'**
+  String get adUnavailableBonus;
+
+  /// No description provided for @noMovesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No moves found! Use another bonus.'**
+  String get noMovesFound;
+
+  /// No description provided for @perfectClear.
+  ///
+  /// In en, this message translates to:
+  /// **'PERFECT CLEAR!'**
+  String get perfectClear;
+
+  /// No description provided for @missLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'MISS +{amount}'**
+  String missLabel(int amount);
+
+  /// No description provided for @crossMultiplier.
+  ///
+  /// In en, this message translates to:
+  /// **'CROSS x10!'**
+  String get crossMultiplier;
+
+  /// No description provided for @comboMultiplier.
+  ///
+  /// In en, this message translates to:
+  /// **'COMBO x{level}!'**
+  String comboMultiplier(int level);
+
+  /// No description provided for @infoComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Info menu coming soon'**
+  String get infoComingSoon;
+
+  /// No description provided for @languageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageTitle;
 }
 
 class _AppLocalizationsDelegate

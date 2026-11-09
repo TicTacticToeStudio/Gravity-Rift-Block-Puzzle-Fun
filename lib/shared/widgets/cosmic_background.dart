@@ -109,7 +109,7 @@ class _WarpSpeedPainter extends CustomPainter {
         opacity = 1.0 - ((currentDist - 0.8) / 0.2);
       }
 
-      starPaint.color = Colors.white.withOpacity(opacity * 0.9);
+      starPaint.color = Colors.white.withValues(alpha: opacity * 0.9);
 
       // FIXED MATH: Calculate where the star was slightly earlier.
       // We subtract a percentage of currentDist, ensuring the tail ALWAYS moves outwards.
@@ -150,7 +150,7 @@ class _WarpSpeedPainter extends CustomPainter {
         final double tailY = currentPos.dy + sin(comet.angle) * comet.length;
 
         final tailPaint = Paint()
-          ..shader = LinearGradient(
+          ..shader = const LinearGradient(
             begin: Alignment.center,
             end: Alignment.bottomRight,
             colors: [Colors.white, Colors.transparent],
@@ -162,12 +162,12 @@ class _WarpSpeedPainter extends CustomPainter {
 
         // Comet Head
         final outerGlow = Paint()
-          ..color = AppColors.primary.withOpacity(0.6)
+          ..color = AppColors.primary.withValues(alpha: 0.6)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15.0);
         canvas.drawCircle(currentPos, 12, outerGlow);
 
         final innerGlow = Paint()
-          ..color = Colors.white.withOpacity(0.9)
+          ..color = Colors.white.withValues(alpha: 0.9)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5.0);
         canvas.drawCircle(currentPos, 7, innerGlow);
 

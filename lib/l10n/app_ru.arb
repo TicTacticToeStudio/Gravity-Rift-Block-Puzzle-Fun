@@ -1,15 +1,14 @@
 {
   "@@locale": "ru",
-  "appTitle": "SpaceCore: Block Puzzle & Fun",
+
+  "appTitle": "Gravity Rift: Block Puzzle Fun",
   "scoreLabel": "ОЧКИ",
   "gameOverTitle": "Отличная игра!",
   "gameOverBody": "Не осталось места для новых блоков.",
   "yourScore": "Твой счет: {score}",
   "@yourScore": {
     "placeholders": {
-      "score": {
-        "type": "int"
-      }
+      "score": { "type": "Object" }
     }
   },
   "playAgain": "Играть снова",
@@ -32,6 +31,8 @@
   "restart": "ЗАНОВО",
   "soundOn": "ЗВУК: ВКЛ",
   "soundOff": "ЗВУК: ВЫКЛ",
+  "vibrationOn": "ВИБРАЦИЯ: ВКЛ",
+  "vibrationOff": "ВИБРАЦИЯ: ВЫКЛ",
   "nothingToUndo": "Пока нечего отменять!",
   "outOfUndos": "Отмены закончились!",
   "adUnavailableUndo": "Реклама недоступна. Вот ваша отмена!",
@@ -42,10 +43,62 @@
   "sessionEnded": "Ваша сессия завершена.",
   "startNewGame": "НАЧАТЬ НОВУЮ ИГРУ",
   "outOfSpace": "ИГРА ОКОНЧЕНА",
+
   "hexGameTitle": "Hex Крестики-нолики: Веселье и Стратегия",
   "hexGameDesc": "Hex Крестики-нолики. Играйте офлайн против Бота или друга. Анализ игр. Турниры.",
   "tttGameTitle": "Крестики-нолики: Веселье и Стратегия",
   "tttGameDesc": "Бот или друг, глубокий анализ, адаптивный геймплей. Крестики-нолики — но тактически.",
   "comingSoonTitle": "Скоро",
-  "comingSoonDesc": "Следите за нашими новыми головоломками!"
+  "comingSoonDesc": "Следите за нашими новыми головоломками!",
+
+  "resumeYourGame": "Продолжить игру",
+  "startFresh": "Начать заново",
+
+  "topScores": "РЕКОРДЫ",
+  "noRecordsYet": "Пока нет рекордов. Сыграйте!",
+  "close": "ЗАКРЫТЬ",
+  "today": "Сегодня",
+  "yesterday": "Вчера",
+  "daysAgo": "{days} дн. назад",
+  "@daysAgo": {
+    "placeholders": {
+      "days": { "type": "Object" }
+    }
+  },
+
+  "bonusesTitle": "БОНУСЫ",
+  "rescueBonusesTitle": "БОНУСЫ СПАСЕНИЯ",
+  "selectBonusToSave": "Выберите бонус, чтобы спасти игру",
+  "bonusSurprise": "Сюрприз",
+  "bonusHammer": "Молот",
+  "bonusNewBlocks": "Новые блоки",
+  "bonusHint": "Подсказка",
+  "useBonus": "ИСП. ({count})",
+  "@useBonus": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "adButton": "РЕКЛАМА",
+  "limitLabel": "ЛИМИТ",
+  "adUnavailableBonus": "Реклама недоступна. Вот ваш бонус!",
+  "noMovesFound": "Ходов не найдено! Используйте другой бонус.",
+
+  "perfectClear": "ИДЕАЛЬНАЯ ОЧИСТКА!",
+  "missLabel": "МИМО +{amount}",
+  "@missLabel": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "crossMultiplier": "КРЕСТ x10!",
+  "comboMultiplier": "КОМБО x{level}!",
+  "@comboMultiplier": {
+    "placeholders": {
+      "level": { "type": "int" }
+    }
+  },
+
+  "infoComingSoon": "Меню информации скоро появится",
+  "languageTitle": "Язык"
 }

@@ -32,9 +32,15 @@ class BoardWidget extends ConsumerWidget {
     final gameState = ref.watch(gameControllerProvider);
     final board = gameState.board;
 
-    final centerX = 4 * cellSize;
-    final centerY = 4 * cellSize;
-    final lineThickness = cellSize * 0.12;
+    final lineThickness = cellSize * 0.15;
+    // Aura width: 1/4 cell on each side of the line
+    final auraWidth = lineThickness + (cellSize * 0.5);
+
+    // Corrected logic:
+    // Row clears -> blocks fall UP/DOWN -> Horizontal rift activates.
+    // Col clears -> blocks fall LEFT/RIGHT -> Vertical rift activates.
+    final bool isVerticalRiftActive = gameState.clearingCols.isNotEmpty;
+    final bool isHorizontalRiftActive = gameState.clearingRows.isNotEmpty;
 
     final hintPiece = gameState.hintPieceId != null
         ? gameState.pieces.firstWhere((p) => p.id == gameState.hintPieceId, orElse: () => gameState.pieces.first)
@@ -60,7 +66,7 @@ class BoardWidget extends ConsumerWidget {
               borderRadius: BorderRadius.circular(cellSize * 0.1),
               boxShadow: [
                 BoxShadow(
-                  color: _getColor(cell.type).withOpacity(0.5),
+                  color: _getColor(cell.type).withValues(alpha: 0.5),
                   blurRadius: 8,
                   spreadRadius: 1,
                 )
@@ -108,9 +114,9 @@ class BoardWidget extends ConsumerWidget {
                           decoration: BoxDecoration(
                               border: Border.all(color: Colors.greenAccent, width: 3),
                               borderRadius: BorderRadius.circular(cellSize * 0.1),
-                              color: Colors.greenAccent.withOpacity(0.2),
+                              color: Colors.greenAccent.withValues(alpha: 0.2),
                               boxShadow: [
-                                BoxShadow(color: Colors.greenAccent.withOpacity(0.5), blurRadius: 10, spreadRadius: 2)
+                                BoxShadow(color: Colors.greenAccent.withValues(alpha: 0.5), blurRadius: 10, spreadRadius: 2)
                               ]
                           ),
                         ),
@@ -136,8 +142,10 @@ class BoardWidget extends ConsumerWidget {
         ),
         boxShadow: AppConstants.defaultShadow,
       ),
+      clipBehavior: Clip.hardEdge,
       child: Stack(
         children: [
+          // 1. Background Grid
           Column(
             children: List.generate(board.height, (y) {
               return Expanded(
@@ -158,71 +166,218 @@ class BoardWidget extends ConsumerWidget {
             }),
           ),
 
-          // Gravity Crosshair Lines
-          Positioned(
-            left: centerX - (lineThickness / 2),
-            top: 0,
-            bottom: 0,
-            child: ShaderMask(
-              shaderCallback: (Rect bounds) => const LinearGradient(
-                begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
-                stops: [0.0, 0.15, 0.85, 1.0],
-              ).createShader(bounds),
-              blendMode: BlendMode.dstIn,
-              child: Container(
-                width: lineThickness,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.centerLeft, end: Alignment.centerRight,
-                    colors: [Colors.transparent, Color(0x8000E5FF), Color(0xFF0A0815), Color(0x8000E5FF), Colors.transparent],
-                    stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+          // 2. Gradient Auras around the lines (always visible)
+          // Vertical Aura
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: auraWidth,
+                  height: double.infinity,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Colors.transparent,
+                          Color(0x303D5AFE),
+                          Color(0x303D5AFE),
+                          Colors.transparent,
+                        ],
+                        stops: [0.0, 0.35, 0.65, 1.0],
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(lineThickness / 2),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: centerY - (lineThickness / 2),
-            left: 0,
-            right: 0,
-            child: ShaderMask(
-              shaderCallback: (Rect bounds) => const LinearGradient(
-                begin: Alignment.centerLeft, end: Alignment.centerRight,
-                colors: [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
-                stops: [0.0, 0.15, 0.85, 1.0],
-              ).createShader(bounds),
-              blendMode: BlendMode.dstIn,
-              child: Container(
-                height: lineThickness,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Color(0x8000E5FF), Color(0xFF0A0815), Color(0x8000E5FF), Colors.transparent],
-                    stops: [0.0, 0.25, 0.5, 0.75, 1.0],
-                  ),
-                  borderRadius: BorderRadius.circular(lineThickness / 2),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            left: centerX - (cellSize * 1.2),
-            top: centerY - (cellSize * 1.2),
-            width: cellSize * 2.4,
-            height: cellSize * 2.4,
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [const Color(0xFF0A0815).withOpacity(1.0), AppColors.primary.withOpacity(0.5), AppColors.primary.withOpacity(0.0)],
-                  stops: const [0.0, 0.35, 1.0],
                 ),
               ),
             ),
           ),
 
+          // Horizontal Aura
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: double.infinity,
+                  height: auraWidth,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Color(0x303D5AFE),
+                          Color(0x303D5AFE),
+                          Colors.transparent,
+                        ],
+                        stops: [0.0, 0.35, 0.65, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // 3. Gravity Crosshair Lines (Base)
+          // Vertical Base Line
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: lineThickness,
+                  height: double.infinity,
+                  child: ShaderMask(
+                    shaderCallback: (Rect bounds) => const LinearGradient(
+                      begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                      colors: [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
+                      stops: [0.0, 0.15, 0.85, 1.0],
+                    ).createShader(bounds),
+                    blendMode: BlendMode.dstIn,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft, end: Alignment.centerRight,
+                          colors: [Colors.transparent, Color(0x803D5AFE), Color(0xFF0A0815), Color(0x803D5AFE), Colors.transparent],
+                          stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Horizontal Base Line
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: double.infinity,
+                  height: lineThickness,
+                  child: ShaderMask(
+                    shaderCallback: (Rect bounds) => const LinearGradient(
+                      begin: Alignment.centerLeft, end: Alignment.centerRight,
+                      colors: [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
+                      stops: [0.0, 0.15, 0.85, 1.0],
+                    ).createShader(bounds),
+                    blendMode: BlendMode.dstIn,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                          colors: [Colors.transparent, Color(0x803D5AFE), Color(0xFF0A0815), Color(0x803D5AFE), Colors.transparent],
+                          stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // 4. Active Rift Effects (Lightning + Bright Glow)
+          // Active Vertical Rift
+          if (isVerticalRiftActive)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 1000),
+                    builder: (context, t, child) {
+                      double pulse = (1.0 - t) * (0.5 + 0.5 * cos(t * pi * 6));
+                      return Opacity(
+                        opacity: pulse.clamp(0.0, 1.0),
+                        child: SizedBox(
+                          width: lineThickness * 3,
+                          height: double.infinity,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                width: lineThickness * 1.5,
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  border: Border.all(color: Colors.white, width: 2),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.cyanAccent,
+                                      blurRadius: 50 * pulse,
+                                      spreadRadius: 20 * pulse,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              CustomPaint(
+                                painter: LightningPainter(isVertical: true, pulse: pulse),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+
+          // Active Horizontal Rift
+          if (isHorizontalRiftActive)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 1000),
+                    builder: (context, t, child) {
+                      double pulse = (1.0 - t) * (0.5 + 0.5 * cos(t * pi * 6));
+                      return Opacity(
+                        opacity: pulse.clamp(0.0, 1.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: lineThickness * 3,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                height: lineThickness * 1.5,
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  border: Border.all(color: Colors.white, width: 2),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.cyanAccent,
+                                      blurRadius: 50 * pulse,
+                                      spreadRadius: 20 * pulse,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              CustomPaint(
+                                painter: LightningPainter(isVertical: false, pulse: pulse),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+
+          // 5. Laser Sparks
           ...gameState.clearingRows.map((y) {
             return Positioned(
               left: 0, right: 0, top: y * cellSize, height: cellSize,
@@ -263,11 +418,13 @@ class BoardWidget extends ConsumerWidget {
             );
           }),
 
+          // 6. Animated Crystals
           ...animatedCells,
 
+          // 7. HINT OVERLAY
           ...hintWidgets,
 
-          // Hammer Miss Ripples
+          // 8. HAMMER MISS RIPPLES
           ...gameState.activeHammerMisses.map((miss) {
             return Positioned(
               left: miss.position.dx * cellSize,
@@ -278,7 +435,7 @@ class BoardWidget extends ConsumerWidget {
                 child: TweenAnimationBuilder<double>(
                   key: ValueKey(miss.id),
                   tween: Tween(begin: 1.0, end: 0.0),
-                  duration: const Duration(milliseconds: 200), // <-- Синхронизировано с контроллером
+                  duration: const Duration(milliseconds: 200),
                   builder: (context, value, child) {
                     return Center(
                       child: Container(
@@ -287,10 +444,10 @@ class BoardWidget extends ConsumerWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: Colors.white.withOpacity(value),
+                            color: Colors.white.withValues(alpha: value),
                             width: 2,
                           ),
-                          color: Colors.white.withOpacity(value * 0.2),
+                          color: Colors.white.withValues(alpha: value * 0.2),
                         ),
                       ),
                     );
@@ -300,6 +457,7 @@ class BoardWidget extends ConsumerWidget {
             );
           }),
 
+          // 9. HAMMER OVERLAY
           if (gameState.isHammerActive)
             Positioned.fill(
               child: GestureDetector(
@@ -311,7 +469,7 @@ class BoardWidget extends ConsumerWidget {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.redAccent.withOpacity(0.15),
+                    color: Colors.redAccent.withValues(alpha: 0.15),
                     border: Border.all(color: Colors.redAccent, width: 4),
                     borderRadius: BorderRadius.circular(AppConstants.radiusL),
                   ),
@@ -322,6 +480,61 @@ class BoardWidget extends ConsumerWidget {
       ),
     );
   }
+}
+
+// --- CUSTOM PAINTERS ---
+
+// 1. Lightning Painter for the Rift
+class LightningPainter extends CustomPainter {
+  final bool isVertical;
+  final double pulse;
+
+  LightningPainter({required this.isVertical, required this.pulse});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (pulse <= 0.01) return;
+
+    for (int i = 0; i < 3; i++) {
+      final paint = Paint()
+        ..color = i == 0 ? Colors.white : Colors.cyanAccent.withValues(alpha: 0.5)
+        ..strokeWidth = i == 0 ? 2.0 : 6.0
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round;
+
+      if (i == 0) {
+        paint.maskFilter = const MaskFilter.blur(BlurStyle.normal, 5.0);
+      }
+
+      final path = Path();
+      final random = Random();
+
+      if (isVertical) {
+        path.moveTo(size.width / 2, 0);
+        double currentX = size.width / 2;
+
+        for (double y = 0; y <= size.height; y += 20) {
+          double offset = (random.nextDouble() - 0.5) * 15;
+          currentX = (size.width / 2) + offset;
+          path.lineTo(currentX, y);
+        }
+      } else {
+        path.moveTo(0, size.height / 2);
+        double currentY = size.height / 2;
+
+        for (double x = 0; x <= size.width; x += 20) {
+          double offset = (random.nextDouble() - 0.5) * 15;
+          currentY = (size.height / 2) + offset;
+          path.lineTo(x, currentY);
+        }
+      }
+
+      canvas.drawPath(path, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant LightningPainter oldDelegate) => true;
 }
 
 double _fract(double x) => x - x.floorToDouble();
@@ -362,7 +575,7 @@ class RowSparkPainter extends CustomPainter {
     final halfCell = cellSize / 2;
 
     final glowPaint = Paint()
-      ..color = Colors.red.withOpacity(0.8)
+      ..color = Colors.red.withValues(alpha: 0.8)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 10.0
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8.0);
@@ -431,7 +644,7 @@ class RowSparkPainter extends CustomPainter {
         double pSize = 2.5 * (1.0 - age);
 
         Paint pPaint = Paint()
-          ..color = (r3 > 0.5 ? Colors.orangeAccent : Colors.yellow).withOpacity(alpha)
+          ..color = (r3 > 0.5 ? Colors.orangeAccent : Colors.yellow).withValues(alpha: alpha)
           ..strokeWidth = pSize
           ..strokeCap = StrokeCap.round;
 
@@ -483,7 +696,7 @@ class ColSparkPainter extends CustomPainter {
     final halfCell = cellSize / 2;
 
     final glowPaint = Paint()
-      ..color = Colors.red.withOpacity(0.8)
+      ..color = Colors.red.withValues(alpha: 0.8)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 10.0
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8.0);
@@ -552,7 +765,7 @@ class ColSparkPainter extends CustomPainter {
         double pSize = 2.5 * (1.0 - age);
 
         Paint pPaint = Paint()
-          ..color = (r3 > 0.5 ? Colors.orangeAccent : Colors.yellow).withOpacity(alpha)
+          ..color = (r3 > 0.5 ? Colors.orangeAccent : Colors.yellow).withValues(alpha: alpha)
           ..strokeWidth = pSize
           ..strokeCap = StrokeCap.round;
 
