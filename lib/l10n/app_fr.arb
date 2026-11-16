@@ -1,0 +1,103 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Gravity Rift: Block Puzzle Fun",
+  "scoreLabel": "SCORE",
+  "gameOverTitle": "Super partie !",
+  "gameOverBody": "Il n'y a plus de place pour de nouveaux blocs.",
+  "yourScore": "Votre score : {score}",
+  "@yourScore": {
+    "placeholders": {
+      "score": { "type": "Object" }
+    }
+  },
+  "playAgain": "Rejouer",
+  "classicMode": "MODE CLASSIQUE",
+  "classicModeSub": "Puzzle de blocs sans fin. Battez votre record.",
+  "treasureMode": "CHASSE AU TRÉSOR",
+  "treasureModeSub": "Récupérez des cristaux rares.",
+  "playFreeOffline": "Jouer gratuitement hors ligne",
+  "comingSoon": "Bientôt disponible !",
+  "moreGames": "Plus de jeux",
+  "myGamesTitle": "Mes jeux",
+  "playNow": "Jouer maintenant",
+  "sound": "Son",
+  "continueGame": "CONTINUER",
+  "newGame": "NOUVELLE PARTIE",
+  "saveAndExit": "ENREGISTRER ET QUITTER",
+  "exitWithoutSaving": "QUITTER SANS ENREGISTRER",
+  "pauseTitle": "EN PAUSE",
+  "resume": "REPRENDRE",
+  "restart": "REDÉMARRER",
+  "soundOn": "SON : ACTIVÉ",
+  "soundOff": "SON : DÉSACTIVÉ",
+  "vibrationOn": "VIBRATION : ACTIVÉE",
+  "vibrationOff": "VIBRATION : DÉSACTIVÉE",
+  "nothingToUndo": "Rien à annuler pour l'instant !",
+  "outOfUndos": "Plus d'annulations disponibles !",
+  "adUnavailableUndo": "Publicité indisponible. Voici votre annulation !",
+  "outOfMovesTitle": "Plus de coups !",
+  "outOfMovesBody": "Nous vous avons préparé un bonus de secours. Utilisez un bonus pour continuer.",
+  "openBonuses": "OUVRIR LES BONUS",
+  "endSession": "TERMINER LA SESSION",
+  "sessionEnded": "Votre session est terminée.",
+  "startNewGame": "COMMENCER UNE NOUVELLE PARTIE",
+  "outOfSpace": "FIN DE PARTIE",
+  "hexGameTitle": "Tic-tac-toe hexagonal : amusement et stratégie",
+  "hexGameDesc": "Tic-tac-toe hexagonal. Jouez hors ligne contre un bot ou un ami. Analyse de partie. Tournois.",
+  "tttGameTitle": "Tic-tac-toe : Fun & Strategy",
+  "tttGameDesc": "Contre un bot ou un ami, analyse approfondie, gameplay adaptatif. Tic-tac-toe — mais tactique.",
+  "comingSoonTitle": "Bientôt disponible",
+  "comingSoonDesc": "Restez à l'écoute pour notre prochain casse-tête !",
+  "resumeYourGame": "Reprendre votre partie",
+  "startFresh": "Commencer une nouvelle partie",
+  "topScores": "MEILLEURS SCORES",
+  "noRecordsYet": "Aucun record pour l'instant. Jouez une partie !",
+  "close": "FERMER",
+  "today": "Aujourd’hui",
+  "yesterday": "Hier",
+  "daysAgo": "Il y a {days} jours",
+  "@daysAgo": {
+    "placeholders": {
+      "days": { "type": "Object" }
+    }
+  },
+  "veryLongAgo": "Il y a très longtemps",
+  "bonusesTitle": "BONUS",
+  "rescueBonusesTitle": "BONUS DE SAUVETAGE",
+  "selectBonusToSave": "Sélectionnez un bonus pour sauvegarder votre partie",
+  "bonusSurprise": "Surprise",
+  "bonusHammer": "Marteau",
+  "bonusNewBlocks": "Nouveaux blocs",
+  "bonusHint": "Indice",
+  "useBonus": "UTILISER ({count})",
+  "@useBonus": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "adButton": "PUBLICITÉ",
+  "limitLabel": "LIMITE",
+  "adUnavailableBonus": "Publicité indisponible. Voici votre bonus !",
+  "noMovesFound": "Aucun coup trouvé ! Utilisez un autre bonus.",
+  "perfectClear": "PARFAITEMENT TERMINÉ !",
+  "missLabel": "ÉCHEC +{amount}",
+  "@missLabel": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "crossMultiplier": "CROSS x10 !",
+  "comboMultiplier": "COMBO x{level} !",
+  "@comboMultiplier": {
+    "placeholders": {
+      "level": { "type": "int" }
+    }
+  },
+  "languageTitle": "Langue",
+  "infoTitle": "Informations",
+  "howToPlay": "Comment jouer",
+  "privacyPolicy": "Politique de confidentialité",
+  "termsOfService": "Conditions d'utilisation",
+  "licenses": "Licences",
+  "aboutGame": "À propos du jeu"
+}

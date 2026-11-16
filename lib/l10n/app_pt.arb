@@ -1,0 +1,103 @@
+{
+  "@@locale": "pt",
+  "appTitle": "Gravity Rift: Block Puzzle Fun",
+  "scoreLabel": "PONTUAÇÃO",
+  "gameOverTitle": "Excelente jogo!",
+  "gameOverBody": "Não há mais espaço para novos blocos.",
+  "yourScore": "A tua pontuação: {score}",
+  "@yourScore": {
+    "placeholders": {
+      "score": { "type": "Object" }
+    }
+  },
+  "playAgain": "Jogar de novo",
+  "classicMode": "MODO CLÁSSICO",
+  "classicModeSub": "Quebra-cabeças de blocos sem fim. Bate a tua pontuação.",
+  "treasureMode": "CAÇA AO TESOURO",
+  "treasureModeSub": "Recolhe cristais raros.",
+  "playFreeOffline": "Jogar offline gratuitamente",
+  "comingSoon": "Em breve!",
+  "moreGames": "Mais jogos",
+  "myGamesTitle": "Os meus jogos",
+  "playNow": "Jogar agora",
+  "sound": "Som",
+  "continueGame": "CONTINUAR",
+  "newGame": "NOVO JOGO",
+  "saveAndExit": "GUARDAR E SAIR",
+  "exitWithoutSaving": "SAIR SEM GUARDAR",
+  "pauseTitle": "EM PAUSA",
+  "resume": "RETOMAR",
+  "restart": "REINICIAR",
+  "soundOn": "SOM: LIGADO",
+  "soundOff": "SOM: DESLIGADO",
+  "vibrationOn": "VIBRAÇÃO: LIGADA",
+  "vibrationOff": "VIBRAÇÃO: DESLIGADO",
+  "nothingToUndo": "Ainda não há nada para desfazer!",
+  "outOfUndos": "Sem opções de desfazer!",
+  "adUnavailableUndo": "Anúncio indisponível. Aqui está a tua opção de desfazer!",
+  "outOfMovesTitle": "Sem jogadas!",
+  "outOfMovesBody": "Preparámos um bónus de resgate para ti. Usa um bónus para continuar.",
+  "openBonuses": "ABRIR BÓNUS",
+  "endSession": "TERMINAR SESSÃO",
+  "sessionEnded": "A tua sessão terminou.",
+  "startNewGame": "INICIAR NOVO JOGO",
+  "outOfSpace": "FIM DO JOGO",
+  "hexGameTitle": "Jogo da Velha Hexagonal: Diversão e Estratégia",
+  "hexGameDesc": "Jogo da Velha Hexagonal. Joga offline contra um bot ou um amigo. Análise do jogo. Torneios.",
+  "tttGameTitle": "Jogo da Velha: Diversão e Estratégia",
+  "tttGameDesc": "Bot ou amigo, análise aprofundada, jogabilidade adaptativa. Jogo da Velha — mas tático.",
+  "comingSoonTitle": "Em breve",
+  "comingSoonDesc": "Fique atento ao nosso próximo quebra-cabeças!",
+  "resumeYourGame": "Retomar o jogo",
+  "startFresh": "Começar do zero",
+  "topScores": "MELHORES RESULTADOS",
+  "noRecordsYet": "Ainda não há registos. Joga uma partida!",
+  "close": "FECHAR",
+  "today": "Hoje",
+  "yesterday": "Ontem",
+  "daysAgo": "{days} dias atrás",
+  "@daysAgo": {
+    "placeholders": {
+      "days": { "type": "Object" }
+    }
+  },
+  "veryLongAgo": "Há muito tempo",
+  "bonusesTitle": "BÓNUS",
+  "rescueBonusesTitle": "BÓNUS DE RESGATE",
+  "selectBonusToSave": "Seleciona um bónus para guardares o teu jogo",
+  "bonusSurprise": "Surpresa",
+  "bonusHammer": "Martelo",
+  "bonusNewBlocks": "Novos blocos",
+  "bonusHint": "Dica",
+  "useBonus": "USAR ({count})",
+  "@useBonus": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "adButton": "ANÚNCIO",
+  "limitLabel": "LIMITE",
+  "adUnavailableBonus": "Anúncio indisponível. Aqui está o teu bónus!",
+  "noMovesFound": "Não foram encontradas jogadas! Usa outro bónus.",
+  "perfectClear": "JOGO PERFEITO!",
+  "missLabel": "ERRO +{amount}",
+  "@missLabel": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "crossMultiplier": "CRUZ x10!",
+  "comboMultiplier": "COMBO x{level}!",
+  "@comboMultiplier": {
+    "placeholders": {
+      "level": { "type": "int" }
+    }
+  },
+  "languageTitle": "Idioma",
+  "infoTitle": "Informações",
+  "howToPlay": "Como jogar",
+  "privacyPolicy": "Política de Privacidade",
+  "termsOfService": "Termos de Serviço",
+  "licenses": "Licenças",
+  "aboutGame": "Sobre o jogo"
+}

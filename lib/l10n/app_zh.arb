@@ -1,0 +1,103 @@
+{
+  "@@locale": "zh",
+  "appTitle": "重力裂隙：方块解谜乐趣",
+  "scoreLabel": "得分",
+  "gameOverTitle": "玩得真棒！",
+  "gameOverBody": "没有空间放置新方块了。",
+  "yourScore": "您的得分：{score}",
+  "@yourScore": {
+    "placeholders": {
+      "score": { "type": "Object" }
+    }
+  },
+  "playAgain": "再次游玩",
+  "classicMode": "经典模式",
+  "classicModeSub": "无尽方块解谜。挑战自己的最高分。",
+  "treasureMode": "寻宝模式",
+  "treasureModeSub": "收集稀有水晶。",
+  "playFreeOffline": "免费离线游玩",
+  "comingSoon": "即将上线！",
+  "moreGames": "更多游戏",
+  "myGamesTitle": "我的游戏",
+  "playNow": "立即游玩",
+  "sound": "声音",
+  "continueGame": "继续游戏",
+  "newGame": "新游戏",
+  "saveAndExit": "保存并退出",
+  "exitWithoutSaving": "不保存直接退出",
+  "pauseTitle": "暂停",
+  "resume": "继续",
+  "restart": "重新开始",
+  "soundOn": "声音：开",
+  "soundOff": "声音：关",
+  "vibrationOn": "振动：开",
+  "vibrationOff": "振动：关闭",
+  "nothingToUndo": "暂无可撤销的操作！",
+  "outOfUndos": "撤销次数用尽！",
+  "adUnavailableUndo": "广告不可用。请使用您的撤销机会！",
+  "outOfMovesTitle": "步数用尽！",
+  "outOfMovesBody": "我们为您准备了救援奖励。使用奖励继续游戏。",
+  "openBonuses": "打开奖励",
+  "endSession": "结束本局",
+  "sessionEnded": "您的本局已结束。",
+  "startNewGame": "开始新游戏",
+  "outOfSpace": "游戏结束",
+  "hexGameTitle": "六边形井字棋：趣味与策略",
+  "hexGameDesc": "六边形井字棋。离线对战机器人或好友。游戏分析。锦标赛。",
+  "tttGameTitle": "井字棋：趣味与策略",
+  "tttGameDesc": "对战机器人或好友，深度分析，自适应玩法。井字棋——但更具战术性。",
+  "comingSoonTitle": "即将上线",
+  "comingSoonDesc": "敬请期待我们的下一款益智游戏！",
+  "resumeYourGame": "继续游戏",
+  "startFresh": "重新开始",
+  "topScores": "最高分榜",
+  "noRecordsYet": "暂无记录。快来玩一局吧！",
+  "close": "关闭",
+  "today": "今天",
+  "yesterday": "昨天",
+  "daysAgo": "{days} 天前",
+  "@daysAgo": {
+    "placeholders": {
+      "days": { "type": "Object" }
+    }
+  },
+  "veryLongAgo": "很久以前",
+  "bonusesTitle": "奖励",
+  "rescueBonusesTitle": "救援奖励",
+  "selectBonusToSave": "选择一个奖励来保存游戏进度",
+  "bonusSurprise": "惊喜",
+  "bonusHammer": "锤子",
+  "bonusNewBlocks": "新方块",
+  "bonusHint": "提示",
+  "useBonus": "使用 ({count})",
+  "@useBonus": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "adButton": "广告",
+  "limitLabel": "限制",
+  "adUnavailableBonus": "广告不可用。这是你的奖励！",
+  "noMovesFound": "未找到可操作步数！请使用其他奖励。",
+  "perfectClear": "完美通关！",
+  "missLabel": "失误 +{amount}",
+  "@missLabel": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "crossMultiplier": "连线 x10！",
+  "comboMultiplier": "连击 x{level}！",
+  "@comboMultiplier": {
+    "placeholders": {
+      "level": { "type": "int" }
+    }
+  },
+  "languageTitle": "语言",
+  "infoTitle": "信息",
+  "howToPlay": "游戏玩法",
+  "privacyPolicy": "隐私政策",
+  "termsOfService": "服务条款",
+  "licenses": "许可协议",
+  "aboutGame": "关于游戏"
+}

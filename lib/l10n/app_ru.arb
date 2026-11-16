@@ -1,6 +1,5 @@
 {
   "@@locale": "ru",
-
   "appTitle": "Gravity Rift: Block Puzzle Fun",
   "scoreLabel": "ОЧКИ",
   "gameOverTitle": "Отличная игра!",
@@ -43,17 +42,14 @@
   "sessionEnded": "Ваша сессия завершена.",
   "startNewGame": "НАЧАТЬ НОВУЮ ИГРУ",
   "outOfSpace": "ИГРА ОКОНЧЕНА",
-
   "hexGameTitle": "Hex Крестики-нолики: Веселье и Стратегия",
   "hexGameDesc": "Hex Крестики-нолики. Играйте офлайн против Бота или друга. Анализ игр. Турниры.",
   "tttGameTitle": "Крестики-нолики: Веселье и Стратегия",
   "tttGameDesc": "Бот или друг, глубокий анализ, адаптивный геймплей. Крестики-нолики — но тактически.",
   "comingSoonTitle": "Скоро",
   "comingSoonDesc": "Следите за нашими новыми головоломками!",
-
   "resumeYourGame": "Продолжить игру",
   "startFresh": "Начать заново",
-
   "topScores": "РЕКОРДЫ",
   "noRecordsYet": "Пока нет рекордов. Сыграйте!",
   "close": "ЗАКРЫТЬ",
@@ -66,7 +62,6 @@
     }
   },
   "veryLongAgo": "Очень давно",
-
   "bonusesTitle": "БОНУСЫ",
   "rescueBonusesTitle": "БОНУСЫ СПАСЕНИЯ",
   "selectBonusToSave": "Выберите бонус, чтобы спасти игру",
@@ -84,7 +79,6 @@
   "limitLabel": "ЛИМИТ",
   "adUnavailableBonus": "Реклама недоступна. Вот ваш бонус!",
   "noMovesFound": "Ходов не найдено! Используйте другой бонус.",
-
   "perfectClear": "ИДЕАЛЬНАЯ ОЧИСТКА!",
   "missLabel": "МИМО +{amount}",
   "@missLabel": {
@@ -99,7 +93,6 @@
       "level": { "type": "int" }
     }
   },
-
   "languageTitle": "Язык",
   "infoTitle": "Информация",
   "howToPlay": "Как играть",

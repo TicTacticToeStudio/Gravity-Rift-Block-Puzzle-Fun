@@ -1,0 +1,103 @@
+{
+  "@@locale": "id",
+  "appTitle": "Gravity Rift: Keseruan Teka-teki Balok",
+  "scoreLabel": "SKOR",
+  "gameOverTitle": "Permainan yang Seru!",
+  "gameOverBody": "Tidak ada ruang lagi untuk balok baru.",
+  "yourScore": "Skor Anda: {score}",
+  "@yourScore": {
+    "placeholders": {
+      "score": { "type": "Object" }
+    }
+  },
+  "playAgain": "Main Lagi",
+  "classicMode": "MODUS KLASIK",
+  "classicModeSub": "Teka-teki balok tanpa akhir. Kalahkan skor Anda sendiri.",
+  "treasureMode": "PERBURUAN HARTA KARUN",
+  "treasureModeSub": "Kumpulkan kristal langka.",
+  "playFreeOffline": "Mainkan secara gratis tanpa koneksi internet",
+  "comingSoon": "Segera Hadir!",
+  "moreGames": "Game Lainnya",
+  "myGamesTitle": "Game Saya",
+  "playNow": "Main Sekarang",
+  "sound": "Suara",
+  "continueGame": "LANJUTKAN",
+  "newGame": "PERMAINAN BARU",
+  "saveAndExit": "SIMPAN & KELUAR",
+  "exitWithoutSaving": "KELUAR TANPA MENYIMPAN",
+  "pauseTitle": "DIJEDA",
+  "resume": "LANJUTKAN",
+  "restart": "MULAI ULANG",
+  "soundOn": "SUARA: AKTIF",
+  "soundOff": "SUARA: NONAKTIF",
+  "vibrationOn": "GETARAN: AKTIF",
+  "vibrationOff": "GETARAN: MATI",
+  "nothingToUndo": "Belum ada yang bisa dibatalkan!",
+  "outOfUndos": "Tidak ada lagi opsi pembatalan!",
+  "adUnavailableUndo": "Iklan tidak tersedia. Ini opsi pembatalanmu!",
+  "outOfMovesTitle": "Tidak ada langkah lagi!",
+  "outOfMovesBody": "Kami telah menyiapkan bonus penyelamat untuk Anda. Gunakan bonus tersebut untuk melanjutkan.",
+  "openBonuses": "BUKA BONUS",
+  "endSession": "AKHIRI SESI",
+  "sessionEnded": "Sesi Anda telah berakhir.",
+  "startNewGame": "MULAI PERMAINAN BARU",
+  "outOfSpace": "GAME OVER",
+  "hexGameTitle": "Hex Tic Tac Toe: Seru & Strategis",
+  "hexGameDesc": "Hex Tic Tac Toe. Mainkan secara offline melawan Bot atau teman. Analisis permainan. Turnamen.",
+  "tttGameTitle": "Tic Tac Toe: Seru & Strategi",
+  "tttGameDesc": "Melawan Bot atau teman, analisis mendalam, gameplay adaptif. Tic Tac Toe — tapi taktis.",
+  "comingSoonTitle": "Segera Hadir",
+  "comingSoonDesc": "Nantikan teka-teki kami berikutnya!",
+  "resumeYourGame": "Lanjutkan permainanmu",
+  "startFresh": "Mulai dari awal",
+  "topScores": "SKOR TERATAS",
+  "noRecordsYet": "Belum ada rekor. Mainkan permainannya!",
+  "close": "TUTUP",
+  "today": "Hari ini",
+  "yesterday": "Kemarin",
+  "daysAgo": "{days} hari yang lalu",
+  "@daysAgo": {
+    "placeholders": {
+      "days": { "type": "Object" }
+    }
+  },
+  "veryLongAgo": "Sudah sangat lama",
+  "bonusesTitle": "BONUS",
+  "rescueBonusesTitle": "BONUS PENYELAMATAN",
+  "selectBonusToSave": "Pilih bonus untuk menyimpan permainanmu",
+  "bonusSurprise": "Kejutan",
+  "bonusHammer": "Palu",
+  "bonusNewBlocks": "Blok Baru",
+  "bonusHint": "Petunjuk",
+  "useBonus": "GUNAKAN ({count})",
+  "@useBonus": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "adButton": "IKLAN",
+  "limitLabel": "BATAS",
+  "adUnavailableBonus": "Iklan tidak tersedia. Ini bonusmu!",
+  "noMovesFound": "Tidak ditemukan langkah! Gunakan bonus lain.",
+  "perfectClear": "SELESAI SEMPURNA!",
+  "missLabel": "GAGAL +{amount}",
+  "@missLabel": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "crossMultiplier": "CROSS x10!",
+  "comboMultiplier": "COMBO x{level}!",
+  "@comboMultiplier": {
+    "placeholders": {
+      "level": { "type": "int" }
+    }
+  },
+  "languageTitle": "Bahasa",
+  "infoTitle": "Informasi",
+  "howToPlay": "Cara Bermain",
+  "privacyPolicy": "Kebijakan Privasi",
+  "termsOfService": "Ketentuan Layanan",
+  "licenses": "Lisensi",
+  "aboutGame": "Tentang Game"
+}

@@ -1,6 +1,5 @@
 {
   "@@locale": "en",
-
   "appTitle": "Gravity Rift: Block Puzzle Fun",
   "scoreLabel": "SCORE",
   "gameOverTitle": "Great Game!",
@@ -43,17 +42,14 @@
   "sessionEnded": "Your session has ended.",
   "startNewGame": "START NEW GAME",
   "outOfSpace": "GAME OVER",
-
   "hexGameTitle": "Hex Tic Tac Toe Fun & Strategy",
   "hexGameDesc": "Hex Tic Tac Toe. Play offline vs Bot or friend. Game analysis. Tournaments.",
   "tttGameTitle": "Tic Tac Toe: Fun & Strategy",
   "tttGameDesc": "Bot or friend, deep analysis, adaptive gameplay. Tic Tac Toe — but tactical.",
   "comingSoonTitle": "Coming Soon",
   "comingSoonDesc": "Stay tuned for our next puzzle!",
-
   "resumeYourGame": "Resume your game",
   "startFresh": "Start fresh",
-
   "topScores": "TOP SCORES",
   "noRecordsYet": "No records yet. Play a game!",
   "close": "CLOSE",
@@ -66,7 +62,6 @@
     }
   },
   "veryLongAgo": "Very long ago",
-
   "bonusesTitle": "BONUSES",
   "rescueBonusesTitle": "RESCUE BONUSES",
   "selectBonusToSave": "Select a bonus to save your game",
@@ -84,7 +79,6 @@
   "limitLabel": "LIMIT",
   "adUnavailableBonus": "Ad unavailable. Here is your bonus!",
   "noMovesFound": "No moves found! Use another bonus.",
-
   "perfectClear": "PERFECT CLEAR!",
   "missLabel": "MISS +{amount}",
   "@missLabel": {
@@ -99,7 +93,6 @@
       "level": { "type": "int" }
     }
   },
-
   "languageTitle": "Language",
   "infoTitle": "Information",
   "howToPlay": "How to Play",

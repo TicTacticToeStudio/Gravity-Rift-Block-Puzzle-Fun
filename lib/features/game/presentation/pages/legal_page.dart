@@ -1,6 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:yaml/yaml.dart';
 import 'package:energy_blast/core/constants/app_constants.dart';
 import 'package:energy_blast/core/theme/app_colors.dart';
@@ -37,7 +39,6 @@ class _LegalPageState extends ConsumerState<LegalPage> {
     try {
       final String yamlString = await rootBundle.loadString(widget.assetPath);
 
-      // Fix: Check if the widget is still mounted after the async gap
       if (!mounted) return;
 
       final Map yamlMap = loadYaml(yamlString);
@@ -62,6 +63,56 @@ class _LegalPageState extends ConsumerState<LegalPage> {
         });
       }
     }
+  }
+
+  // This function builds text with clickable links
+  Widget _buildTextWithLinks(String text) {
+    // Regex to find URLs
+    final RegExp urlRegExp = RegExp(r'(https?:\/\/[^\s]+)');
+    final List<InlineSpan> spans = [];
+    int start = 0;
+    final matches = urlRegExp.allMatches(text);
+
+    for (final match in matches) {
+      if (match.start > start) {
+        spans.add(TextSpan(text: text.substring(start, match.start)));
+      }
+
+      final url = match.group(0)!.trim(); // <-- Добавлен trim()
+      spans.add(
+        TextSpan(
+          text: url,
+          style: const TextStyle(
+            color: AppColors.primary,
+            decoration: TextDecoration.underline,
+          ),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () async {
+              final uri = Uri.parse(url);
+              // Changed to platformDefault for better compatibility
+              if (!await launchUrl(uri, mode: LaunchMode.platformDefault)) {
+                debugPrint('Could not launch $url');
+              }
+            },
+        ),
+      );
+      start = match.end;
+    }
+
+    if (start < text.length) {
+      spans.add(TextSpan(text: text.substring(start)));
+    }
+
+    return RichText(
+      text: TextSpan(
+        style: const TextStyle(
+          color: AppColors.textPrimary,
+          fontSize: 16,
+          height: 1.5,
+        ),
+        children: spans,
+      ),
+    );
   }
 
   @override
@@ -100,14 +151,8 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                         borderRadius: BorderRadius.circular(AppConstants.radiusM),
                         border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
                       ),
-                      child: SelectableText(
-                        _content,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 16,
-                          height: 1.5,
-                        ),
-                      ),
+                      // Using the custom link builder here
+                      child: _buildTextWithLinks(_content),
                     ),
                   ),
                 ),

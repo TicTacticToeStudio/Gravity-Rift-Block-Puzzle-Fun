@@ -1,0 +1,103 @@
+{
+  "@@locale": "uk",
+  "appTitle": "Gravity Rift: Block Puzzle Fun",
+  "scoreLabel": "РЕЗУЛЬТАТ",
+  "gameOverTitle": "Чудова гра!",
+  "gameOverBody": "Не залишилося місця для нових блоків.",
+  "yourScore": "Ваш результат: {score}",
+  "@yourScore": {
+    "placeholders": {
+      "score": { "type": "Object" }
+    }
+  },
+  "playAgain": "Зіграти ще раз",
+  "classicMode": "КЛАСИЧНИЙ РЕЖИМ",
+  "classicModeSub": "Безкінечна головоломка з блоками. Побийте свій рекорд.",
+  "treasureMode": "ПОШУК СКАРБІВ",
+  "treasureModeSub": "Збирайте рідкісні кристали.",
+  "playFreeOffline": "Грати безкоштовно в автономному режимі",
+  "comingSoon": "Скоро з'явиться!",
+  "moreGames": "Більше ігор",
+  "myGamesTitle": "Мої ігри",
+  "playNow": "Грати зараз",
+  "sound": "Звук",
+  "continueGame": "ПРОДОВЖИТИ",
+  "newGame": "НОВА ГРА",
+  "saveAndExit": "ЗБЕРЕГТИ ТА ВИЙТИ",
+  "exitWithoutSaving": "ВИЙТИ БЕЗ ЗБЕРЕЖЕННЯ",
+  "pauseTitle": "ПАУЗА",
+  "resume": "ПРОДОВЖИТИ",
+  "restart": "ПЕРЕЗАПУСТИТИ",
+  "soundOn": "ЗВУК: УВІМКНЕНО",
+  "soundOff": "ЗВУК: ВИМКНЕНО",
+  "vibrationOn": "ВІБРАЦІЯ: УВІМКНЕНО",
+  "vibrationOff": "ВІБРАЦІЯ: ВИМКНЕНО",
+  "nothingToUndo": "Поки що немає чого скасувати!",
+  "outOfUndos": "Немає більше можливостей скасування!",
+  "adUnavailableUndo": "Реклама недоступна. Ось ваша можливість скасування!",
+  "outOfMovesTitle": "Немає більше ходів!",
+  "outOfMovesBody": "Ми підготували для вас рятувальний бонус. Використайте бонус, щоб продовжити.",
+  "openBonuses": "ВІДКРИТИ БОНУСИ",
+  "endSession": "ЗАВЕРШИТИ СЕСІЮ",
+  "sessionEnded": "Ваша сесія завершилася.",
+  "startNewGame": "ПОЧАТИ НОВУ ГРУ",
+  "outOfSpace": "ГРА ЗАВЕРШЕНА",
+  "hexGameTitle": "Hex Tic Tac Toe: Розвага та стратегія",
+  "hexGameDesc": "Hex Tic Tac Toe. Грайте офлайн проти бота або друга. Аналіз гри. Турніри.",
+  "tttGameTitle": "Хрестики-нулики: розвага та стратегія",
+  "tttGameDesc": "Бот або друг, глибокий аналіз, адаптивний ігровий процес. Хрестики-нулики — але тактичні.",
+  "comingSoonTitle": "Скоро",
+  "comingSoonDesc": "Слідкуйте за новинами про нашу наступну головоломку!",
+  "resumeYourGame": "Продовжити гру",
+  "startFresh": "Почати з нуля",
+  "topScores": "РЕКОРДИ",
+  "noRecordsYet": "Рекордів ще немає. Пограйте!",
+  "close": "ЗАКРИТИ",
+  "today": "Сьогодні",
+  "yesterday": "Вчора",
+  "daysAgo": "{days} днів тому",
+  "@daysAgo": {
+    "placeholders": {
+      "days": { "type": "Object" }
+    }
+  },
+  "veryLongAgo": "Дуже давно",
+  "bonusesTitle": "БОНУСИ",
+  "rescueBonusesTitle": "БОНУСИ РЯТУВАННЯ",
+  "selectBonusToSave": "Виберіть бонус, щоб зберегти гру",
+  "bonusSurprise": "Сюрприз",
+  "bonusHammer": "Молоток",
+  "bonusNewBlocks": "Нові блоки",
+  "bonusHint": "Підказка",
+  "useBonus": "ВИКОРИСТАТИ ({count})",
+  "@useBonus": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "adButton": "РЕКЛАМА",
+  "limitLabel": "ЛІМІТ",
+  "adUnavailableBonus": "Реклама недоступна. Ось ваш бонус!",
+  "noMovesFound": "Хідів не знайдено! Використайте інший бонус.",
+  "perfectClear": "ІДЕАЛЬНЕ ПРОХОДЖЕННЯ!",
+  "missLabel": "ПРОМАХ +{amount}",
+  "@missLabel": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "crossMultiplier": "КРОС x10!",
+  "comboMultiplier": "КОМБО x{level}!",
+  "@comboMultiplier": {
+    "placeholders": {
+      "level": { "type": "int" }
+    }
+  },
+  "languageTitle": "Мова",
+  "infoTitle": "Інформація",
+  "howToPlay": "Як грати",
+  "privacyPolicy": "Політика конфіденційності",
+  "termsOfService": "Умови надання послуг",
+  "licenses": "Ліцензії",
+  "aboutGame": "Про гру"
+}

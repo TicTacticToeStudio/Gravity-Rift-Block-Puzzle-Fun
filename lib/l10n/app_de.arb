@@ -1,0 +1,103 @@
+{
+  "@@locale": "de",
+  "appTitle": "Gravity Rift: Block Puzzle Fun",
+  "scoreLabel": "PUNKTESTAND",
+  "gameOverTitle": "Tolles Spiel!",
+  "gameOverBody": "Es ist kein Platz mehr für neue Blöcke.",
+  "yourScore": "Dein Punktestand: {score}",
+  "@yourScore": {
+    "placeholders": {
+      "score": { "type": "Object" }
+    }
+  },
+  "playAgain": "Noch einmal spielen",
+  "classicMode": "KLASSISCHER MODUS",
+  "classicModeSub": "Endloses Block-Puzzle. Übertriff deine Punktzahl.",
+  "treasureMode": "SCHATZSUCHE",
+  "treasureModeSub": "Sammle seltene Kristalle.",
+  "playFreeOffline": "Kostenlos offline spielen",
+  "comingSoon": "Demnächst verfügbar!",
+  "moreGames": "Weitere Spiele",
+  "myGamesTitle": "Meine Spiele",
+  "playNow": "Jetzt spielen",
+  "sound": "Sound",
+  "continueGame": "WEITERSPIELEN",
+  "newGame": "NEUES SPIEL",
+  "saveAndExit": "SPEICHERN & BEENDEN",
+  "exitWithoutSaving": "BEENDEN OHNE ZU SPEICHERN",
+  "pauseTitle": "PAUSE",
+  "resume": "WEITERSPIELEN",
+  "restart": "NEUSTART",
+  "soundOn": "TON: EIN",
+  "soundOff": "TON: AUS",
+  "vibrationOn": "VIBRATION: EIN",
+  "vibrationOff": "VIBRATION: AUS",
+  "nothingToUndo": "Noch nichts rückgängig zu machen!",
+  "outOfUndos": "Keine Rückgängig-Möglichkeiten mehr!",
+  "adUnavailableUndo": "Anzeige nicht verfügbar. Hier ist deine Rückgängig-Möglichkeit!",
+  "outOfMovesTitle": "Keine Züge mehr!",
+  "outOfMovesBody": "Wir haben einen Rettungsbonus für dich vorbereitet. Nutze einen Bonus, um weiterzuspielen.",
+  "openBonuses": "BONUSSE ÖFFNEN",
+  "endSession": "SITZUNG BEENDEN",
+  "sessionEnded": "Deine Sitzung ist beendet.",
+  "startNewGame": "NEUES SPIEL STARTEN",
+  "outOfSpace": "SPIEL VORBEI",
+  "hexGameTitle": "Hex Tic Tac Toe – Spaß & Strategie",
+  "hexGameDesc": "Hex Tic Tac Toe. Offline gegen den Bot oder einen Freund spielen. Spielanalyse. Turniere.",
+  "tttGameTitle": "Tic Tac Toe: Spaß & Strategie",
+  "tttGameDesc": "Gegen den Bot oder einen Freund, tiefgehende Analyse, anpassungsfähiges Gameplay. Tic Tac Toe – aber taktisch.",
+  "comingSoonTitle": "Demnächst",
+  "comingSoonDesc": "Seid gespannt auf unser nächstes Rätselspiel!",
+  "resumeYourGame": "Spiel fortsetzen",
+  "startFresh": "Neu starten",
+  "topScores": "TOP-ERGEBNISSE",
+  "noRecordsYet": "Noch keine Rekorde. Spiel eine Partie!",
+  "close": "SCHLIESSEN",
+  "today": "Heute",
+  "yesterday": "Gestern",
+  "daysAgo": "vor {days} Tagen",
+  "@daysAgo": {
+    "placeholders": {
+      "days": { "type": "Object" }
+    }
+  },
+  "veryLongAgo": "Vor sehr langer Zeit",
+  "bonusesTitle": "BONUSSE",
+  "rescueBonusesTitle": "RETTUNGSBONUSSE",
+  "selectBonusToSave": "Wähle einen Bonus aus, um dein Spiel zu speichern",
+  "bonusSurprise": "Überraschung",
+  "bonusHammer": "Hammer",
+  "bonusNewBlocks": "Neue Blöcke",
+  "bonusHint": "Hinweis",
+  "useBonus": "({count}) EINSETZEN",
+  "@useBonus": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "adButton": "WERBUNG",
+  "limitLabel": "LIMIT",
+  "adUnavailableBonus": "Werbung nicht verfügbar. Hier ist dein Bonus!",
+  "noMovesFound": "Keine Züge gefunden! Verwende einen anderen Bonus.",
+  "perfectClear": "PERFEKT GELÖST!",
+  "missLabel": "FEHLER +{amount}",
+  "@missLabel": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "crossMultiplier": "KREUZ x10!",
+  "comboMultiplier": "KOMBO x{level}!",
+  "@comboMultiplier": {
+    "placeholders": {
+      "level": { "type": "int" }
+    }
+  },
+  "languageTitle": "Sprache",
+  "infoTitle": "Informationen",
+  "howToPlay": "Spielanleitung",
+  "privacyPolicy": "Datenschutzerklärung",
+  "termsOfService": "Nutzungsbedingungen",
+  "licenses": "Lizenzen",
+  "aboutGame": "Über das Spiel"
+}

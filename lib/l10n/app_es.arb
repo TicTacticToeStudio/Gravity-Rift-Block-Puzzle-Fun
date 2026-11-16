@@ -1,0 +1,103 @@
+{
+  "@@locale": "es",
+  "appTitle": "Gravity Rift: Block Puzzle Fun",
+  "scoreLabel": "PUNTUACIÓN",
+  "gameOverTitle": "¡Gran partida!",
+  "gameOverBody": "No queda espacio para nuevos bloques.",
+  "yourScore": "Tu puntuación: {score}",
+  "@yourScore": {
+    "placeholders": {
+      "score": { "type": "Object" }
+    }
+  },
+  "playAgain": "Jugar de nuevo",
+  "classicMode": "MODO CLÁSICO",
+  "classicModeSub": "Rompecabezas de bloques sin fin. Supera tu puntuación.",
+  "treasureMode": "BÚSQUEDA DEL TESORO",
+  "treasureModeSub": "Recoge cristales raros.",
+  "playFreeOffline": "Jugar gratis sin conexión",
+  "comingSoon": "¡Próximamente!",
+  "moreGames": "Más juegos",
+  "myGamesTitle": "Mis juegos",
+  "playNow": "Jugar ahora",
+  "sound": "Sonido",
+  "continueGame": "CONTINUAR",
+  "newGame": "NUEVA PARTIDA",
+  "saveAndExit": "GUARDAR Y SALIR",
+  "exitWithoutSaving": "SALIR SIN GUARDAR",
+  "pauseTitle": "EN PAUSA",
+  "resume": "REANUDAR",
+  "restart": "REINICIAR",
+  "soundOn": "SONIDO: ACTIVADO",
+  "soundOff": "SONIDO: DESACTIVADO",
+  "vibrationOn": "VIBRACIÓN: ACTIVADA",
+  "vibrationOff": "VIBRACIÓN: DESACTIVADA",
+  "nothingToUndo": "¡Aún no hay nada que deshacer!",
+  "outOfUndos": "¡No hay más acciones que deshacer!",
+  "adUnavailableUndo": "Anuncio no disponible. ¡Aquí tienes tu acción de deshacer!",
+  "outOfMovesTitle": "¡No hay más jugadas!",
+  "outOfMovesBody": "Te hemos preparado una bonificación de rescate. Usa una bonificación para continuar.",
+  "openBonuses": "ABRIR BONIFICACIONES",
+  "endSession": "FINALIZAR SESIÓN",
+  "sessionEnded": "Tu sesión ha finalizado.",
+  "startNewGame": "EMPEZAR NUEVA PARTIDA",
+  "outOfSpace": "FIN DE LA PARTIDA",
+  "hexGameTitle": "Tic-tac-toe hexagonal: diversión y estrategia",
+  "hexGameDesc": "Tic-tac-toe hexagonal. Juega sin conexión contra un bot o un amigo. Análisis de la partida. Torneos.",
+  "tttGameTitle": "Tres en raya: diversión y estrategia",
+  "tttGameDesc": "Contra el bot o un amigo, análisis en profundidad, jugabilidad adaptativa. Tres en raya, pero táctico.",
+  "comingSoonTitle": "Próximamente",
+  "comingSoonDesc": "¡Estad atentos a nuestro próximo rompecabezas!",
+  "resumeYourGame": "Reanuda tu partida",
+  "startFresh": "Empezar de cero",
+  "topScores": "MEJORES PUNTUACIONES",
+  "noRecordsYet": "Aún no hay registros. ¡Juega una partida!",
+  "close": "CERRAR",
+  "today": "Hoy",
+  "yesterday": "Ayer",
+  "daysAgo": "Hace {days} días",
+  "@daysAgo": {
+    "placeholders": {
+      "days": { "type": "Object" }
+    }
+  },
+  "veryLongAgo": "Hace mucho tiempo",
+  "bonusesTitle": "BONIFICACIONES",
+  "rescueBonusesTitle": "BONIFICACIONES DE RESCATE",
+  "selectBonusToSave": "Selecciona una bonificación para guardar tu partida",
+  "bonusSurprise": "Sorpresa",
+  "bonusHammer": "Martillo",
+  "bonusNewBlocks": "Nuevos bloques",
+  "bonusHint": "Pista",
+  "useBonus": "USAR ({count})",
+  "@useBonus": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "adButton": "ANUNCIO",
+  "limitLabel": "LÍMITE",
+  "adUnavailableBonus": "Anuncio no disponible. ¡Aquí tienes tu bonificación!",
+  "noMovesFound": "¡No se han encontrado movimientos! Usa otra bonificación.",
+  "perfectClear": "¡PURGA PERFECTA!",
+  "missLabel": "FALLO +{amount}",
+  "@missLabel": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "crossMultiplier": "CRUZ x10!",
+  "comboMultiplier": "COMBO x{level}!",
+  "@comboMultiplier": {
+    "placeholders": {
+      "level": { "type": "int" }
+    }
+  },
+  "languageTitle": "Idioma",
+  "infoTitle": "Información",
+  "howToPlay": "Cómo jugar",
+  "privacyPolicy": "Política de privacidad",
+  "termsOfService": "Condiciones de servicio",
+  "licenses": "Licencias",
+  "aboutGame": "Acerca del juego"
+}

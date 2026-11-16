@@ -1,43 +1,239 @@
 en: |
   Welcome to {appName}!
 
-  🎮 THE BASICS:
-  • Drag blocks from the tray onto the 8x8 board.
-  • Fill an entire row or column to clear it and score points.
+  🎮 HOW TO PLAY:
+  • Drag blocks from the tray onto the 8x8 grid.
+  • Fill entire rows or columns to clear them.
+  • Clear a row and a column simultaneously to form a CROSS and get a massive x10 multiplier!
+  • Wipe the entire board to earn a +5,000 Perfect Clear Bonus!
 
   🌌 THE GRAVITY RIFT:
-  The glowing cross in the center of the board is the Rift.
-  • When you clear a line, the Rift activates! The empty space creates a gravity pull that drags the remaining blocks along that row or column towards the glowing center cross.
-  • This constantly shifts the board, closing the gaps and setting up unexpected cascading combos.
-  • Clear a row and a column at the exact same time to form a CROSS. This triggers the ultimate Rift reaction and scores a massive x10 multiplier!
+  Clearing a row or column activates the central rifts, pulling outer blocks inward toward the middle of the board. Plan ahead to set up automatic cascades and chain multiple gravity clears in a single move!
 
-  🚀 BONUSES (BOOSTERS):
-  Stuck? Use your Bonuses to keep the combo alive!
-  • Hammer: Smash a single block.
-  • New Blocks: Shuffle the pieces in your tray.
-  • Surprise: Place a magical block with a random effect.
-  • Hint: Shows you the best possible move.
-
-  Pro Tip: Use the Gravity Rift to your advantage—clear lines to pull blocks together and set up your next big Cross Combo!
+  🛠️ 5 STRATEGIC BOOSTERS:
+  Stuck with no moves left? Use tactical power-ups to save your run:
+  • Surprise Block: Blasts surrounding tiles, spawns new crystals, or awards instant points.
+  • Hammer: Smash any single unwanted crystal.
+  • New Blocks (Shuffle): Refresh your tray with a new set of playable pieces.
+  • Smart Hint: Highlights the highest-scoring placement on the board.
+  • Undo: Rewind your last move and try a better strategy.
 
 ru: |
   Добро пожаловать в {appName}!
 
-  🎮 ОСНОВЫ:
-  • Перетаскивайте блоки из лотка на поле 8x8.
-  • Заполняйте целые ряды или столбцы для их очистки и получения очков.
+  🎮 КАК ИГРАТЬ:
+  • Перетаскивайте блоки с лотка на поле размером 8x8.
+  • Заполняйте целые строки или столбцы, чтобы очистить их.
+  • Очистите строку и столбец одновременно, чтобы сформировать КРЕСТ и получить огромный множитель x10!
+  • Очистите всё поле, чтобы получить бонус за идеальную очистку в размере +5 000!
 
-  🌌 ГРАВИТАЦИОННЫЙ РАЗЛОМ (GRAVITY RIFT):
-  Светящийся крест в центре поля — это и есть Разлом.
-  • Когда вы очищаете линию, Разлом активируется! Освободившееся пространство создает гравитацию, которая стягивает оставшиеся блоки вдоль этого ряда или столбца к светящемуся центральному кресту.
-  • Поле постоянно сдвигается, закрывая пустоты и создавая неожиданные каскадные комбо.
-  • Очистите ряд и столбец одновременно, чтобы создать КРЕСТ. Это вызывает мощнейшую реакцию Разлома и приносит огромный множитель x10!
+  🌌 ГРАВИТАЦИОННЫЙ РАЗЛОМ:
+  Очистка ряда или столбца активирует центральные разломы, притягивающие внешние блоки внутрь, к центру игрового поля. Планируйте заранее, чтобы создавать автоматические каскады и соединять несколько гравитационных очисток за один ход!
 
-  🚀 БОНУСЫ (BOOSTERS):
-  Зашли в тупик? Используйте Бонусы, чтобы продолжить!
-  • Молот: Разбивает один блок.
-  • Новые блоки: Меняет фигуры в вашем лотке.
-  • Сюрприз: Устанавливает магический блок со случайным эффектом.
-  • Подсказка: Показывает лучший возможный ход.
+  🛠️ 5 СТРАТЕГИЧЕСКИХ БОНУСОВ:
+  Застряли и не знаете, что делать? Используйте тактические бонусы, чтобы спасти игру:
+  • Сюрприз: взрывает окружающие плитки, создает новые кристаллы или начисляет мгновенные очки.
+  • Молот: разбивает любой один ненужный кристалл.
+  • Новые блоки (Перемешивание): обновляет ваш лоток новым набором игровых фигур.
+  • Умная подсказка: выделяет место на поле, дающее наибольшее количество очков.
+  • Отмена: отменяет последний ход и позволяет попробовать более удачную стратегию.
 
-  Совет: Используйте Гравитационный Разлом с умом — очищайте линии, чтобы стянуть блоки вместе и подготовить почву для следующего Крест-комбо!
+uk: |
+  Ласкаво просимо до {appName}!
+
+  🎮 ЯК ГРАТИ:
+  • Перетягуйте блоки з лотка на сітку розміром 8x8.
+  • Заповнюйте цілі рядки або стовпці, щоб їх очистити.
+  • Очистіть рядок і стовпець одночасно, щоб утворити ХРЕСТ і отримати величезний множник x10!
+  • Очистіть усе поле, щоб отримати бонус за ідеальне очищення +5 000!
+
+  🌌 ГРАВІТАЦІЙНИЙ РОЗЛОМ:
+  Очищення рядка або стовпця активує центральні розломи, які притягують зовнішні блоки до середини ігрового поля. Плануйте заздалегідь, щоб створити автоматичні каскади та поєднати кілька гравітаційних очищень одним ходом!
+
+  🛠️ 5 СТРАТЕГІЧНИХ БОНУСІВ:
+  Застрягли й не маєте більше ходів? Використовуйте тактичні бонуси, щоб врятувати гру:
+  • Блок-сюрприз: підриває сусідні клітинки, створює нові кристали або приносить миттєві очки.
+  • Молот: розбиває будь-який непотрібний кристал.
+  • Нові блоки (Перемішування): оновлює ваш лоток новим набором ігрових фігур.
+  • Розумна підказка: виділяє місце на ігровому полі, яке принесе найбільшу кількість очок.
+  • Скасувати: повертає останній хід назад і дає змогу спробувати кращу стратегію.
+
+de: |
+  Willkommen bei {appName}!
+
+  🎮 SPIELANLEITUNG:
+  • Ziehe Blöcke aus der Ablage auf das 8x8-Raster.
+  • Fülle ganze Reihen oder Spalten, um sie zu leeren.
+  • Entferne gleichzeitig eine Reihe und eine Spalte, um ein KREUZ zu bilden und einen riesigen x10-Multiplikator zu erhalten!
+  • Leere das gesamte Spielfeld, um einen Bonus von +5.000 für einen perfekten Clear zu erhalten!
+
+  🌌 DER SCHWERKRAFT-RISS:
+  Wenn du eine Reihe oder Spalte leerst, werden die zentralen Risse aktiviert, wodurch äußere Blöcke nach innen in Richtung der Mitte des Spielfelds gezogen werden. Plane voraus, um automatische Kaskaden auszulösen und mehrere Schwerkraft-Clears in einem einzigen Zug zu verketten!
+
+  🛠️ 5 STRATEGISCHE BOOSTER:
+  Du steckst fest und hast keine Züge mehr übrig? Nutze taktische Power-Ups, um deinen Durchlauf zu retten:
+  • Überraschungsblock: Sprengt umliegende Felder, erzeugt neue Kristalle oder bringt sofort Punkte.
+  • Hammer: Zerschlägt einen beliebigen unerwünschten Kristall.
+  • Neue Blöcke (Mischen): Erfrische deine Ablage mit einem neuen Satz spielbarer Teile.
+  • Intelligenter Hinweis: Markiert die Platzierung mit der höchsten Punktzahl auf dem Spielfeld.
+  • Rückgängig: Mach deinen letzten Zug rückgängig und versuche es mit einer besseren Strategie.
+
+es: |
+  ¡Bienvenido a {appName}!
+
+  🎮 CÓMO JUGAR:
+  • Arrastra los bloques desde la bandeja hasta la cuadrícula de 8x8.
+  • Llena filas o columnas completas para eliminarlas.
+  • ¡Elimina una fila y una columna a la vez para formar una CRUZ y conseguir un multiplicador enorme de x10!
+  • ¡Despeja todo el tablero para ganar una bonificación de +5.000 por limpieza perfecta!
+
+  🌌 LA GRIETA DE GRAVEDAD:
+  Al eliminar una fila o columna, se activan las grietas centrales, que atraen los bloques exteriores hacia el centro del tablero. ¡Planifica con antelación para crear cascadas automáticas y encadenar múltiples eliminaciones por gravedad en un solo movimiento!
+
+  🛠️ 5 POTENCIADORES ESTRATÉGICOS:
+  ¿Te has quedado atascado y no te quedan movimientos? Usa potenciadores tácticos para salvar tu partida:
+  • Bloque sorpresa: destruye las fichas circundantes, genera nuevos cristales o te otorga puntos al instante.
+  • Martillo: rompe cualquier cristal que no te haga falta.
+  • Nuevos bloques (barajar): renueva tu bandeja con un nuevo conjunto de piezas jugables.
+  • Pista inteligente: resalta la posición que más puntos te da en el tablero.
+  • Deshacer: retrocede tu último movimiento e intenta una estrategia mejor.
+
+fr: |
+  Bienvenue dans {appName} !
+
+  🎮 COMMENT JOUER :
+  • Faites glisser les blocs depuis la plateau vers la grille 8x8.
+  • Remplissez des lignes ou des colonnes entières pour les éliminer.
+  • Éliminez simultanément une ligne et une colonne pour former une CROIX et obtenir un multiplicateur énorme x10 !
+  • Videz tout le plateau pour gagner un bonus de « Perfect Clear » de +5 000 !
+
+  🌌 LA FAILLE DE GRAVITÉ :
+  Lorsque vous effacez une ligne ou une colonne, les failles centrales s’activent, attirant les blocs extérieurs vers le centre du plateau. Anticipez pour déclencher des cascades automatiques et enchaîner plusieurs effacements par gravité en un seul coup !
+
+  🛠️ 5 BOOSTERS STRATÉGIQUES :
+  Vous êtes bloqué et n’avez plus de coups à jouer ? Utilisez des bonus tactiques pour sauver votre partie :
+  • Bloc surprise : fait exploser les tuiles environnantes, génère de nouveaux cristaux ou vous rapporte des points instantanés.
+  • Marteau : détruit n’importe quel cristal indésirable.
+  • Nouveaux blocs (mélange) : renouvelez votre plateau avec un nouvel ensemble de pièces jouables.
+  • Astuce intelligente : met en évidence l’emplacement le plus rentable du plateau.
+  • Annuler : revenez en arrière sur votre dernier coup et essayez une meilleure stratégie.
+
+pt: |
+  Bem-vindo ao {appName}!
+
+  🎮 COMO JOGAR:
+  • Arraste os blocos da bandeja para a grelha de 8x8.
+  • Preencha linhas ou colunas inteiras para as eliminar.
+  • Elimine uma linha e uma coluna simultaneamente para formar uma CRUZ e ganhar um multiplicador enorme de x10!
+  • Limpe todo o tabuleiro para ganhar um bónus de limpeza perfeita de +5 000!
+
+  🌌 A FENDA GRAVITACIONAL:
+  Limpar uma linha ou coluna ativa as fendas centrais, puxando os blocos exteriores para o centro do tabuleiro. Planeia com antecedência para criar cascatas automáticas e encadear várias limpezas gravitacionais num único movimento!
+
+  🛠️ 5 POTENCIADORES ESTRATÉGICOS:
+  Ficaste sem jogadas? Usa os potenciadores táticos para salvar a tua jogada:
+  • Bloco Surpresa: destrói as peças circundantes, gera novos cristais ou concede pontos instantâneos.
+  • Martelo: destrói qualquer cristal indesejado.
+  • Novos Blocos (Baralhar): renova a tua bandeja com um novo conjunto de peças jogáveis.
+  • Dica Inteligente: destaca a posição com maior pontuação no tabuleiro.
+  • Desfazer: volta atrás na tua última jogada e tenta uma estratégia melhor.
+
+id: |
+  Selamat datang di {appName}!
+
+  🎮 CARA BERMAIN:
+  • Seret balok dari baki ke papan 8x8.
+  • Isi seluruh baris atau kolom untuk menghapusnya.
+  • Hapus satu baris dan satu kolom secara bersamaan untuk membentuk SALIB dan dapatkan pengganda x10 yang luar biasa!
+  • Hapus seluruh papan untuk mendapatkan Bonus Penyelesaian Sempurna +5.000!
+
+  🌌 CELAH GRAVITASI:
+  Menghapus satu baris atau kolom akan mengaktifkan celah-celah di tengah, menarik balok-balok di tepi ke arah tengah papan. Rencanakan langkahmu untuk memicu kaskade otomatis dan menggabungkan beberapa penghapusan gravitasi dalam satu gerakan!
+
+  🛠️ 5 PENINGKAT STRATEGIS:
+  Terjebak tanpa langkah yang tersisa? Gunakan power-up taktis untuk menyelamatkan permainanmu:
+  • Blok Kejutan: Meledakkan ubin di sekitarnya, menghasilkan kristal baru, atau memberikan poin instan.
+  • Palu: Hancurkan satu kristal yang tidak diinginkan.
+  • Blok Baru (Acak): Segarkan baki Anda dengan set potongan baru yang dapat dimainkan.
+  • Petunjuk Cerdas: Menyoroti penempatan dengan skor tertinggi di papan.
+  • Batal: Kembalikan langkah terakhir Anda dan coba strategi yang lebih baik.
+
+zh: |
+  欢迎来到 {appName}！
+
+  🎮 玩法说明：
+  • 将方块从托盘拖拽到 8x8 的棋盘上。
+  • 填满整行或整列即可消除。
+  • 同时消除一行和一列，形成“十字”图案，即可获得 10 倍的巨额乘数！
+  • 清空整个棋盘，即可获得 +5,000 的完美消除奖励！
+
+  🌌 重力裂隙：
+  清除一行或一列会激活中央裂隙，将外围方块向棋盘中心吸入。提前规划，设置自动连锁反应，在单一步骤中连续触发多次重力清除！
+
+  🛠️ 5 种战略助推器：
+  卡关无路可走？使用战术助推器来挽救你的游戏进程：
+  • 惊喜方块：炸毁周围的方块，生成新的水晶，或立即获得分数。
+  • 锤子：击碎任意一个不需要的水晶。
+  • 新方块（洗牌）：刷新你的托盘，生成一套新的可操作方块。
+  • 智能提示：高亮显示棋盘上得分最高的放置位置。
+  • 撤销：回退上一步操作，尝试更好的策略。
+
+ja: |
+  {appName}へようこそ！
+
+  🎮 遊び方：
+  • トレイからブロックを8×8のグリッド上にドラッグします。
+  • 行または列をすべて埋めて消去します。
+  • 行と列を同時に消して「クロス」を形成すると、最大10倍のマルチプライヤーを獲得できます！
+  • ボード全体をクリアすると、+5,000の「パーフェクトクリアボーナス」を獲得できます！
+
+  🌌 グラビティ・リフト：
+  行または列をクリアすると、中央のリフトが作動し、外側のブロックがボードの中央に向かって引き寄せられます。先を見越して戦略を立て、自動連鎖を起こし、1回の操作で複数のグラビティ・クリアを連鎖させましょう！
+
+  🛠️ 5つの戦略的ブースター：
+  手詰まりで次の手が思いつかない？ 戦術的なパワーアップを使ってゲームを救いましょう：
+  • サプライズブロック：周囲のタイルを爆破したり、新しいクリスタルを生成したり、即座にポイントを獲得したりします。
+  • ハンマー：不要なクリスタルを1つ破壊します。
+  • 新しいブロック（シャッフル）：トレイをリフレッシュし、新しいプレイ可能なピースのセットを補充します。
+  • スマートヒント：ボード上で最も高得点になる配置をハイライト表示します。
+  • 取り消し：最後の手を巻き戻し、より良い戦略を試すことができます。
+
+ko: |
+  {appName}에 오신 것을 환영합니다!
+
+  🎮 게임 방법:
+  • 트레이에서 블록을 8x8 격자 위로 끌어다 놓으세요.
+  • 행이나 열 전체를 채우면 해당 부분이 사라집니다.
+  • 행과 열을 동시에 제거하여 ‘크로스’를 만들면 10배의 엄청난 배율을 얻을 수 있습니다!
+  • 보드 전체를 비우면 +5,000의 퍼펙트 클리어 보너스를 획득하세요!
+
+  🌌 중력 균열:
+  행이나 열을 클리어하면 중앙의 균열이 활성화되어 바깥쪽 블록들이 보드 중앙으로 빨려 들어옵니다. 미리 계획을 세워 자동 연쇄 반응을 유도하고, 한 번의 수순으로 여러 번의 중력 클리어를 연달아 성공시켜 보세요!
+
+  🛠️ 5가지 전략적 부스터:
+  더 이상 움직일 수 없어 막혔나요? 전술적인 파워업을 사용하여 게임을 이어가세요:
+  • 서프라이즈 블록: 주변 타일을 폭발시키거나, 새로운 크리스탈을 생성하거나, 즉시 점수를 획득하게 해줍니다.
+  • 해머: 원치 않는 크리스탈 하나를 부숴버립니다.
+  • 새로운 블록 (셔플): 플레이 가능한 새로운 블록 세트로 트레이를 새로 고칩니다.
+  • 스마트 힌트: 보드에서 가장 높은 점수를 얻을 수 있는 위치를 강조 표시해 줍니다.
+  • 되돌리기: 마지막 수를 되돌리고 더 나은 전략을 시도해 보세요.
+
+hi: |
+  {appName} में आपका स्वागत है!
+
+  🎮 कैसे खेलें:
+  • ट्रे से ब्लॉकों को 8x8 ग्रिड पर खींचें।
+  • उन्हें साफ़ करने के लिए पूरी पंक्तियाँ या स्तंभ भरें।
+  • एक क्रॉस बनाने के लिए एक ही समय में एक पंक्ति और एक स्तंभ साफ़ करें और एक जबरदस्त x10 मल्टीप्लायर प्राप्त करें!
+  • +5,000 परफेक्ट क्लियर बोनस अर्जित करने के लिए पूरे बोर्ड को साफ़ करें!
+
+  🌌 गुरुत्वाकर्षण दरार:
+  एक पंक्ति या स्तंभ साफ़ करने पर केंद्रीय दरारें सक्रिय हो जाती हैं, जो बाहरी ब्लॉकों को बोर्ड के बीच की ओर अंदर की तरफ खींचती हैं। स्वचालित कैस्केड बनाने और एक ही चाल में कई गुरुत्वाकर्षण क्लियर को जोड़ने की योजना पहले से बनाएं!
+
+  🛠️ 5 रणनीतिक बूस्टर:
+  चालें खत्म हो गईं और आप फंस गए हैं? अपनी बारी बचाने के लिए रणनीतिक पावर-अप का उपयोग करें:
+  • सरप्राइज़ ब्लॉक: आस-पास की टाइलों को उड़ा देता है, नए क्रिस्टल बनाता है, या तुरंत अंक देता है।
+  • हैमर: किसी भी एक अवांछित क्रिस्टल को तोड़ता है।
+  • नए ब्लॉक (शफल): खेलने योग्य टुकड़ों के एक नए सेट के साथ अपनी ट्रे को रिफ्रेश करें।
+  • स्मार्ट हिंट: बोर्ड पर सबसे ज़्यादा अंक देने वाली जगह को हाइलाइट करता है।
+  • अनडू: अपनी पिछली चाल को रिविंड करें और एक बेहतर रणनीति आज़माएँ।

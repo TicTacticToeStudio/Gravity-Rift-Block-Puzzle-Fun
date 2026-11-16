@@ -1,0 +1,103 @@
+{
+  "@@locale": "ja",
+  "appTitle": "Gravity Rift: Block Puzzle Fun",
+  "scoreLabel": "スコア",
+  "gameOverTitle": "素晴らしいゲームでした！",
+  "gameOverBody": "新しいブロックを置くスペースがなくなりました。",
+  "yourScore": "あなたのスコア: {score}",
+  "@yourScore": {
+    "placeholders": {
+      "score": { "type": "Object" }
+    }
+  },
+  "playAgain": "もう一度プレイ",
+  "classicMode": "クラシックモード",
+  "classicModeSub": "エンドレスなブロックパズル。自分の最高得点を更新しよう。",
+  "treasureMode": "トレジャーハント",
+  "treasureModeSub": "レアなクリスタルを集めよう。",
+  "playFreeOffline": "オフラインで無料でプレイ",
+  "comingSoon": "近日公開！",
+  "moreGames": "その他のゲーム",
+  "myGamesTitle": "マイゲーム",
+  "playNow": "今すぐプレイ",
+  "sound": "サウンド",
+  "continueGame": "続きからプレイ",
+  "newGame": "新規ゲーム",
+  "saveAndExit": "セーブして終了",
+  "exitWithoutSaving": "セーブせずに終了",
+  "pauseTitle": "一時停止",
+  "resume": "再開",
+  "restart": "再スタート",
+  "soundOn": "サウンド：オン",
+  "soundOff": "サウンド：オフ",
+  "vibrationOn": "バイブレーション：オン",
+  "vibrationOff": "バイブレーション：オフ",
+  "nothingToUndo": "まだ元に戻す操作はありません！",
+  "outOfUndos": "元に戻す操作が尽きました！",
+  "adUnavailableUndo": "広告が利用できません。代わりに、元に戻す操作をご利用ください！",
+  "outOfMovesTitle": "手番が尽きました！",
+  "outOfMovesBody": "救済ボーナスを用意しました。ボーナスを使ってゲームを続行してください。",
+  "openBonuses": "ボーナスを開く",
+  "endSession": "セッションを終了",
+  "sessionEnded": "セッションが終了しました。",
+  "startNewGame": "新しいゲームを開始",
+  "outOfSpace": "ゲームオーバー",
+  "hexGameTitle": "ヘックス三目並べ：楽しさと戦略",
+  "hexGameDesc": "ヘックス三目並べ。オフラインでボットや友達と対戦。ゲーム分析。トーナメント。",
+  "tttGameTitle": "三目並べ：楽しさと戦略",
+  "tttGameDesc": "ボットや友達との対戦、詳細な分析、状況に応じたゲームプレイ。三目並べ――しかし戦術的。",
+  "comingSoonTitle": "近日公開",
+  "comingSoonDesc": "次のパズルにご期待ください！",
+  "resumeYourGame": "ゲームを再開",
+  "startFresh": "新規開始",
+  "topScores": "ハイスコア",
+  "noRecordsYet": "まだ記録はありません。ゲームをプレイしましょう！",
+  "close": "閉じる",
+  "today": "今日",
+  "yesterday": "昨日",
+  "daysAgo": "{days}日前",
+  "@daysAgo": {
+    "placeholders": {
+      "days": { "type": "Object" }
+    }
+  },
+  "veryLongAgo": "ずいぶん昔",
+  "bonusesTitle": "ボーナス",
+  "rescueBonusesTitle": "レスキューボーナス",
+  "selectBonusToSave": "ゲームをセーブするためのボーナスを選択してください",
+  "bonusSurprise": "サプライズ",
+  "bonusHammer": "ハンマー",
+  "bonusNewBlocks": "新しいブロック",
+  "bonusHint": "ヒント",
+  "useBonus": "({count})を使用",
+  "@useBonus": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "adButton": "広告",
+  "limitLabel": "制限",
+  "adUnavailableBonus": "広告は利用できません。こちらがボーナスです！",
+  "noMovesFound": "次の手が見つかりません！別のボーナスを使ってください。",
+  "perfectClear": "パーフェクトクリア！",
+  "missLabel": "ミス +{amount}",
+  "@missLabel": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "crossMultiplier": "クロス x10！",
+  "comboMultiplier": "コンボ x{level}！",
+  "@comboMultiplier": {
+    "placeholders": {
+      "level": { "type": "int" }
+    }
+  },
+  "languageTitle": "言語",
+  "infoTitle": "情報",
+  "howToPlay": "遊び方",
+  "privacyPolicy": "プライバシーポリシー",
+  "termsOfService": "利用規約",
+  "licenses": "ライセンス",
+  "aboutGame": "ゲームについて"
+}

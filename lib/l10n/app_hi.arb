@@ -1,0 +1,103 @@
+{
+  "@@locale": "hi",
+  "appTitle": "Gravity Rift: Block Puzzle Fun",
+  "scoreLabel": "स्कोर",
+  "gameOverTitle": "शानदार खेल!",
+  "gameOverBody": "नए ब्लॉकों के लिए कोई जगह नहीं बची है।",
+  "yourScore": "आपका स्कोर: {score}",
+  "@yourScore": {
+    "placeholders": {
+      "score": { "type": "Object" }
+    }
+  },
+  "playAgain": "फिर से खेलें",
+  "classicMode": "क्लासिक मोड",
+  "classicModeSub": "अनंत ब्लॉक पहेली। अपना स्कोर तोड़ें।",
+  "treasureMode": "खज़ाने की खोज",
+  "treasureModeSub": "दुर्लभ क्रिस्टल इकट्ठा करें।",
+  "playFreeOffline": "मुफ्त में ऑफ़लाइन खेलें",
+  "comingSoon": "जल्द आ रहा है!",
+  "moreGames": "और गेम",
+  "myGamesTitle": "मेरे गेम",
+  "playNow": "अभी खेलें",
+  "sound": "ध्वनि",
+  "continueGame": "जारी रखें",
+  "newGame": "नया खेलें",
+  "saveAndExit": "सहेजें और बाहर निकलें",
+  "exitWithoutSaving": "बिना सहेजे बाहर निकलें",
+  "pauseTitle": "विरामित",
+  "resume": "फिर से शुरू करें",
+  "restart": "पुनः आरंभ",
+  "soundOn": "ध्वनि: चालू",
+  "soundOff": "ध्वनि: बंद",
+  "vibrationOn": "कंपन: चालू",
+  "vibrationOff": "कंपन: बंद",
+  "nothingToUndo": "अभी कुछ भी अनडू नहीं करना है!",
+  "outOfUndos": "सभी अनडू समाप्त!",
+  "adUnavailableUndo": "विज्ञापन अनुपलब्ध। यहाँ आपका अनडू है!",
+  "outOfMovesTitle": "चाल समाप्त!",
+  "outOfMovesBody": "हमने आपके लिए एक रेस्क्यू बोनस तैयार किया है। जारी रखने के लिए बोनस का उपयोग करें।",
+  "openBonuses": "बोनस खोलें",
+  "endSession": "सत्र समाप्त करें",
+  "sessionEnded": "आपका सत्र समाप्त हो गया है।",
+  "startNewGame": "नई गेम शुरू करें",
+  "outOfSpace": "गेम खत्म",
+  "hexGameTitle": "हेक्स टिक टैक टो मज़ा और रणनीति",
+  "hexGameDesc": "हेक्स टिक टैक टो। बॉट या दोस्त के खिलाफ ऑफ़लाइन खेलें। गेम विश्लेषण। टूर्नामेंट्स।",
+  "tttGameTitle": "टिक टैक टो: मज़ा और रणनीति",
+  "tttGameDesc": "बॉट या दोस्त, गहरा विश्लेषण, अनुकूली गेमप्ले। टिक टैक टो — लेकिन रणनीतिक।",
+  "comingSoonTitle": "जल्द आ रहा है",
+  "comingSoonDesc": "हमारी अगली पहेली के लिए बने रहें!",
+  "resumeYourGame": "अपना गेम फिर से शुरू करें",
+  "startFresh": "नया गेम शुरू करें",
+  "topScores": "शीर्ष स्कोर",
+  "noRecordsYet": "अभी तक कोई रिकॉर्ड नहीं है। एक गेम खेलें!",
+  "close": "बंद करें",
+  "today": "आज",
+  "yesterday": "कल",
+  "daysAgo": "{days} दिन पहले",
+  "@daysAgo": {
+    "placeholders": {
+      "days": { "type": "Object" }
+    }
+  },
+  "veryLongAgo": "बहुत समय पहले",
+  "bonusesTitle": "बोनस",
+  "rescueBonusesTitle": "बचाने वाले बोनस",
+  "selectBonusToSave": "अपना गेम सहेजने के लिए एक बोनस चुनें",
+  "bonusSurprise": "सरप्राइज",
+  "bonusHammer": "हथौड़ा",
+  "bonusNewBlocks": "नए ब्लॉक",
+  "bonusHint": "सुराग",
+  "useBonus": "उपयोग करें ({count})",
+  "@useBonus": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "adButton": "विज्ञापन",
+  "limitLabel": "सीमा",
+  "adUnavailableBonus": "विज्ञापन उपलब्ध नहीं है। यहाँ आपका बोनस है!",
+  "noMovesFound": "कोई चाल नहीं मिली! कोई दूसरा बोनस इस्तेमाल करें।",
+  "perfectClear": "परफेक्ट क्लियर!",
+  "missLabel": "मिस +{amount}",
+  "@missLabel": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "crossMultiplier": "क्रॉस x10!",
+  "comboMultiplier": "कॉम्बो x{level}!",
+  "@comboMultiplier": {
+    "placeholders": {
+      "level": { "type": "int" }
+    }
+  },
+  "languageTitle": "भाषा",
+  "infoTitle": "जानकारी",
+  "howToPlay": "कैसे खेलें",
+  "privacyPolicy": "गोपनीयता नीति",
+  "termsOfService": "सेवा की शर्तें",
+  "licenses": "लाइसेंस",
+  "aboutGame": "गेम के बारे में"
+}

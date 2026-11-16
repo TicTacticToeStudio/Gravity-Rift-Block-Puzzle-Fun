@@ -1,5 +1,3 @@
-// lib/features/game/presentation/pages/main_menu_page.dart
-
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +13,7 @@ import 'package:energy_blast/core/providers/locale_provider.dart';
 import 'package:energy_blast/core/services/save_game_service.dart';
 import 'package:energy_blast/features/game/application/game_controller.dart';
 import 'package:energy_blast/features/game/presentation/widgets/leaderboard_dialog.dart';
-import 'package:energy_blast/features/game/presentation/widgets/info_dialog.dart'; // <-- Added
+import 'package:energy_blast/features/game/presentation/widgets/info_dialog.dart';
 import 'game_page.dart';
 import 'more_games_page.dart';
 
@@ -184,7 +182,7 @@ class MainMenuPage extends ConsumerWidget {
                         ],
                       ),
 
-                      // SUBTITLE (Enhanced readability)
+                      // SUBTITLE
                       if (subTitle.isNotEmpty) ...[
                         const SizedBox(height: 8),
                         Text(
@@ -382,12 +380,25 @@ class MainMenuPage extends ConsumerWidget {
             l10n.languageTitle,
             style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildLanguageTile(context, ref, 'English', const Locale('en'), currentLocale),
-              _buildLanguageTile(context, ref, 'Русский', const Locale('ru'), currentLocale),
-            ],
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                _buildLanguageTile(context, ref, 'English', const Locale('en'), currentLocale),
+                _buildLanguageTile(context, ref, 'Русский', const Locale('ru'), currentLocale),
+                _buildLanguageTile(context, ref, 'Українська', const Locale('uk'), currentLocale),
+                _buildLanguageTile(context, ref, 'Deutsch', const Locale('de'), currentLocale),
+                _buildLanguageTile(context, ref, 'Español', const Locale('es'), currentLocale),
+                _buildLanguageTile(context, ref, 'Français', const Locale('fr'), currentLocale),
+                _buildLanguageTile(context, ref, 'Português', const Locale('pt'), currentLocale),
+                _buildLanguageTile(context, ref, 'Bahasa Indonesia', const Locale('id'), currentLocale),
+                _buildLanguageTile(context, ref, '中文', const Locale('zh'), currentLocale),
+                _buildLanguageTile(context, ref, '日本語', const Locale('ja'), currentLocale),
+                _buildLanguageTile(context, ref, '한국어', const Locale('ko'), currentLocale),
+                _buildLanguageTile(context, ref, 'हिन्दी', const Locale('hi'), currentLocale),
+              ],
+            ),
           ),
         );
       },

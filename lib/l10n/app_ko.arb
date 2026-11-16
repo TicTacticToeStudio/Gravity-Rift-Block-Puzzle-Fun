@@ -1,0 +1,103 @@
+{
+  "@@locale": "ko",
+  "appTitle": "Gravity Rift: Block Puzzle Fun",
+  "scoreLabel": "점수",
+  "gameOverTitle": "멋진 게임이었습니다!",
+  "gameOverBody": "새로운 블록을 놓을 공간이 더 이상 없습니다.",
+  "yourScore": "당신의 점수: {score}",
+  "@yourScore": {
+    "placeholders": {
+      "score": { "type": "Object" }
+    }
+  },
+  "playAgain": "다시 플레이",
+  "classicMode": "클래식 모드",
+  "classicModeSub": "끝없는 블록 퍼즐. 자신의 최고 점수를 갱신해 보세요.",
+  "treasureMode": "보물 찾기",
+  "treasureModeSub": "희귀한 크리스탈을 모으세요.",
+  "playFreeOffline": "오프라인에서 무료로 플레이",
+  "comingSoon": "곧 출시됩니다!",
+  "moreGames": "더 많은 게임",
+  "myGamesTitle": "내 게임",
+  "playNow": "지금 플레이",
+  "sound": "사운드",
+  "continueGame": "계속하기",
+  "newGame": "새로운 게임",
+  "saveAndExit": "저장 후 종료",
+  "exitWithoutSaving": "저장하지 않고 종료",
+  "pauseTitle": "일시 정지",
+  "resume": "계속",
+  "restart": "다시 시작",
+  "soundOn": "사운드: 켜짐",
+  "soundOff": "사운드: 꺼짐",
+  "vibrationOn": "진동: 켜짐",
+  "vibrationOff": "진동: 꺼짐",
+  "nothingToUndo": "아직 되돌릴 작업이 없습니다!",
+  "outOfUndos": "되돌릴 수 있는 횟수가 다 되었습니다!",
+  "adUnavailableUndo": "광고가 없습니다. 대신 이 되돌리기 기능을 사용하세요!",
+  "outOfMovesTitle": "이동 횟수가 다 되었습니다!",
+  "outOfMovesBody": "구출 보너스를 준비해 두었습니다. 보너스를 사용하여 게임을 계속하세요.",
+  "openBonuses": "보너스 열기",
+  "endSession": "세션 종료",
+  "sessionEnded": "세션이 종료되었습니다.",
+  "startNewGame": "새로운 게임 시작",
+  "outOfSpace": "게임 오버",
+  "hexGameTitle": "헥스 틱택토: 재미와 전략",
+  "hexGameDesc": "헥스 틱택토. 오프라인에서 봇이나 친구와 대결하세요. 게임 분석. 토너먼트.",
+  "tttGameTitle": "틱택토: 재미와 전략",
+  "tttGameDesc": "봇이나 친구와 대결, 심층 분석, 적응형 게임플레이. 틱택토 — 하지만 전술적입니다.",
+  "comingSoonTitle": "출시 예정",
+  "comingSoonDesc": "다음 퍼즐을 기대해 주세요!",
+  "resumeYourGame": "게임 재개",
+  "startFresh": "새 게임 시작",
+  "topScores": "최고 점수",
+  "noRecordsYet": "아직 기록이 없습니다. 게임을 시작해 보세요!",
+  "close": "닫기",
+  "today": "오늘",
+  "yesterday": "어제",
+  "daysAgo": "{days} 일 전",
+  "@daysAgo": {
+    "placeholders": {
+      "days": { "type": "Object" }
+    }
+  },
+  "veryLongAgo": "아주 오래전",
+  "bonusesTitle": "보너스",
+  "rescueBonusesTitle": "구조 보너스",
+  "selectBonusToSave": "게임을 저장할 보너스를 선택하세요",
+  "bonusSurprise": "서프라이즈",
+  "bonusHammer": "망치",
+  "bonusNewBlocks": "새로운 블록",
+  "bonusHint": "힌트",
+  "useBonus": "({count}) 사용",
+  "@useBonus": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "adButton": "광고",
+  "limitLabel": "한도",
+  "adUnavailableBonus": "광고를 이용할 수 없습니다. 보너스를 드립니다!",
+  "noMovesFound": "이동할 수 있는 방법이 없습니다! 다른 보너스를 사용하세요.",
+  "perfectClear": "완벽 클리어!",
+  "missLabel": "실패 +{amount}",
+  "@missLabel": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "crossMultiplier": "크로스 x10!",
+  "comboMultiplier": "콤보 x{level}!",
+  "@comboMultiplier": {
+    "placeholders": {
+      "level": { "type": "int" }
+    }
+  },
+  "languageTitle": "언어",
+  "infoTitle": "정보",
+  "howToPlay": "게임 방법",
+  "privacyPolicy": "개인정보 처리방침",
+  "termsOfService": "이용약관",
+  "licenses": "라이선스",
+  "aboutGame": "게임 소개"
+}
