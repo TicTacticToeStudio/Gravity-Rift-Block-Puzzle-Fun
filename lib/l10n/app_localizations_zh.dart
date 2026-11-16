@@ -9,7 +9,7 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => '重力裂隙：方块解谜乐趣';
+  String get appTitle => 'Gravity Rift: Block Puzzle Fun';
 
   @override
   String get scoreLabel => '得分';

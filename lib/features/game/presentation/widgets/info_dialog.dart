@@ -128,13 +128,12 @@ class InfoDialog extends ConsumerWidget {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
       leading: Icon(icon, color: AppColors.primary, size: 28),
-      title: AutoText.singleLine(
+      title: AutoText.multiline(
         title,
-        alignment: Alignment.centerLeft,
+        textAlign: TextAlign.left,
         style: const TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.w500),
       ),
       trailing: const Icon(Icons.arrow_forward_ios, color: AppColors.textSecondary, size: 16),
       onTap: onTap,
     );
-  }
-}
+  }}

@@ -9,7 +9,7 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
-  String get appTitle => 'Gravity Rift: Keseruan Teka-teki Balok';
+  String get appTitle => 'Gravity Rift: Block Puzzle Fun';
 
   @override
   String get scoreLabel => 'SKOR';
