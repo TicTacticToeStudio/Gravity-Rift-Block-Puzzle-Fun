@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yaml/yaml.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:energy_blast/core/constants/app_constants.dart';
 import 'package:energy_blast/core/theme/app_colors.dart';
 import 'package:energy_blast/core/providers/locale_provider.dart';
@@ -47,7 +48,10 @@ class _LegalPageState extends ConsumerState<LegalPage> {
       String rawText = yamlMap[langCode] ?? yamlMap['en'] ?? 'Text not found';
 
       final appTitle = AppLocalizations.of(context).appTitle;
+      final packageInfo = await PackageInfo.fromPlatform();
+
       rawText = rawText.replaceAll('{appName}', appTitle);
+      rawText = rawText.replaceAll('{version}', packageInfo.version);
 
       if (mounted) {
         setState(() {
@@ -67,7 +71,6 @@ class _LegalPageState extends ConsumerState<LegalPage> {
 
   // This function builds text with clickable links
   Widget _buildTextWithLinks(String text) {
-    // Regex to find URLs
     final RegExp urlRegExp = RegExp(r'(https?:\/\/[^\s]+)');
     final List<InlineSpan> spans = [];
     int start = 0;
@@ -78,7 +81,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
         spans.add(TextSpan(text: text.substring(start, match.start)));
       }
 
-      final url = match.group(0)!.trim(); // <-- Добавлен trim()
+      final url = match.group(0)!.trim();
       spans.add(
         TextSpan(
           text: url,
@@ -89,7 +92,6 @@ class _LegalPageState extends ConsumerState<LegalPage> {
           recognizer: TapGestureRecognizer()
             ..onTap = () async {
               final uri = Uri.parse(url);
-              // Changed to platformDefault for better compatibility
               if (!await launchUrl(uri, mode: LaunchMode.platformDefault)) {
                 debugPrint('Could not launch $url');
               }
@@ -151,7 +153,6 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                         borderRadius: BorderRadius.circular(AppConstants.radiusM),
                         border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
                       ),
-                      // Using the custom link builder here
                       child: _buildTextWithLinks(_content),
                     ),
                   ),

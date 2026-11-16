@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:energy_blast/core/constants/app_constants.dart';
 import 'package:energy_blast/core/theme/app_colors.dart';
 import 'package:energy_blast/core/services/audio_service.dart';
@@ -80,13 +81,16 @@ class InfoDialog extends ConsumerWidget {
             _buildMenuItem(
               icon: Icons.code_rounded,
               title: l10n.licenses,
-              onTap: () {
+              onTap: () async {
                 playClick();
-                showLicensePage(
-                  context: context,
-                  applicationName: l10n.appTitle,
-                  applicationVersion: '0.1.0',
-                );
+                final packageInfo = await PackageInfo.fromPlatform();
+                if (context.mounted) {
+                  showLicensePage(
+                    context: context,
+                    applicationName: l10n.appTitle,
+                    applicationVersion: packageInfo.version,
+                  );
+                }
               },
             ),
             _buildMenuItem(
@@ -136,4 +140,5 @@ class InfoDialog extends ConsumerWidget {
       trailing: const Icon(Icons.arrow_forward_ios, color: AppColors.textSecondary, size: 16),
       onTap: onTap,
     );
-  }}
+  }
+}
