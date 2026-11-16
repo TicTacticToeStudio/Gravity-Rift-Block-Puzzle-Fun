@@ -65,6 +65,7 @@
       "days": { "type": "Object" }
     }
   },
+  "veryLongAgo": "Очень давно",
 
   "bonusesTitle": "БОНУСЫ",
   "rescueBonusesTitle": "БОНУСЫ СПАСЕНИЯ",
@@ -99,6 +100,11 @@
     }
   },
 
-  "infoComingSoon": "Меню информации скоро появится",
-  "languageTitle": "Язык"
+  "languageTitle": "Язык",
+  "infoTitle": "Информация",
+  "howToPlay": "Как играть",
+  "privacyPolicy": "Политика конфиденциальности",
+  "termsOfService": "Условия использования",
+  "licenses": "Лицензии",
+  "aboutGame": "Об игре"
 }

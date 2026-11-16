@@ -1,3 +1,6 @@
+// lib/features/game/presentation/widgets/piece_tray_widget.dart
+
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:energy_blast/core/constants/app_constants.dart';
@@ -31,81 +34,96 @@ class PieceTrayWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final gameState = ref.watch(gameControllerProvider);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppConstants.paddingS, horizontal: AppConstants.paddingS),
-      decoration: BoxDecoration(
-        color: AppColors.surface.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(AppConstants.radiusL),
-        border: Border.all(color: AppColors.boardBorder, width: 1),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: pieces.map((Piece piece) {
-          final pieceWidth = piece.width * boardCellSize;
-          final pieceHeight = piece.height * boardCellSize;
-          final liftAmount = boardCellSize * 1.5;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppConstants.radiusL),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: AppConstants.paddingS, horizontal: AppConstants.paddingS),
+          decoration: BoxDecoration(
+            // Slightly increased opacity for better definition
+            color: AppColors.surface.withValues(alpha: 0.25),
+            borderRadius: BorderRadius.circular(AppConstants.radiusL),
+            // Brighter neon border
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.4), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                blurRadius: 15,
+                spreadRadius: 2,
+              )
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: pieces.map((Piece piece) {
+              final pieceWidth = piece.width * boardCellSize;
+              final pieceHeight = piece.height * boardCellSize;
+              final liftAmount = boardCellSize * 1.5;
 
-          final isHinted = gameState.hintPieceId == piece.id;
+              final isHinted = gameState.hintPieceId == piece.id;
 
-          Widget draggableChild = Container(
-            color: Colors.transparent,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: _buildPieceRaw(piece, boardCellSize * 0.6),
-                ),
-              ),
-            ),
-          );
-
-          // Apply Glowing Border if this piece is hinted
-          if (isHinted) {
-            draggableChild = Container(
-              decoration: BoxDecoration(
-                  color: Colors.greenAccent.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppConstants.radiusM),
-                  border: Border.all(color: Colors.greenAccent, width: 2),
-                  boxShadow: [
-                    BoxShadow(color: Colors.greenAccent.withValues(alpha: 0.5), blurRadius: 10, spreadRadius: 2)
-                  ]
-              ),
-              padding: const EdgeInsets.all(4),
-              child: draggableChild,
-            );
-          }
-
-          return Expanded(
-            child: Draggable<Piece>(
-              data: piece,
-              dragAnchorStrategy: pointerDragAnchorStrategy,
-              feedback: Transform.translate(
-                offset: Offset(-pieceWidth / 2, -pieceHeight - liftAmount),
-                child: Material(
-                  color: Colors.transparent,
-                  child: Opacity(
-                    opacity: 0.9,
-                    child: _buildPieceRaw(piece, boardCellSize, isDragging: true),
-                  ),
-                ),
-              ),
-              childWhenDragging: Container(
+              Widget draggableChild = Container(
                 color: Colors.transparent,
-                child: Opacity(
-                  opacity: 0.2,
-                  child: Center(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: FittedBox(
                       fit: BoxFit.contain,
                       child: _buildPieceRaw(piece, boardCellSize * 0.6),
                     ),
                   ),
                 ),
-              ),
-              child: draggableChild,
-            ),
-          );
-        }).toList(),
+              );
+
+              // Apply Glowing Border if this piece is hinted
+              if (isHinted) {
+                draggableChild = Container(
+                  decoration: BoxDecoration(
+                      color: Colors.greenAccent.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppConstants.radiusM),
+                      border: Border.all(color: Colors.greenAccent, width: 2),
+                      boxShadow: [
+                        BoxShadow(color: Colors.greenAccent.withValues(alpha: 0.5), blurRadius: 10, spreadRadius: 2)
+                      ]
+                  ),
+                  padding: const EdgeInsets.all(4),
+                  child: draggableChild,
+                );
+              }
+
+              return Expanded(
+                child: Draggable<Piece>(
+                  data: piece,
+                  dragAnchorStrategy: pointerDragAnchorStrategy,
+                  feedback: Transform.translate(
+                    offset: Offset(-pieceWidth / 2, -pieceHeight - liftAmount),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: Opacity(
+                        opacity: 0.9,
+                        child: _buildPieceRaw(piece, boardCellSize, isDragging: true),
+                      ),
+                    ),
+                  ),
+                  childWhenDragging: Container(
+                    color: Colors.transparent,
+                    child: Opacity(
+                      opacity: 0.2,
+                      child: Center(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: _buildPieceRaw(piece, boardCellSize * 0.6),
+                        ),
+                      ),
+                    ),
+                  ),
+                  child: draggableChild,
+                ),
+              );
+            }).toList(),
+          ),
+        ),
       ),
     );
   }

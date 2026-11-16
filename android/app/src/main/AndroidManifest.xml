@@ -6,7 +6,7 @@
     <application
             android:label="Gravity Rift"
             android:name="${applicationName}"
-            android:icon="@mipmap/ic_launcher">
+            android:icon="@mipmap/launcher_icon">
 
         <!-- TODO: Replace with your REAL AdMob App ID before publishing to Google Play! -->
         <meta-data

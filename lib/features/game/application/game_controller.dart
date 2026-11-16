@@ -45,9 +45,10 @@ class GameState {
   final bool isGameOver;
   final bool isOutOfMoves;
   final bool isProcessing;
+  final bool isBonusProcessing;
   final List<int> clearingRows;
   final List<int> clearingCols;
-  final Map<String, int> clearingCellPoints; // NEW: Stores points for UI
+  final Map<String, int> clearingCellPoints;
   final List<ScorePopup> activePopups;
   final GameState? previousState;
 
@@ -84,7 +85,7 @@ class GameState {
   const GameState({
     required this.runId,
     required this.board, required this.pieces, this.score = 0,
-    this.isGameOver = false, this.isOutOfMoves = false, this.isProcessing = false,
+    this.isGameOver = false, this.isOutOfMoves = false, this.isProcessing = false, this.isBonusProcessing = false,
     this.clearingRows = const [], this.clearingCols = const [], this.clearingCellPoints = const {}, this.activePopups = const [], this.previousState,
 
     this.freeSurprises = 2, this.freeHammers = 2, this.freeShuffles = 2, this.freeHints = 2, this.freeUndos = 3,
@@ -98,7 +99,7 @@ class GameState {
 
   GameState copyWith({
     String? runId,
-    Board? board, List<Piece>? pieces, int? score, bool? isGameOver, bool? isOutOfMoves, bool? isProcessing,
+    Board? board, List<Piece>? pieces, int? score, bool? isGameOver, bool? isOutOfMoves, bool? isProcessing, bool? isBonusProcessing,
     List<int>? clearingRows, List<int>? clearingCols, Map<String, int>? clearingCellPoints, List<ScorePopup>? activePopups,
     GameState? previousState, bool clearPreviousState = false,
 
@@ -115,6 +116,7 @@ class GameState {
       board: board ?? this.board, pieces: pieces ?? this.pieces, score: score ?? this.score,
       isGameOver: isGameOver ?? this.isGameOver, isOutOfMoves: isOutOfMoves ?? this.isOutOfMoves,
       isProcessing: isProcessing ?? this.isProcessing,
+      isBonusProcessing: isBonusProcessing ?? this.isBonusProcessing,
       clearingRows: clearingRows ?? this.clearingRows, clearingCols: clearingCols ?? this.clearingCols,
       clearingCellPoints: clearingCellPoints ?? this.clearingCellPoints,
       activePopups: activePopups ?? this.activePopups,
@@ -179,71 +181,77 @@ class GameController extends AutoDisposeNotifier<GameState> {
 
     if (level == 1) {
       targetCells = 8;
-      allowedShapes = [[[true]]]; // Only 1x1 blocks for beginners
+      allowedShapes = [[[true]]];
     } else if (level == 2) {
-      targetCells = 16 + _random.nextInt(5); // 16-20 cells
+      targetCells = 10 + _random.nextInt(3);
       allowedShapes = _safeShapes;
     } else if (level == 3) {
-      targetCells = 24 + _random.nextInt(5); // 24-28 cells
+      targetCells = 14 + _random.nextInt(3);
       allowedShapes = [..._safeShapes, ..._mediumShapes];
     } else {
-      targetCells = 32 + _random.nextInt(6); // 32-37 cells
+      targetCells = 18 + _random.nextInt(5);
       allowedShapes = [..._safeShapes, ..._mediumShapes, ..._complexShapes];
     }
 
     int placedCells = 0;
     int attempts = 0;
 
-    while (placedCells < targetCells && attempts < 500) {
+    while (placedCells < targetCells && attempts < 1000) {
       attempts++;
       final shape = allowedShapes[_random.nextInt(allowedShapes.length)];
       final color = allColors[_random.nextInt(allColors.length)];
       final testPiece = Piece(id: 'init', shape: shape, type: color);
 
       int x, y;
-
       if (level == 1) {
-        // Level 1: perfectly uniform across the board
         x = _random.nextInt(board.width);
         y = _random.nextInt(board.height);
       } else {
-        // Levels 2, 3, 4: distribute across 4 quadrants for balance
-        int quadrant = _random.nextInt(4); // 0: TL, 1: TR, 2: BL, 3: BR
+        int quadrant = _random.nextInt(4);
         int qx = (quadrant % 2) * 4;
         int qy = (quadrant ~/ 2) * 4;
-
-        // Pick a random cell inside the quadrant as the anchor
         x = qx + _random.nextInt(4);
         y = qy + _random.nextInt(4);
-
-        // Ensure the piece fits within the board bounds
         x = x.clamp(0, board.width - testPiece.width);
         y = y.clamp(0, board.height - testPiece.height);
-
-        // For levels 3 and 4, reject pieces that overlap the central 4x4 area (x:2-5, y:2-5)
-        // This keeps the Gravity Rifts clean and clear.
-        if (level >= 3) {
-          bool overlapsCenter = false;
-          for (int py = 0; py < testPiece.height; py++) {
-            for (int px = 0; px < testPiece.width; px++) {
-              if (testPiece.shape[py][px]) {
-                int nx = x + px;
-                int ny = y + py;
-                if (nx >= 2 && nx <= 5 && ny >= 2 && ny <= 5) {
-                  overlapsCenter = true;
-                }
-              }
-            }
-          }
-          if (overlapsCenter) {
-            continue; // Reject and try again
-          }
-        }
       }
 
       if (board.canPlacePiece(testPiece, x, y)) {
         board.placePiece(testPiece, x, y);
-        placedCells += testPiece.blockCount;
+        final lines = board.findFullLines();
+        bool createdFullLine = lines['rows']!.isNotEmpty || lines['cols']!.isNotEmpty;
+
+        bool createdLongSegment = false;
+        if (level > 1) {
+          for (int i = 0; i < 8; i++) {
+            int rowSegment = 0;
+            int colSegment = 0;
+            for (int j = 0; j < 8; j++) {
+              if (!board.getCell(j, i).isEmpty) {
+                rowSegment++;
+                if (rowSegment >= 5) { createdLongSegment = true; break; }
+              } else { rowSegment = 0; }
+
+              if (!board.getCell(i, j).isEmpty) {
+                colSegment++;
+                if (colSegment >= 5) { createdLongSegment = true; break; }
+              } else { colSegment = 0; }
+            }
+            if (createdLongSegment) break;
+          }
+        }
+
+        if (createdFullLine || createdLongSegment) {
+          for (int py = 0; py < testPiece.height; py++) {
+            for (int px = 0; px < testPiece.width; px++) {
+              if (testPiece.shape[py][px]) {
+                board.getCell(x + px, y + py).type = CrystalType.empty;
+              }
+            }
+          }
+        } else {
+          placedCells += testPiece.blockCount;
+        }
       }
     }
 
@@ -268,7 +276,6 @@ class GameController extends AutoDisposeNotifier<GameState> {
     else if (highestScore.score >= 5000) level = 3;
     else if (highestScore.score >= 3000) level = 2;
 
-    // Skill Decay: if the record hasn't been beaten for a while, lower the difficulty
     final daysPassed = DateTime.now().difference(highestScore.date).inDays;
     if (daysPassed >= 7) {
       level -= 2;
@@ -292,11 +299,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
 
   Future<void> startNewGame() async {
     await SaveGameService.clearSave();
-
-    // Fetch difficulty asynchronously
     final level = await _calculateDifficultyLevel();
-
-    // Generate the board based on the level and replace the state
     final newState = _createBoardForLevel(level).copyWith(turnId: state.turnId + 1);
     state = newState;
   }
@@ -307,6 +310,17 @@ class GameController extends AutoDisposeNotifier<GameState> {
     state = state.copyWith(pulseGift: true);
   }
 
+  void startBonusProcessing() {
+    state = state.copyWith(isBonusProcessing: true);
+  }
+
+  void cancelBonusProcessing() {
+    if (state.isBonusProcessing) {
+      state = state.copyWith(isBonusProcessing: false);
+      _checkForGameOver(state.board, state.pieces);
+    }
+  }
+
   void onBonusDialogClosed() {
     if (state.pulseGift) {
       _checkForGameOver(state.board, state.pieces);
@@ -314,44 +328,59 @@ class GameController extends AutoDisposeNotifier<GameState> {
     }
   }
 
-  void onAdReward(PowerUpType type) {
-    if (type == PowerUpType.surprise) useSurprise();
+  Future<void> onAdReward(PowerUpType type) async {
+    if (type == PowerUpType.surprise) await useSurprise();
     if (type == PowerUpType.hammer) toggleHammerMode();
-    if (type == PowerUpType.shuffle) useNewBlocks();
-    if (type == PowerUpType.hint) useHint();
-    if (type == PowerUpType.undo) undo(fromAd: true);
+    if (type == PowerUpType.shuffle) await useNewBlocks();
+    if (type == PowerUpType.hint) await useHint();
+    if (type == PowerUpType.undo) await undo(fromAd: true);
   }
 
-  bool undo({bool fromAd = false}) {
+  Future<void> _finalizeBonusAction({required bool wasInRescue}) async {
+    if (wasInRescue) {
+      // Give the player 1.5 seconds to see the result of the bonus before
+      // the rescue screen might reappear.
+      await Future.delayed(const Duration(milliseconds: 1500));
+    } else {
+      // Even if not in rescue, if a bonus (like Shuffle) causes a deadlock,
+      // give the player a moment to see the board change before the screen pops.
+      await Future.delayed(const Duration(milliseconds: 800));
+    }
+
+    if (_isDisposed) return;
+
+    state = state.copyWith(isBonusProcessing: false);
+    _checkForGameOver(state.board, state.pieces);
+    saveCurrentGame();
+  }
+
+  Future<bool> undo({bool fromAd = false}) async {
     if (state.isProcessing || state.previousState == null || state.isHammerActive) return true;
 
     bool canUseFree = state.freeUndos > 0;
     bool canUseRescueAd = state.isOutOfMoves && state.rescueUndos == 0;
-    bool canUseGameAd = !state.isOutOfMoves && state.adUndos < 1;
+
+    // FIX: Allow normal ad undo in rescue mode as a fallback
+    bool canUseGameAd = state.adUndos < 1;
 
     int newFree = state.freeUndos;
     int newGameAd = state.adUndos;
     int newRescueAd = state.rescueUndos;
 
     if (fromAd) {
-      if (canUseRescueAd) {
-        newRescueAd = 1;
-      } else if (canUseGameAd) {
-        newGameAd = 1;
-      } else {
-        return false;
-      }
+      // Prioritize rescue ad, then fallback to normal ad
+      if (canUseRescueAd) newRescueAd = 1;
+      else if (canUseGameAd) newGameAd = 1;
+      else return false;
     } else {
-      if (canUseFree) {
-        newFree--;
-      } else {
-        return false;
-      }
+      if (canUseFree) newFree--;
+      else return false;
     }
 
     ref.read(audioServiceProvider).play(AppSound.click);
     ref.read(hapticServiceProvider).trigger(AppHaptic.selection);
 
+    final bool wasInRescue = state.isOutOfMoves;
     final pointsToKeep = state.lastSurprisePoints;
     GameState restoredState = state.previousState!;
     if (pointsToKeep > 0) {
@@ -361,8 +390,8 @@ class GameController extends AutoDisposeNotifier<GameState> {
     restoredState = restoredState.copyWith(freeUndos: newFree, adUndos: newGameAd, rescueUndos: newRescueAd);
 
     state = restoredState.copyWith(clearHint: true, pulseGift: false, isOutOfMoves: false);
-    _checkForGameOver(state.board, state.pieces);
-    saveCurrentGame();
+
+    await _finalizeBonusAction(wasInRescue: wasInRescue);
     return true;
   }
 
@@ -383,7 +412,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
     SaveGameService.clearSave();
   }
 
-  void useSurprise() {
+  Future<void> useSurprise() async {
     if (state.isProcessing || state.isGameOver) return;
 
     bool canUse = false;
@@ -391,15 +420,24 @@ class GameController extends AutoDisposeNotifier<GameState> {
     int newAd = state.adSurprises;
     int newRescue = state.rescueSurprises;
 
-    if (state.freeSurprises > 0) { newFree--; canUse = true; }
-    else if (state.isOutOfMoves && state.rescueSurprises == 0) { newRescue = 1; canUse = true; }
-    else if (!state.isOutOfMoves && state.adSurprises < 2) { newAd++; canUse = true; }
+    if (state.freeSurprises > 0) {
+      newFree--;
+      canUse = true;
+    } else if (state.isOutOfMoves && state.rescueSurprises == 0) {
+      newRescue = 1;
+      canUse = true;
+    } else if (state.adSurprises < 2) {
+      // FIX: Allow normal ads in rescue mode as a fallback
+      newAd++;
+      canUse = true;
+    }
 
     if (!canUse) return;
 
     ref.read(audioServiceProvider).play(AppSound.bonus);
     ref.read(hapticServiceProvider).trigger(AppHaptic.medium);
 
+    final bool wasInRescue = state.isOutOfMoves;
     final surprisePiece = Piece(id: 'surprise_${DateTime.now().microsecondsSinceEpoch}', shape: [[true]], type: CrystalType.amber, isSurprise: true);
     final newPieces = List<Piece>.from(state.pieces)..insert(0, surprisePiece);
 
@@ -407,7 +445,8 @@ class GameController extends AutoDisposeNotifier<GameState> {
       pieces: newPieces, freeSurprises: newFree, adSurprises: newAd, rescueSurprises: newRescue,
       isOutOfMoves: false, isProcessing: false, isHammerActive: false, clearHint: true, pulseGift: false,
     );
-    saveCurrentGame();
+
+    await _finalizeBonusAction(wasInRescue: wasInRescue);
   }
 
   void toggleHammerMode() {
@@ -416,7 +455,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
     bool canUse = false;
     if (state.freeHammers > 0) canUse = true;
     else if (state.isOutOfMoves && state.rescueHammers == 0) canUse = true;
-    else if (!state.isOutOfMoves && state.adHammers < 2) canUse = true;
+    else if (state.adHammers < 2) canUse = true;
 
     if (!canUse) return;
 
@@ -440,10 +479,8 @@ class GameController extends AutoDisposeNotifier<GameState> {
     if (state.board.getCell(x, y).isEmpty) {
       ref.read(audioServiceProvider).play(AppSound.click);
       ref.read(hapticServiceProvider).trigger(AppHaptic.light);
-
       await Future.delayed(const Duration(milliseconds: 200));
       if (_isDisposed) return;
-
       state = state.copyWith(
         activeHammerMisses: state.activeHammerMisses.where((m) => m.id != strike.id).toList(),
         isProcessing: false,
@@ -461,7 +498,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
 
     if (state.freeHammers > 0) { newFree--; sourceFound = true; }
     else if (state.isOutOfMoves && state.rescueHammers == 0) { newRescue = 1; sourceFound = true; }
-    else if (!state.isOutOfMoves && state.adHammers < 2) { newAd++; sourceFound = true; }
+    else if (state.adHammers < 2) { newAd++; sourceFound = true; }
 
     if (!sourceFound) {
       state = state.copyWith(
@@ -472,6 +509,8 @@ class GameController extends AutoDisposeNotifier<GameState> {
       _checkForGameOver(state.board, state.pieces);
       return;
     }
+
+    final bool wasInRescue = state.isOutOfMoves;
 
     final currentSnapshot = GameState(
       runId: state.runId,
@@ -493,6 +532,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
       freeHammers: newFree,
       adHammers: newAd,
       rescueHammers: newRescue,
+      isOutOfMoves: false,
       isHammerActive: false,
       isProcessing: false,
       activeHammerMisses: state.activeHammerMisses.where((m) => m.id != strike.id).toList(),
@@ -501,11 +541,11 @@ class GameController extends AutoDisposeNotifier<GameState> {
       clearHint: true,
       pulseGift: false,
     );
-    _checkForGameOver(newBoard, state.pieces);
-    saveCurrentGame();
+
+    await _finalizeBonusAction(wasInRescue: wasInRescue);
   }
 
-  void useNewBlocks() {
+  Future<void> useNewBlocks() async {
     if (state.isProcessing || state.isGameOver) return;
 
     bool canUse = false;
@@ -515,12 +555,14 @@ class GameController extends AutoDisposeNotifier<GameState> {
 
     if (state.freeShuffles > 0) { newFree--; canUse = true; }
     else if (state.isOutOfMoves && state.rescueShuffles == 0) { newRescue = 1; canUse = true; }
-    else if (!state.isOutOfMoves && state.adShuffles < 2) { newAd++; canUse = true; }
+    else if (state.adShuffles < 2) { newAd++; canUse = true; }
 
     if (!canUse) return;
 
     ref.read(audioServiceProvider).play(AppSound.bonus);
     ref.read(hapticServiceProvider).trigger(AppHaptic.light);
+
+    final bool wasInRescue = state.isOutOfMoves;
 
     final currentSnapshot = GameState(
       runId: state.runId,
@@ -545,11 +587,10 @@ class GameController extends AutoDisposeNotifier<GameState> {
       previousState: currentSnapshot, clearPreviousState: false, clearHint: true, pulseGift: false,
     );
 
-    _checkForGameOver(state.board, newPieces);
-    saveCurrentGame();
+    await _finalizeBonusAction(wasInRescue: wasInRescue);
   }
 
-  bool useHint() {
+  Future<bool> useHint() async {
     if (state.isProcessing || state.isGameOver) return false;
 
     bool canUse = false;
@@ -559,7 +600,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
 
     if (state.freeHints > 0) { newFree--; canUse = true; }
     else if (state.isOutOfMoves && state.rescueHints == 0) { newRescue = 1; canUse = true; }
-    else if (!state.isOutOfMoves && state.adHints < 2) { newAd++; canUse = true; }
+    else if (state.adHints < 2) { newAd++; canUse = true; }
 
     if (!canUse) return false;
 
@@ -585,11 +626,14 @@ class GameController extends AutoDisposeNotifier<GameState> {
       ref.read(audioServiceProvider).play(AppSound.bonus);
       ref.read(hapticServiceProvider).trigger(AppHaptic.light);
 
+      final bool wasInRescue = state.isOutOfMoves;
+
       state = state.copyWith(
         freeHints: newFree, adHints: newAd, rescueHints: newRescue,
         hintPieceId: bestPiece.id, hintX: bestX, hintY: bestY, isOutOfMoves: false, pulseGift: false,
       );
-      saveCurrentGame();
+
+      await _finalizeBonusAction(wasInRescue: wasInRescue);
       return true;
     }
     return false;
@@ -727,7 +771,6 @@ class GameController extends AutoDisposeNotifier<GameState> {
         final int totalLines = cleared['rows']!.length + cleared['cols']!.length;
         if (totalLines == 0) break;
 
-        // NEW LOGIC: Calculate points based on the color of each cleared block
         final Set<Offset> clearedCoords = {};
         for (int y in cleared['rows']!) {
           for (int x = 0; x < newBoard.width; x++) {
@@ -757,7 +800,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
         state = state.copyWith(
           clearingRows: cleared['rows'],
           clearingCols: cleared['cols'],
-          clearingCellPoints: cellPoints, // Pass data to UI
+          clearingCellPoints: cellPoints,
         );
 
         await Future.delayed(const Duration(milliseconds: 1200));
@@ -795,7 +838,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
             board: newBoard,
             clearingRows: const [],
             clearingCols: const [],
-            clearingCellPoints: const {}, // Clear UI data
+            clearingCellPoints: const {},
             score: state.score + stepScore,
             activePopups: [newPopup]
         );
@@ -825,12 +868,12 @@ class GameController extends AutoDisposeNotifier<GameState> {
 
     if (noMovesLeft) {
       final bool canUndoByAnyMeans = state.previousState != null &&
-          (state.freeUndos > 0 || state.rescueUndos == 0);
+          (state.freeUndos > 0 || state.rescueUndos == 0 || state.adUndos < 1);
 
       final bool canUseAnyBonus =
-          (state.freeSurprises > 0 || state.rescueSurprises == 0) ||
-              (state.freeHammers > 0 || state.rescueHammers == 0) ||
-              (state.freeShuffles > 0 || state.rescueShuffles == 0) ||
+          (state.freeSurprises > 0 || state.rescueSurprises == 0 || state.adSurprises < 2) ||
+              (state.freeHammers > 0 || state.rescueHammers == 0 || state.adHammers < 2) ||
+              (state.freeShuffles > 0 || state.rescueShuffles == 0 || state.adShuffles < 2) ||
               canUndoByAnyMeans;
 
       if (canUseAnyBonus) {
@@ -929,8 +972,8 @@ class GameController extends AutoDisposeNotifier<GameState> {
   final List<List<List<bool>>> _complexShapes = [
     [[true, true, true, true]],
     [[true], [true], [true], [true]],
-    [[true, true], [true, true], [true, true]], // 2x3 rectangle
-    [[true, false], [true, false], [true, true]], // 3x2 L-shape (Г-образник)
+    [[true, true], [true, true], [true, true]],
+    [[true, false], [true, false], [true, true]],
     [[true, true, true], [true, true, true], [true, true, true]],
     [[false, true, false], [true, true, true], [false, true, false]],
     [[true, true, true, true, true]]

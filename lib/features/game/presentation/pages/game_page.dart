@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter/foundation.dart'; // <-- Добавлен для kIsWeb
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:energy_blast/core/constants/app_constants.dart';
@@ -44,7 +45,6 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
         ref.read(gameControllerProvider.notifier).resumeGame(widget.savedState!);
       });
     } else {
-      // Start a fresh game asynchronously to fetch the correct difficulty level
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(gameControllerProvider.notifier).startNewGame();
       });
@@ -77,7 +77,7 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
     final bool canUseBonuses = (hasAnyFreeBonuses || hasAnyAdsLeft || gameState.isOutOfMoves) && !isHammerBlocking;
 
     bool hasFreeUndos = gameState.freeUndos > 0;
-    bool canWatchGameAd = !gameState.isOutOfMoves && gameState.adUndos < 1;
+    bool canWatchGameAd = gameState.adUndos < 1;
     bool canWatchRescueAd = gameState.isOutOfMoves && gameState.rescueUndos == 0;
     bool hasAdUndos = canWatchGameAd || canWatchRescueAd;
     bool hasAnyUndosLeft = hasFreeUndos || hasAdUndos;
@@ -93,8 +93,6 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
         ref.read(audioServiceProvider).play(AppSound.click);
         ref.read(hapticServiceProvider).trigger(AppHaptic.selection);
 
-        // The build callback can outlive the widget, so verify that this
-        // specific BuildContext is still mounted before popping.
         Future.microtask(() {
           if (!context.mounted) return;
           Navigator.pop(context);
@@ -145,7 +143,8 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
             ),
           ],
         ),
-        bottomNavigationBar: (Platform.isAndroid || Platform.isIOS)
+        // Fix: Added !kIsWeb check to prevent crash in Chrome
+        bottomNavigationBar: (!kIsWeb && (Platform.isAndroid || Platform.isIOS))
             ? const SafeArea(child: AdBannerWidget())
             : null,
         body: SafeArea(
@@ -235,7 +234,7 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                         const SizedBox(width: AppConstants.paddingM),
 
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             if (gameState.isProcessing || _isPaused || gameState.isHammerActive) return;
                             if (gameState.previousState == null) {
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.nothingToUndo)));
@@ -246,8 +245,9 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                               return;
                             }
 
-                            bool success = ref.read(gameControllerProvider.notifier).undo();
+                            bool success = await ref.read(gameControllerProvider.notifier).undo();
                             if (!success && hasAdUndos) {
+                              ref.read(gameControllerProvider.notifier).startBonusProcessing();
                               bool earned = false;
                               RewardedAdManager.showAd(
                                 onUserEarnedReward: () => earned = true,
@@ -256,12 +256,11 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                                     Future.delayed(const Duration(milliseconds: 500), () {
                                       ref.read(gameControllerProvider.notifier).onAdReward(PowerUpType.undo);
                                     });
+                                  } else {
+                                    ref.read(gameControllerProvider.notifier).cancelBonusProcessing();
                                   }
                                 },
                                 onAdFailed: () {
-                                  // Delayed callback may fire after the page
-                                  // has been popped, so verify the BuildContext
-                                  // is still mounted before showing feedback.
                                   Future.delayed(const Duration(milliseconds: 500), () {
                                     ref.read(gameControllerProvider.notifier).onAdReward(PowerUpType.undo);
                                     if (!context.mounted) return;
@@ -441,9 +440,6 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                                                       child: Column(
                                                         mainAxisSize: MainAxisSize.min,
                                                         children: [
-                                                          // Main line: stacked stroke + fill Text,
-                                                          // wrapped in FittedBox so any translation
-                                                          // length scales down instead of overflowing.
                                                           FittedBox(
                                                             fit: BoxFit.scaleDown,
                                                             child: Stack(
@@ -489,7 +485,7 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                   ],
                 ),
 
-                if (gameState.isOutOfMoves && !gameState.pulseGift && !_isPaused && !gameState.isHammerActive)
+                if (gameState.isOutOfMoves && !gameState.isBonusProcessing && !gameState.pulseGift && !_isPaused && !gameState.isHammerActive)
                   Positioned.fill(
                     child: Container(
                       color: Colors.black.withValues(alpha: 0.85),
@@ -590,7 +586,7 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                                       ref.read(gameControllerProvider.notifier).startNewGame();
                                       setState(() => _isPaused = false);
                                     },
-                                    child: AutoText.singleLine(l10n.restart, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                    child: AutoText.singleLine(l10n.newGame, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                                   ),
                                   const SizedBox(height: AppConstants.paddingM),
                                   Wrap(

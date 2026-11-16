@@ -169,6 +169,9 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get veryLongAgo => 'Очень давно';
+
+  @override
   String get bonusesTitle => 'БОНУСЫ';
 
   @override
@@ -223,8 +226,23 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get infoComingSoon => 'Меню информации скоро появится';
+  String get languageTitle => 'Язык';
 
   @override
-  String get languageTitle => 'Язык';
+  String get infoTitle => 'Информация';
+
+  @override
+  String get howToPlay => 'Как играть';
+
+  @override
+  String get privacyPolicy => 'Политика конфиденциальности';
+
+  @override
+  String get termsOfService => 'Условия использования';
+
+  @override
+  String get licenses => 'Лицензии';
+
+  @override
+  String get aboutGame => 'Об игре';
 }

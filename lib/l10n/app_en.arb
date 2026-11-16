@@ -65,6 +65,7 @@
       "days": { "type": "Object" }
     }
   },
+  "veryLongAgo": "Very long ago",
 
   "bonusesTitle": "BONUSES",
   "rescueBonusesTitle": "RESCUE BONUSES",
@@ -99,6 +100,11 @@
     }
   },
 
-  "infoComingSoon": "Info menu coming soon",
-  "languageTitle": "Language"
+  "languageTitle": "Language",
+  "infoTitle": "Information",
+  "howToPlay": "How to Play",
+  "privacyPolicy": "Privacy Policy",
+  "termsOfService": "Terms of Service",
+  "licenses": "Licenses",
+  "aboutGame": "About Game"
 }

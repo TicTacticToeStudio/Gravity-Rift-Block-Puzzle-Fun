@@ -1,3 +1,5 @@
+// lib/features/game/presentation/widgets/board/board_widget.dart
+
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -163,7 +165,6 @@ class BoardWidget extends ConsumerWidget {
           ),
 
           // 2. Gradient Auras around the lines (always visible)
-          // Vertical Aura
           Positioned.fill(
             child: IgnorePointer(
               child: Align(
@@ -191,7 +192,6 @@ class BoardWidget extends ConsumerWidget {
             ),
           ),
 
-          // Horizontal Aura
           Positioned.fill(
             child: IgnorePointer(
               child: Align(
@@ -220,7 +220,6 @@ class BoardWidget extends ConsumerWidget {
           ),
 
           // 3. Gravity Crosshair Lines (Base)
-          // Vertical Base Line
           Positioned.fill(
             child: IgnorePointer(
               child: Align(
@@ -250,7 +249,6 @@ class BoardWidget extends ConsumerWidget {
             ),
           ),
 
-          // Horizontal Base Line
           Positioned.fill(
             child: IgnorePointer(
               child: Align(
@@ -281,7 +279,6 @@ class BoardWidget extends ConsumerWidget {
           ),
 
           // 4. Active Rift Effects (Lightning + Bright Glow)
-          // Active Vertical Rift
           if (isVerticalRiftActive)
             Positioned.fill(
               child: IgnorePointer(
@@ -327,7 +324,6 @@ class BoardWidget extends ConsumerWidget {
               ),
             ),
 
-          // Active Horizontal Rift
           if (isHorizontalRiftActive)
             Positioned.fill(
               child: IgnorePointer(
@@ -417,7 +413,7 @@ class BoardWidget extends ConsumerWidget {
           // 6. Animated Crystals
           ...animatedCells,
 
-          // 6.5. FLOATING SCORE NUMBERS (WHITE OUTLINE)
+          // 6.5. FLOATING SCORE NUMBERS
           if (gameState.clearingCellPoints.isNotEmpty)
             ...gameState.clearingCellPoints.entries.map((entry) {
               final parts = entry.key.split('_');
@@ -425,9 +421,28 @@ class BoardWidget extends ConsumerWidget {
               final y = int.parse(parts[1]);
               final points = entry.value;
 
-              // Get the block's color for the text
               final cell = board.getCell(x, y);
               final blockColor = _getColor(cell.type);
+
+              double dirX = 0;
+              double dirY = 0;
+
+              final bool isInRow = gameState.clearingRows.contains(y);
+              final bool isInCol = gameState.clearingCols.contains(x);
+
+              if (isInRow) {
+                if (y < 3.5) {
+                  dirY = 1.0;
+                } else if (y > 3.5) {
+                  dirY = -1.0;
+                }
+              } else if (isInCol) {
+                if (x < 3.5) {
+                  dirX = 1.0;
+                } else if (x > 3.5) {
+                  dirX = -1.0;
+                }
+              }
 
               return Positioned(
                 left: x * cellSize,
@@ -441,12 +456,14 @@ class BoardWidget extends ConsumerWidget {
                     duration: const Duration(milliseconds: 1200),
                     curve: Curves.easeOutQuad,
                     builder: (context, t, child) {
-                      final dy = -cellSize * 1.2 * t;
-                      // Keep at 100% opacity for the first 70% of the flight, then fade out
+                      final travelDistance = cellSize * 1.5 * t;
+                      final offsetX = dirX * travelDistance;
+                      final offsetY = dirY * travelDistance;
+
                       final opacity = t < 0.7 ? 1.0 : (1.0 - t) / 0.3;
 
                       return Transform.translate(
-                        offset: Offset(0, dy),
+                        offset: Offset(offsetX, offsetY),
                         child: Center(
                           child: Opacity(
                             opacity: opacity.clamp(0.0, 1.0),
@@ -455,7 +472,6 @@ class BoardWidget extends ConsumerWidget {
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
-                                  // 1. White stroke outline
                                   Text(
                                     '+$points',
                                     style: TextStyle(
@@ -467,7 +483,6 @@ class BoardWidget extends ConsumerWidget {
                                         ..color = Colors.white,
                                     ),
                                   ),
-                                  // 2. Colored fill with neon glow
                                   Text(
                                     '+$points',
                                     style: TextStyle(
@@ -475,9 +490,8 @@ class BoardWidget extends ConsumerWidget {
                                       fontWeight: FontWeight.w900,
                                       color: blockColor,
                                       shadows: [
-                                        // Adding a tiny dark shadow under the white outline helps pop it further against light areas
                                         const Shadow(color: Colors.black45, blurRadius: 2, offset: Offset(0, 1)),
-                                        Shadow(color: blockColor, blurRadius: 10), // Glow matches block color
+                                        Shadow(color: blockColor, blurRadius: 10),
                                       ],
                                     ),
                                   ),
@@ -556,7 +570,6 @@ class BoardWidget extends ConsumerWidget {
 
 // --- CUSTOM PAINTERS ---
 
-// 1. Lightning Painter for the Rift
 class LightningPainter extends CustomPainter {
   final bool isVertical;
   final double pulse;
@@ -691,7 +704,8 @@ class RowSparkPainter extends CustomPainter {
     canvas.drawCircle(pos, 6, sparkPaint);
     canvas.drawCircle(pos, 3, Paint()..color = Colors.white);
 
-    for (int i = 0; i < 150; i++) {
+    // INCREASED PARTICLES FROM 150 TO 350
+    for (int i = 0; i < 350; i++) {
       double r1 = _rand(seed + i * 1.5);
       double r2 = _rand(seed + i * 2.3);
       double r3 = _rand(seed + i * 3.1);
@@ -812,7 +826,8 @@ class ColSparkPainter extends CustomPainter {
     canvas.drawCircle(pos, 6, sparkPaint);
     canvas.drawCircle(pos, 3, Paint()..color = Colors.white);
 
-    for (int i = 0; i < 150; i++) {
+    // INCREASED PARTICLES FROM 150 TO 350
+    for (int i = 0; i < 350; i++) {
       double r1 = _rand(seed + i * 1.5);
       double r2 = _rand(seed + i * 2.3);
       double r3 = _rand(seed + i * 3.1);

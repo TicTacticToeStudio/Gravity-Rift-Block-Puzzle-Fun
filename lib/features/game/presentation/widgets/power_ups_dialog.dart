@@ -17,21 +17,11 @@ class PowerUpsDialog extends ConsumerWidget {
     final gameState = ref.watch(gameControllerProvider);
     final notifier = ref.read(gameControllerProvider.notifier);
 
-    // Capture messenger and ad-unavailable message BEFORE any Navigator.pop.
-    // The dialog is unmounted the moment it pops, so callbacks running after
-    // that (ad-failure fallbacks) cannot use the dialog's own `context` or
-    // the dialog-scoped `l10n` safely. ScaffoldMessengerState and plain
-    // Strings outlive the dialog and are the correct way to surface feedback
-    // on the underlying GamePage.
     final messenger = ScaffoldMessenger.of(context);
     final adUnavailableMsg = l10n.adUnavailableBonus;
     final noMovesFoundMsg = l10n.noMovesFound;
 
     final bool isRescue = gameState.isOutOfMoves;
-
-    // A short delay after Navigator.pop() gives the dialog time to finish its
-    // exit animation before the bonus starts applying. Without it, the bonus
-    // animation overlays the closing dialog and the result looks messy.
     const Duration applyDelay = Duration(milliseconds: 500);
 
     return Dialog(
@@ -43,7 +33,6 @@ class PowerUpsDialog extends ConsumerWidget {
           borderRadius: BorderRadius.circular(AppConstants.radiusL),
           border: Border.all(color: AppColors.primary.withValues(alpha: 0.5), width: 2),
         ),
-        // Wrapped in SingleChildScrollView to prevent RenderFlex overflow on small screens
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -73,26 +62,30 @@ class PowerUpsDialog extends ConsumerWidget {
                     icon: Icons.help_outline,
                     color: AppColors.crystalAmber,
                     onUse: () {
+                      notifier.startBonusProcessing();
                       Navigator.pop(context);
-                      Future.delayed(applyDelay, () {
-                        notifier.useSurprise();
+                      Future.delayed(applyDelay, () async {
+                        await notifier.useSurprise();
                       });
                     },
                     onAd: () {
+                      notifier.startBonusProcessing();
                       Navigator.pop(context);
                       bool earned = false;
                       RewardedAdManager.showAd(
                         onUserEarnedReward: () => earned = true,
                         onAdDismissed: () {
                           if (earned) {
-                            Future.delayed(const Duration(milliseconds: 500), () {
-                              notifier.onAdReward(PowerUpType.surprise);
+                            Future.delayed(const Duration(milliseconds: 500), () async {
+                              await notifier.onAdReward(PowerUpType.surprise);
                             });
+                          } else {
+                            notifier.cancelBonusProcessing();
                           }
                         },
                         onAdFailed: () {
-                          Future.delayed(const Duration(milliseconds: 500), () {
-                            notifier.onAdReward(PowerUpType.surprise);
+                          Future.delayed(const Duration(milliseconds: 500), () async {
+                            await notifier.onAdReward(PowerUpType.surprise);
                             messenger.showSnackBar(
                               SnackBar(content: Text(adUnavailableMsg)),
                             );
@@ -108,26 +101,30 @@ class PowerUpsDialog extends ConsumerWidget {
                     icon: Icons.gavel,
                     color: AppColors.crystalRuby,
                     onUse: () {
+                      notifier.startBonusProcessing();
                       Navigator.pop(context);
                       Future.delayed(applyDelay, () {
                         notifier.toggleHammerMode();
                       });
                     },
                     onAd: () {
+                      notifier.startBonusProcessing();
                       Navigator.pop(context);
                       bool earned = false;
                       RewardedAdManager.showAd(
                         onUserEarnedReward: () => earned = true,
                         onAdDismissed: () {
                           if (earned) {
-                            Future.delayed(const Duration(milliseconds: 500), () {
-                              notifier.onAdReward(PowerUpType.hammer);
+                            Future.delayed(const Duration(milliseconds: 500), () async {
+                              await notifier.onAdReward(PowerUpType.hammer);
                             });
+                          } else {
+                            notifier.cancelBonusProcessing();
                           }
                         },
                         onAdFailed: () {
-                          Future.delayed(const Duration(milliseconds: 500), () {
-                            notifier.onAdReward(PowerUpType.hammer);
+                          Future.delayed(const Duration(milliseconds: 500), () async {
+                            await notifier.onAdReward(PowerUpType.hammer);
                             messenger.showSnackBar(
                               SnackBar(content: Text(adUnavailableMsg)),
                             );
@@ -143,26 +140,30 @@ class PowerUpsDialog extends ConsumerWidget {
                     icon: Icons.refresh,
                     color: AppColors.crystalSapphire,
                     onUse: () {
+                      notifier.startBonusProcessing();
                       Navigator.pop(context);
-                      Future.delayed(applyDelay, () {
-                        notifier.useNewBlocks();
+                      Future.delayed(applyDelay, () async {
+                        await notifier.useNewBlocks();
                       });
                     },
                     onAd: () {
+                      notifier.startBonusProcessing();
                       Navigator.pop(context);
                       bool earned = false;
                       RewardedAdManager.showAd(
                         onUserEarnedReward: () => earned = true,
                         onAdDismissed: () {
                           if (earned) {
-                            Future.delayed(const Duration(milliseconds: 500), () {
-                              notifier.onAdReward(PowerUpType.shuffle);
+                            Future.delayed(const Duration(milliseconds: 500), () async {
+                              await notifier.onAdReward(PowerUpType.shuffle);
                             });
+                          } else {
+                            notifier.cancelBonusProcessing();
                           }
                         },
                         onAdFailed: () {
-                          Future.delayed(const Duration(milliseconds: 500), () {
-                            notifier.onAdReward(PowerUpType.shuffle);
+                          Future.delayed(const Duration(milliseconds: 500), () async {
+                            await notifier.onAdReward(PowerUpType.shuffle);
                             messenger.showSnackBar(
                               SnackBar(content: Text(adUnavailableMsg)),
                             );
@@ -178,33 +179,36 @@ class PowerUpsDialog extends ConsumerWidget {
                     icon: Icons.lightbulb_outline,
                     color: Colors.greenAccent,
                     onUse: () {
+                      notifier.startBonusProcessing();
                       Navigator.pop(context);
-                      Future.delayed(applyDelay, () {
-                        final bool found = notifier.useHint();
-                        // Use the pre-captured messenger and message instead
-                        // of touching the (now unmounted) dialog context.
+                      Future.delayed(applyDelay, () async {
+                        final bool found = await notifier.useHint();
                         if (!found) {
                           messenger.showSnackBar(
                             SnackBar(content: Text(noMovesFoundMsg)),
                           );
+                          notifier.cancelBonusProcessing();
                         }
                       });
                     },
                     onAd: () {
+                      notifier.startBonusProcessing();
                       Navigator.pop(context);
                       bool earned = false;
                       RewardedAdManager.showAd(
                         onUserEarnedReward: () => earned = true,
                         onAdDismissed: () {
                           if (earned) {
-                            Future.delayed(const Duration(milliseconds: 500), () {
-                              notifier.onAdReward(PowerUpType.hint);
+                            Future.delayed(const Duration(milliseconds: 500), () async {
+                              await notifier.onAdReward(PowerUpType.hint);
                             });
+                          } else {
+                            notifier.cancelBonusProcessing();
                           }
                         },
                         onAdFailed: () {
-                          Future.delayed(const Duration(milliseconds: 500), () {
-                            notifier.onAdReward(PowerUpType.hint);
+                          Future.delayed(const Duration(milliseconds: 500), () async {
+                            await notifier.onAdReward(PowerUpType.hint);
                             messenger.showSnackBar(
                               SnackBar(content: Text(adUnavailableMsg)),
                             );
@@ -253,21 +257,18 @@ class PowerUpsDialog extends ConsumerWidget {
 
     bool canWatchAd = false;
 
+    // UPDATED LOGIC: Allow normal ads in rescue mode as a fallback
     if (type == PowerUpType.surprise) {
-      canWatchAd = state.isOutOfMoves ? state.rescueSurprises == 0 : state.adSurprises < 2;
+      canWatchAd = (state.isOutOfMoves && state.rescueSurprises == 0) || (state.adSurprises < 2);
     } else if (type == PowerUpType.hammer) {
-      canWatchAd = state.isOutOfMoves ? state.rescueHammers == 0 : state.adHammers < 2;
+      canWatchAd = (state.isOutOfMoves && state.rescueHammers == 0) || (state.adHammers < 2);
     } else if (type == PowerUpType.shuffle) {
-      canWatchAd = state.isOutOfMoves ? state.rescueShuffles == 0 : state.adShuffles < 2;
+      canWatchAd = (state.isOutOfMoves && state.rescueShuffles == 0) || (state.adShuffles < 2);
     } else if (type == PowerUpType.hint) {
-      // Real-time scan to check if ANY piece fits on the board.
       bool hasValidMove = state.pieces.any((p) => state.board.canPlaceAnywhere(p));
-      canWatchAd = hasValidMove && state.adHints < 2;
+      canWatchAd = hasValidMove && (state.adHints < 2); // Hint ads are just normal ads
     }
 
-    // In a deadlock (rescue mode) no valid move exists on the board,
-    // so a hint cannot produce a suggestion. Show the card dimmed with a
-    // disabled button instead of letting the player tap into a dead end.
     final bool isHintDisabled = state.isOutOfMoves && type == PowerUpType.hint;
 
     return SizedBox(
@@ -287,8 +288,6 @@ class PowerUpsDialog extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 8),
-          // Title: wrapped in FittedBox so long translations (French/German)
-          // scale down instead of forcing the card taller than others.
           SizedBox(
             height: 28,
             child: Center(
@@ -310,15 +309,11 @@ class PowerUpsDialog extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
 
-          // Action area: fixed height to keep all four cards aligned,
-          // FittedBox inside so "USE (12)" / "ИСП. (12)" / "RÉCLAME" etc.
-          // all fit inside the same 100px card without overflowing.
           SizedBox(
             height: 32,
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: isHintDisabled && freeCount > 0
-              // Disabled USE button: Material renders it greyed out automatically.
                   ? ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(0, 32),

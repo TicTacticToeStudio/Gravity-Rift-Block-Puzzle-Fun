@@ -20,21 +20,34 @@ dependencies:
   audioplayers: ^6.8.1
   vibration: ^3.1.3
   flutter_soloud: ^4.0.2
+  yaml: ^3.1.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.13.1 # Added for icon generation
 
 flutter:
   uses-material-design: true
   generate: true
   assets:
-  #   - assets/images/flowers/
-  #   - assets/images/pieces/
-  #   - assets/images/ui/
-  #   - assets/sounds/
-  #   - assets/fonts/
-  - "assets/images/HEX_Icon.png"
-  - "assets/images/TTT_icon_final.png"
-  - assets/sounds/
+    #   - assets/images/flowers/
+    #   - assets/images/pieces/
+    #   - assets/images/ui/
+    #   - assets/sounds/
+    #   - assets/fonts/
+    - "assets/images/HEX_Icon.png"
+    - "assets/images/TTT_icon_final.png"
+    - assets/sounds/
+    - assets/legal/
+    - assets/icon/app_icon.png
+
+# Configuration for generating app launcher icons
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: false # iOS is disabled as requested
+  image_path: "assets/icon/app_icon.png"
+  adaptive_icon_background: "#1A163B" # Deep cosmic background color
+  adaptive_icon_foreground: "assets/icon/app_icon.png"
+  min_sdk_android: 28

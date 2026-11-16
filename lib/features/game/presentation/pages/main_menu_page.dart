@@ -1,3 +1,5 @@
+// lib/features/game/presentation/pages/main_menu_page.dart
+
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +15,7 @@ import 'package:energy_blast/core/providers/locale_provider.dart';
 import 'package:energy_blast/core/services/save_game_service.dart';
 import 'package:energy_blast/features/game/application/game_controller.dart';
 import 'package:energy_blast/features/game/presentation/widgets/leaderboard_dialog.dart';
+import 'package:energy_blast/features/game/presentation/widgets/info_dialog.dart'; // <-- Added
 import 'game_page.dart';
 import 'more_games_page.dart';
 
@@ -58,8 +61,9 @@ class MainMenuPage extends ConsumerWidget {
                       icon: const Icon(Icons.info_outline, color: Colors.white, size: 32),
                       onPressed: () {
                         _playClick(ref);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.infoComingSoon)),
+                        showDialog(
+                          context: context,
+                          builder: (_) => const InfoDialog(),
                         );
                       },
                     ),
@@ -180,37 +184,29 @@ class MainMenuPage extends ConsumerWidget {
                         ],
                       ),
 
-                      // SUBTITLE
+                      // SUBTITLE (Enhanced readability)
                       if (subTitle.isNotEmpty) ...[
                         const SizedBox(height: 8),
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Text(
-                              subTitle,
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 6.0,
-                                foreground: Paint()
-                                  ..style = PaintingStyle.stroke
-                                  ..strokeWidth = 5
-                                  ..color = const Color(0xFF0A0815),
+                        Text(
+                          subTitle,
+                          style: TextStyle(
+                            color: Colors.cyanAccent,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 38,
+                            letterSpacing: 4.0,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 6.0,
+                                color: Colors.black.withValues(alpha: 0.9),
+                                offset: const Offset(0, 0),
                               ),
-                            ),
-                            Text(
-                              subTitle,
-                              style: const TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 6.0,
-                                color: AppColors.primary,
-                                shadows: [
-                                  Shadow(color: AppColors.primary, blurRadius: 15),
-                                ],
+                              Shadow(
+                                blurRadius: 8.0,
+                                color: Colors.cyan.withValues(alpha: 0.6),
+                                offset: const Offset(0, 0),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ],
@@ -271,10 +267,11 @@ class MainMenuPage extends ConsumerWidget {
                                     icon: Icons.refresh,
                                     color: AppColors.secondary,
                                     showBoardBackground: false,
-                                    onTap: () {
+                                    onTap: () async {
                                       _playClick(ref);
-                                      SaveGameService.clearSave();
+                                      await SaveGameService.clearSave();
                                       ref.invalidate(hasSaveProvider);
+                                      if (!context.mounted) return;
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(builder: (_) => const GamePage())
@@ -286,13 +283,15 @@ class MainMenuPage extends ConsumerWidget {
                             } else {
                               // Standard Play Button (with Board Background)
                               return _buildMenuButton(
-                                title: l10n.playNow.toUpperCase(),
-                                subtitle: l10n.classicModeSub,
+                                title: l10n.newGame,
+                                subtitle: l10n.startFresh,
                                 icon: Icons.play_circle_fill,
                                 color: AppColors.primary,
                                 showBoardBackground: true,
-                                onTap: () {
+                                onTap: () async {
                                   _playClick(ref);
+                                  await SaveGameService.clearSave();
+                                  if (!context.mounted) return;
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(builder: (_) => const GamePage())
@@ -303,13 +302,15 @@ class MainMenuPage extends ConsumerWidget {
                           },
                           loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
                           error: (_, __) => _buildMenuButton(
-                            title: l10n.playNow.toUpperCase(),
-                            subtitle: l10n.classicModeSub,
+                            title: l10n.newGame,
+                            subtitle: l10n.startFresh,
                             icon: Icons.play_circle_fill,
                             color: AppColors.primary,
                             showBoardBackground: true,
-                            onTap: () {
+                            onTap: () async {
                               _playClick(ref);
+                              await SaveGameService.clearSave();
+                              if (!context.mounted) return;
                               Navigator.push(context, MaterialPageRoute(builder: (_) => const GamePage()));
                             },
                           ),
@@ -438,7 +439,6 @@ class MainMenuPage extends ConsumerWidget {
 
             // Foreground Content
             Container(
-              // Generous vertical padding for a taller button
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               decoration: BoxDecoration(
                 color: showBoardBackground ? Colors.black.withValues(alpha: 0.3) : color.withValues(alpha: 0.1),
@@ -458,8 +458,6 @@ class MainMenuPage extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Title: single-line, scales down if the translation
-                        // doesn't fit (French/German tend to be longer).
                         AutoText.singleLine(
                           title,
                           alignment: Alignment.centerLeft,
@@ -471,8 +469,6 @@ class MainMenuPage extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: 6),
-                        // Subtitle: multiline, wraps naturally, button grows
-                        // in height to accommodate longer descriptions.
                         Text(
                           subtitle,
                           style: TextStyle(

@@ -169,6 +169,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get veryLongAgo => 'Very long ago';
+
+  @override
   String get bonusesTitle => 'BONUSES';
 
   @override
@@ -223,8 +226,23 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get infoComingSoon => 'Info menu coming soon';
+  String get languageTitle => 'Language';
 
   @override
-  String get languageTitle => 'Language';
+  String get infoTitle => 'Information';
+
+  @override
+  String get howToPlay => 'How to Play';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get termsOfService => 'Terms of Service';
+
+  @override
+  String get licenses => 'Licenses';
+
+  @override
+  String get aboutGame => 'About Game';
 }

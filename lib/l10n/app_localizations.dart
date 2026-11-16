@@ -404,6 +404,12 @@ abstract class AppLocalizations {
   /// **'{days} days ago'**
   String daysAgo(Object days);
 
+  /// No description provided for @veryLongAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'Very long ago'**
+  String get veryLongAgo;
+
   /// No description provided for @bonusesTitle.
   ///
   /// In en, this message translates to:
@@ -500,17 +506,47 @@ abstract class AppLocalizations {
   /// **'COMBO x{level}!'**
   String comboMultiplier(int level);
 
-  /// No description provided for @infoComingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Info menu coming soon'**
-  String get infoComingSoon;
-
   /// No description provided for @languageTitle.
   ///
   /// In en, this message translates to:
   /// **'Language'**
   String get languageTitle;
+
+  /// No description provided for @infoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Information'**
+  String get infoTitle;
+
+  /// No description provided for @howToPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'How to Play'**
+  String get howToPlay;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @termsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfService;
+
+  /// No description provided for @licenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Licenses'**
+  String get licenses;
+
+  /// No description provided for @aboutGame.
+  ///
+  /// In en, this message translates to:
+  /// **'About Game'**
+  String get aboutGame;
 }
 
 class _AppLocalizationsDelegate

@@ -41,14 +41,9 @@ class HighScoreService {
   static Future<void> saveScore(int newScore, String runId) async {
     if (newScore <= 0) return;
 
-    // Extract the original game start date from the runId timestamp
-    DateTime gameStartDate;
-    try {
-      gameStartDate = DateTime.fromMicrosecondsSinceEpoch(int.parse(runId));
-    } catch (_) {
-      // Fallback for old save records that might not have a valid timestamp runId
-      gameStartDate = DateTime.now();
-    }
+    // Use the current time when the score is saved.
+    // This ensures the leaderboard always shows "Today" if the record was just set.
+    final DateTime scoreDate = DateTime.now();
 
     final scores = await getScores();
 
@@ -56,13 +51,13 @@ class HighScoreService {
     final existingIndex = scores.indexWhere((s) => s.runId == runId);
 
     if (existingIndex != -1) {
-      // Update the score if it's higher, but keep the original start date
+      // Update the score if it's higher, and refresh the date
       if (newScore > scores[existingIndex].score) {
-        scores[existingIndex] = ScoreRecord(runId: runId, score: newScore, date: gameStartDate);
+        scores[existingIndex] = ScoreRecord(runId: runId, score: newScore, date: scoreDate);
       }
     } else {
-      // Add as new record with the start date
-      scores.add(ScoreRecord(runId: runId, score: newScore, date: gameStartDate));
+      // Add as new record
+      scores.add(ScoreRecord(runId: runId, score: newScore, date: scoreDate));
     }
 
     scores.sort((a, b) => b.score.compareTo(a.score));
@@ -73,7 +68,7 @@ class HighScoreService {
     await prefs.setString(_key, jsonString);
   }
 
-  // Changed to use relative dates for better localization
+  // Changed to use relative dates for better localization and added 30+ days cap
   static String formatRelativeDate(DateTime date, AppLocalizations l10n) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -81,10 +76,13 @@ class HighScoreService {
 
     final difference = today.difference(recordDate).inDays;
 
-    if (difference == 0) {
+    // difference <= 0 handles "Today" and protects against timezone weirdness
+    if (difference <= 0) {
       return l10n.today;
     } else if (difference == 1) {
       return l10n.yesterday;
+    } else if (difference > 30) {
+      return l10n.veryLongAgo;
     } else {
       return l10n.daysAgo(difference);
     }
