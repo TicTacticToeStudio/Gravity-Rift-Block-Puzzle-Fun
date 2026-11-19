@@ -81,6 +81,7 @@ class GameState {
   final int? hintY;
 
   final bool pulseGift;
+  final int gamesPlayed;
 
   const GameState({
     required this.runId,
@@ -95,6 +96,7 @@ class GameState {
     this.activeSurprises = const [], this.lastSurprisePoints = 0, this.isHammerActive = false,
     this.turnId = 0, this.activeHammerMisses = const [], this.hintPieceId, this.hintX, this.hintY,
     this.pulseGift = false,
+    this.gamesPlayed = 0,
   });
 
   GameState copyWith({
@@ -110,6 +112,7 @@ class GameState {
     List<Offset>? activeSurprises, int? lastSurprisePoints, bool? isHammerActive, int? turnId, List<HammerMiss>? activeHammerMisses,
     String? hintPieceId, int? hintX, int? hintY, bool clearHint = false,
     bool? pulseGift,
+    int? gamesPlayed,
   }) {
     return GameState(
       runId: runId ?? this.runId,
@@ -136,6 +139,7 @@ class GameState {
       hintX: clearHint ? null : (hintX ?? this.hintX),
       hintY: clearHint ? null : (hintY ?? this.hintY),
       pulseGift: pulseGift ?? this.pulseGift,
+      gamesPlayed: gamesPlayed ?? this.gamesPlayed,
     );
   }
 
@@ -146,6 +150,7 @@ class GameState {
       'freeSurprises': freeSurprises, 'freeHammers': freeHammers, 'freeShuffles': freeShuffles, 'freeHints': freeHints, 'freeUndos': freeUndos,
       'adSurprises': adSurprises, 'adHammers': adHammers, 'adShuffles': adShuffles, 'adHints': adHints, 'adUndos': adUndos,
       'rescueSurprises': rescueSurprises, 'rescueHammers': rescueHammers, 'rescueShuffles': rescueShuffles, 'rescueHints': rescueHints, 'rescueUndos': rescueUndos,
+      'gamesPlayed': gamesPlayed,
     };
   }
 
@@ -158,6 +163,7 @@ class GameState {
       adSurprises: json['adSurprises'] ?? 0, adHammers: json['adHammers'] ?? 0, adShuffles: json['adShuffles'] ?? 0, adHints: json['adHints'] ?? 0, adUndos: json['adUndos'] ?? 0,
       rescueSurprises: json['rescueSurprises'] ?? 0, rescueHammers: json['rescueHammers'] ?? 0, rescueShuffles: json['rescueShuffles'] ?? 0, rescueHints: json['rescueHints'] ?? 0, rescueUndos: json['rescueUndos'] ?? 0,
       isProcessing: false, isGameOver: false, isOutOfMoves: false, isHammerActive: false, pulseGift: false,
+      gamesPlayed: json['gamesPlayed'] ?? 0,
     );
   }
 }
@@ -300,11 +306,23 @@ class GameController extends AutoDisposeNotifier<GameState> {
   Future<void> startNewGame() async {
     await SaveGameService.clearSave();
     final level = await _calculateDifficultyLevel();
-    final newState = _createBoardForLevel(level).copyWith(turnId: state.turnId + 1);
+    final newState = _createBoardForLevel(level).copyWith(
+      turnId: state.turnId + 1,
+      gamesPlayed: state.gamesPlayed,
+    );
     state = newState;
   }
 
-  Future<void> restartGame() async => await startNewGame();
+  Future<void> restartGame() async {
+    final nextGameCount = state.gamesPlayed + 1;
+    await SaveGameService.clearSave();
+    final level = await _calculateDifficultyLevel();
+    final newState = _createBoardForLevel(level).copyWith(
+      turnId: state.turnId + 1,
+      gamesPlayed: nextGameCount,
+    );
+    state = newState;
+  }
 
   void openBonusesFromRescue() {
     state = state.copyWith(pulseGift: true);
@@ -338,12 +356,8 @@ class GameController extends AutoDisposeNotifier<GameState> {
 
   Future<void> _finalizeBonusAction({required bool wasInRescue}) async {
     if (wasInRescue) {
-      // Give the player 1.5 seconds to see the result of the bonus before
-      // the rescue screen might reappear.
       await Future.delayed(const Duration(milliseconds: 1500));
     } else {
-      // Even if not in rescue, if a bonus (like Shuffle) causes a deadlock,
-      // give the player a moment to see the board change before the screen pops.
       await Future.delayed(const Duration(milliseconds: 800));
     }
 
@@ -358,23 +372,24 @@ class GameController extends AutoDisposeNotifier<GameState> {
     if (state.isProcessing || state.previousState == null || state.isHammerActive) return true;
 
     bool canUseFree = state.freeUndos > 0;
-    bool canUseRescueAd = state.isOutOfMoves && state.rescueUndos == 0;
-
-    // FIX: Allow normal ad undo in rescue mode as a fallback
-    bool canUseGameAd = state.adUndos < 1;
+    bool canUseRescue = state.isOutOfMoves && state.rescueUndos == 0;
+    bool canUseAd = state.adUndos < 1;
 
     int newFree = state.freeUndos;
     int newGameAd = state.adUndos;
-    int newRescueAd = state.rescueUndos;
+    int newRescue = state.rescueUndos;
 
     if (fromAd) {
-      // Prioritize rescue ad, then fallback to normal ad
-      if (canUseRescueAd) newRescueAd = 1;
-      else if (canUseGameAd) newGameAd = 1;
+      if (canUseAd) newGameAd = 1;
       else return false;
     } else {
-      if (canUseFree) newFree--;
-      else return false;
+      if (canUseFree) {
+        newFree--;
+      } else if (canUseRescue) {
+        newRescue = 1;
+      } else {
+        return false;
+      }
     }
 
     ref.read(audioServiceProvider).play(AppSound.click);
@@ -387,7 +402,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
       restoredState = restoredState.copyWith(score: restoredState.score + pointsToKeep);
     }
 
-    restoredState = restoredState.copyWith(freeUndos: newFree, adUndos: newGameAd, rescueUndos: newRescueAd);
+    restoredState = restoredState.copyWith(freeUndos: newFree, adUndos: newGameAd, rescueUndos: newRescue);
 
     state = restoredState.copyWith(clearHint: true, pulseGift: false, isOutOfMoves: false);
 
@@ -426,8 +441,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
     } else if (state.isOutOfMoves && state.rescueSurprises == 0) {
       newRescue = 1;
       canUse = true;
-    } else if (state.adSurprises < 2) {
-      // FIX: Allow normal ads in rescue mode as a fallback
+    } else if (state.adSurprises < 1) {
       newAd++;
       canUse = true;
     }
@@ -455,7 +469,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
     bool canUse = false;
     if (state.freeHammers > 0) canUse = true;
     else if (state.isOutOfMoves && state.rescueHammers == 0) canUse = true;
-    else if (state.adHammers < 2) canUse = true;
+    else if (state.adHammers < 1) canUse = true;
 
     if (!canUse) return;
 
@@ -498,7 +512,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
 
     if (state.freeHammers > 0) { newFree--; sourceFound = true; }
     else if (state.isOutOfMoves && state.rescueHammers == 0) { newRescue = 1; sourceFound = true; }
-    else if (state.adHammers < 2) { newAd++; sourceFound = true; }
+    else if (state.adHammers < 1) { newAd++; sourceFound = true; }
 
     if (!sourceFound) {
       state = state.copyWith(
@@ -519,6 +533,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
       adSurprises: state.adSurprises, adHammers: state.adHammers, adShuffles: state.adShuffles, adHints: state.adHints, adUndos: state.adUndos,
       rescueSurprises: state.rescueSurprises, rescueHammers: state.rescueHammers, rescueShuffles: state.rescueShuffles, rescueHints: state.rescueHints, rescueUndos: state.rescueUndos,
       lastSurprisePoints: 0,
+      gamesPlayed: state.gamesPlayed,
     );
 
     await Future.delayed(const Duration(milliseconds: 200));
@@ -555,7 +570,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
 
     if (state.freeShuffles > 0) { newFree--; canUse = true; }
     else if (state.isOutOfMoves && state.rescueShuffles == 0) { newRescue = 1; canUse = true; }
-    else if (state.adShuffles < 2) { newAd++; canUse = true; }
+    else if (state.adShuffles < 1) { newAd++; canUse = true; }
 
     if (!canUse) return;
 
@@ -570,6 +585,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
       freeSurprises: state.freeSurprises, freeHammers: state.freeHammers, freeShuffles: state.freeShuffles, freeHints: state.freeHints, freeUndos: state.freeUndos,
       adSurprises: state.adSurprises, adHammers: state.adHammers, adShuffles: state.adShuffles, adHints: state.adHints, adUndos: state.adUndos,
       rescueSurprises: state.rescueSurprises, rescueHammers: state.rescueHammers, rescueShuffles: state.rescueShuffles, rescueHints: state.rescueHints, rescueUndos: state.rescueUndos,
+      gamesPlayed: state.gamesPlayed,
     );
 
     List<Piece> newPieces = _generateNewPieces(state.board);
@@ -600,7 +616,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
 
     if (state.freeHints > 0) { newFree--; canUse = true; }
     else if (state.isOutOfMoves && state.rescueHints == 0) { newRescue = 1; canUse = true; }
-    else if (state.adHints < 2) { newAd++; canUse = true; }
+    else if (state.adHints < 1) { newAd++; canUse = true; }
 
     if (!canUse) return false;
 
@@ -701,6 +717,7 @@ class GameController extends AutoDisposeNotifier<GameState> {
         adSurprises: state.adSurprises, adHammers: state.adHammers, adShuffles: state.adShuffles, adHints: state.adHints, adUndos: state.adUndos,
         rescueSurprises: state.rescueSurprises, rescueHammers: state.rescueHammers, rescueShuffles: state.rescueShuffles, rescueHints: state.rescueHints, rescueUndos: state.rescueUndos,
         lastSurprisePoints: 0,
+        gamesPlayed: state.gamesPlayed,
       );
 
       final newBoard = state.board;
@@ -867,24 +884,10 @@ class GameController extends AutoDisposeNotifier<GameState> {
     for (var p in pieces) { if (board.canPlaceAnywhere(p)) { noMovesLeft = false; break; } }
 
     if (noMovesLeft) {
-      final bool canUndoByAnyMeans = state.previousState != null &&
-          (state.freeUndos > 0 || state.rescueUndos == 0 || state.adUndos < 1);
-
-      final bool canUseAnyBonus =
-          (state.freeSurprises > 0 || state.rescueSurprises == 0 || state.adSurprises < 2) ||
-              (state.freeHammers > 0 || state.rescueHammers == 0 || state.adHammers < 2) ||
-              (state.freeShuffles > 0 || state.rescueShuffles == 0 || state.adShuffles < 2) ||
-              canUndoByAnyMeans;
-
-      if (canUseAnyBonus) {
-        state = state.copyWith(isOutOfMoves: true, isGameOver: false, pulseGift: false);
-      } else {
-        ref.read(audioServiceProvider).play(AppSound.gameOver);
-        ref.read(hapticServiceProvider).trigger(AppHaptic.vibrate);
-        state = state.copyWith(isGameOver: true, isOutOfMoves: false, pulseGift: false);
-        HighScoreService.saveScore(state.score, state.runId);
-        SaveGameService.clearSave();
-      }
+      // Always show the rescue screen when there are no moves left.
+      // The player will have the option to use free/in-game bonuses,
+      // or receive rescue bonuses if they run out.
+      state = state.copyWith(isOutOfMoves: true, isGameOver: false, pulseGift: false);
     } else {
       state = state.copyWith(isOutOfMoves: false, isGameOver: false, pulseGift: false);
     }

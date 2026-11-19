@@ -247,4 +247,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get aboutGame => 'Tentang Game';
+
+  @override
+  String get takeABreak => 'Time to relax during a short ad! ☕️';
 }

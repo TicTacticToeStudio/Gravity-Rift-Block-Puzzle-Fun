@@ -242,4 +242,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get aboutGame => '关于游戏';
+
+  @override
+  String get takeABreak => 'Time to relax during a short ad! ☕️';
 }

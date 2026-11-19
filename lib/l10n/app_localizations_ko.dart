@@ -242,4 +242,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get aboutGame => '게임 소개';
+
+  @override
+  String get takeABreak => 'Time to relax during a short ad! ☕️';
 }

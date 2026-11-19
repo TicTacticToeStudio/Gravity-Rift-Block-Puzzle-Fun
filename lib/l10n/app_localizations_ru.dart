@@ -245,4 +245,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get aboutGame => 'Об игре';
+
+  @override
+  String get takeABreak => 'Time to relax during a short ad! ☕️';
 }

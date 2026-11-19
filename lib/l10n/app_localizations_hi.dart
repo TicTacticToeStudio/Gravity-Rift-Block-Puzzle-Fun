@@ -246,4 +246,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get aboutGame => 'गेम के बारे में';
+
+  @override
+  String get takeABreak => 'Time to relax during a short ad! ☕️';
 }

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:energy_blast/core/providers/locale_provider.dart';
 import 'package:energy_blast/core/providers/settings_provider.dart';
 import 'package:energy_blast/core/services/rewarded_ad_manager.dart';
+import 'package:energy_blast/core/services/interstitial_ad_manager.dart';
 
 import 'app.dart';
 
@@ -17,6 +18,7 @@ void main() async {
   ]);
 
   RewardedAdManager.initialize();
+  InterstitialAdManager.loadAd(); // Initialize Interstitial Ad Manager
 
   final prefs = await SharedPreferences.getInstance();
 

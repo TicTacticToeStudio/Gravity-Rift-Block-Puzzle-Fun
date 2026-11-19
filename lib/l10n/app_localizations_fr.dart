@@ -249,4 +249,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get aboutGame => 'À propos du jeu';
+
+  @override
+  String get takeABreak => 'Time to relax during a short ad! ☕️';
 }

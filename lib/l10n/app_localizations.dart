@@ -567,6 +567,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'About Game'**
   String get aboutGame;
+
+  /// No description provided for @takeABreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to relax during a short ad! ☕️'**
+  String get takeABreak;
 }
 
 class _AppLocalizationsDelegate

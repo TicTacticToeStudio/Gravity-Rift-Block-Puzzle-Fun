@@ -242,4 +242,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get aboutGame => 'ゲームについて';
+
+  @override
+  String get takeABreak => 'Time to relax during a short ad! ☕️';
 }

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:flutter/foundation.dart'; // <-- Добавлен для kIsWeb
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:energy_blast/core/constants/app_constants.dart';
@@ -19,6 +19,7 @@ import 'package:energy_blast/features/game/presentation/widgets/power_ups_dialog
 import 'package:energy_blast/shared/widgets/ad_banner_widget.dart';
 import 'package:energy_blast/shared/widgets/auto_text.dart';
 import 'package:energy_blast/core/services/rewarded_ad_manager.dart';
+import 'package:energy_blast/core/services/interstitial_ad_manager.dart';
 
 class GamePage extends ConsumerStatefulWidget {
   final GameState? savedState;
@@ -32,6 +33,7 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
   final GlobalKey _boardKey = GlobalKey();
 
   bool _isPaused = false;
+  bool _isShowingInterstitial = false;
 
   @override
   void initState() {
@@ -73,7 +75,7 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
     final bool isHammerBlocking = gameState.isHammerActive;
 
     final bool hasAnyFreeBonuses = gameState.freeSurprises > 0 || gameState.freeHammers > 0 || gameState.freeShuffles > 0 || gameState.freeHints > 0;
-    final bool hasAnyAdsLeft = gameState.adSurprises < 2 || gameState.adHammers < 2 || gameState.adShuffles < 2 || gameState.adHints < 2;
+    final bool hasAnyAdsLeft = gameState.adSurprises < 1 || gameState.adHammers < 1 || gameState.adShuffles < 1 || gameState.adHints < 1;
     final bool canUseBonuses = (hasAnyFreeBonuses || hasAnyAdsLeft || gameState.isOutOfMoves) && !isHammerBlocking;
 
     bool hasFreeUndos = gameState.freeUndos > 0;
@@ -143,7 +145,6 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
             ),
           ],
         ),
-        // Fix: Added !kIsWeb check to prevent crash in Chrome
         bottomNavigationBar: (!kIsWeb && (Platform.isAndroid || Platform.isIOS))
             ? const SafeArea(child: AdBannerWidget())
             : null,
@@ -650,7 +651,7 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                     ),
                   ),
 
-                if (gameState.isGameOver && !_isPaused)
+                if (gameState.isGameOver && !_isPaused && !_isShowingInterstitial)
                   Positioned.fill(
                     child: Container(
                       color: Colors.black.withValues(alpha: 0.85),
@@ -691,7 +692,29 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                                     onPressed: () {
                                       ref.read(audioServiceProvider).play(AppSound.click);
                                       ref.read(hapticServiceProvider).trigger(AppHaptic.selection);
-                                      ref.read(gameControllerProvider.notifier).restartGame();
+
+                                      final nextGameCount = gameState.gamesPlayed + 1;
+                                      // Show interstitial on game 3, 7, 10, 14... (roughly 1 in 3.5)
+                                      final bool showAd = (nextGameCount % 7 == 3) || (nextGameCount % 7 == 0);
+
+                                      if (showAd) {
+                                        setState(() => _isShowingInterstitial = true);
+                                        Future.delayed(const Duration(seconds: 5), () {
+                                          if (!mounted) return;
+                                          InterstitialAdManager.showAd(
+                                            onAdDismissed: () {
+                                              if (mounted) setState(() => _isShowingInterstitial = false);
+                                              ref.read(gameControllerProvider.notifier).restartGame();
+                                            },
+                                            onAdFailed: () {
+                                              if (mounted) setState(() => _isShowingInterstitial = false);
+                                              ref.read(gameControllerProvider.notifier).restartGame();
+                                            },
+                                          );
+                                        });
+                                      } else {
+                                        ref.read(gameControllerProvider.notifier).restartGame();
+                                      }
                                     },
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -715,6 +738,41 @@ class _GamePageState extends ConsumerState<GamePage> with WidgetsBindingObserver
                       ),
                     ),
                   ),
+
+                        if (_isShowingInterstitial)
+    Positioned.fill(
+    child: Container(
+    // Removing harsh black, using a calming cosmic gradient instead
+    decoration: BoxDecoration(
+    gradient: LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+    AppColors.background.withValues(alpha: 0.98),
+    AppColors.surface.withValues(alpha: 0.98),
+    ],
+    ),
+    ),
+    child: Center(
+    child: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+    const CircularProgressIndicator(color: AppColors.primary),
+    const SizedBox(height: 24),
+    AutoText.singleLine(
+    l10n.takeABreak,
+    style: const TextStyle(
+    color: AppColors.textPrimary,
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 1.5,
+    ),
+    ),
+    ],
+    ),
+    ),
+    ),
+    ),
               ],
             ),
           ),

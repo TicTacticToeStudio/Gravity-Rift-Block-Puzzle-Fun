@@ -245,4 +245,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutGame => 'About Game';
+
+  @override
+  String get takeABreak => 'Time to relax during a short ad! ☕️';
 }

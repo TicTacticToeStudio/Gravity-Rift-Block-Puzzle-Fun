@@ -245,31 +245,38 @@ class PowerUpsDialog extends ConsumerWidget {
         required VoidCallback onAd,
       }) {
     int freeCount = 0;
+    int adCount = 0;
+    int rescueCount = 0;
+
     if (type == PowerUpType.surprise) {
       freeCount = state.freeSurprises;
+      adCount = state.adSurprises;
+      rescueCount = state.rescueSurprises;
     } else if (type == PowerUpType.hammer) {
       freeCount = state.freeHammers;
+      adCount = state.adHammers;
+      rescueCount = state.rescueHammers;
     } else if (type == PowerUpType.shuffle) {
       freeCount = state.freeShuffles;
+      adCount = state.adShuffles;
+      rescueCount = state.rescueShuffles;
     } else if (type == PowerUpType.hint) {
       freeCount = state.freeHints;
+      adCount = state.adHints;
+      rescueCount = state.rescueHints;
     }
 
-    bool canWatchAd = false;
+    // Logic:
+    // 1. If free bonuses exist, use them.
+    // 2. If in rescue mode and rescue bonus not used, use it (shows USE (1)).
+    // 3. If not in rescue mode and ad limit not reached, show Ad button.
+    // 4. Otherwise, limit.
+    bool canUseFree = freeCount > 0;
+    bool canUseRescue = state.isOutOfMoves && rescueCount == 0;
+    bool canWatchAd = !state.isOutOfMoves && adCount < 1;
 
-    // UPDATED LOGIC: Allow normal ads in rescue mode as a fallback
-    if (type == PowerUpType.surprise) {
-      canWatchAd = (state.isOutOfMoves && state.rescueSurprises == 0) || (state.adSurprises < 2);
-    } else if (type == PowerUpType.hammer) {
-      canWatchAd = (state.isOutOfMoves && state.rescueHammers == 0) || (state.adHammers < 2);
-    } else if (type == PowerUpType.shuffle) {
-      canWatchAd = (state.isOutOfMoves && state.rescueShuffles == 0) || (state.adShuffles < 2);
-    } else if (type == PowerUpType.hint) {
-      bool hasValidMove = state.pieces.any((p) => state.board.canPlaceAnywhere(p));
-      canWatchAd = hasValidMove && (state.adHints < 2); // Hint ads are just normal ads
-    }
-
-    final bool isHintDisabled = state.isOutOfMoves && type == PowerUpType.hint;
+    bool hasValidMove = state.pieces.any((p) => state.board.canPlaceAnywhere(p));
+    final bool isHintDisabled = type == PowerUpType.hint && !hasValidMove && !canUseRescue;
 
     return SizedBox(
       width: 100,
@@ -313,16 +320,7 @@ class PowerUpsDialog extends ConsumerWidget {
             height: 32,
             child: FittedBox(
               fit: BoxFit.scaleDown,
-              child: isHintDisabled && freeCount > 0
-                  ? ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(0, 32),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                ),
-                onPressed: null,
-                child: Text(l10n.useBonus(freeCount), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-              )
-                  : isHintDisabled
+              child: isHintDisabled
                   ? Text(
                 l10n.limitLabel,
                 style: TextStyle(
@@ -331,7 +329,7 @@ class PowerUpsDialog extends ConsumerWidget {
                   fontWeight: FontWeight.bold,
                 ),
               )
-                  : freeCount > 0
+                  : canUseFree
                   ? ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: color, foregroundColor: Colors.black,
@@ -340,6 +338,16 @@ class PowerUpsDialog extends ConsumerWidget {
                 ),
                 onPressed: onUse,
                 child: Text(l10n.useBonus(freeCount), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+              )
+                  : canUseRescue
+                  ? ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.crystalAmber, foregroundColor: Colors.black,
+                  minimumSize: const Size(0, 32),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                ),
+                onPressed: onUse,
+                child: Text(l10n.useBonus(1), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
               )
                   : canWatchAd
                   ? ElevatedButton.icon(
